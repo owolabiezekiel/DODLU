@@ -1,0 +1,76 @@
+server:
+  port: ${SERVER_PORT:9001}
+
+spring:
+  mvc:
+    format:
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd'T'HH:mm:ss
+  datasource:
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+      connection-test-query: SELECT 1
+    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:dodlu_db}
+    username: ${RDS_USERNAME:root}
+    password: ${RDS_PASSWORD:root}
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+
+  liquibase:
+    enabled: true
+    change-log: ${LIQUIBASE_PATH:classpath:/db/changelog/changeLog-master.xml}
+  servlet:
+    multipart:
+      max-file-size: ${MAX_UPLOAD_SIZE:10MB}
+      max-request-size: ${MAX_REQUEST_SIZE:10MB}
+management:
+  auditevents:
+    enabled: true
+  endpoint:
+    logfile:
+      enabled: true
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+max:
+  text:
+    message:
+      buffer:
+        size: 8192
+  binary:
+    message:
+      buffer:
+        size: 8192
+allowed:
+  origin-patterns: ${ALLOWED_ORIGIN_PATTERNS:*}
+  headers: ${ALLOWED_HEADERS:*}
+exposed:
+  headers: ${EXPOSED_HEADERS:Access-Control-Allow-Origin,Access-Control-Allow-Credentials}
+springdoc:
+  api-docs:
+    enabled: true
+  packagesToScan: com.dodlu
+logging:
+  level:
+    root: INFO
+    com:
+      dodlu: INFO
+  file:
+    name: dodlu-backend-service.log
+  logback:
+    rollingpolicy:
+      max-file-size: 60MB
+resource:
+  id: dodlu-backend-service
