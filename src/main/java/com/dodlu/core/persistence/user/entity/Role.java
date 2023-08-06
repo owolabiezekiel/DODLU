@@ -1,5 +1,6 @@
 package com.dodlu.core.persistence.user.entity;
 
+import com.dodlu.core.app.model.request.user.CreateRoleRequest;
 import com.dodlu.core.domain.user.model.RoleModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import jakarta.persistence.Entity;
@@ -23,7 +24,11 @@ public class Role extends BaseEntity {
   private String name;
   private String description;
 
+  public static Role fromRequest(CreateRoleRequest request) {
+    return Role.builder().name(request.getName()).description(request.getDescription()).build();
+  }
+
   public RoleModel toModel() {
-    return new RoleModel().setDescription(description).setName(name).setId(id);
+    return RoleModel.builder().id(id).name(name).description(description).build();
   }
 }
