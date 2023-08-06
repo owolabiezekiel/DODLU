@@ -1,13 +1,13 @@
-package com.dodlu.core.domain;
+package com.dodlu.core.domain.user;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.user.CreateRoleRequest;
@@ -16,6 +16,8 @@ import com.dodlu.core.domain.user.service.abstracts.RoleService;
 import com.dodlu.core.domain.user.service.concretes.DefaultRoleService;
 import com.dodlu.core.persistence.user.entity.Role;
 import com.dodlu.core.persistence.user.repository.RoleRepository;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +25,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class RoleTest {
@@ -65,7 +70,7 @@ public class RoleTest {
   }
 
   @Test
-  void createRoleSuccessfully() {
+  void shouldCreateRoleSuccessfully() {
     CreateRoleRequest createRoleRequest = buildCreateRoleRequest("STUDENT");
 
     when(roleRepository.existsByName(any())).thenReturn(false);
@@ -87,10 +92,68 @@ public class RoleTest {
     verify(roleRepository, times(1)).save(any());
   }
 
+  @Test
+  void shouldGetAllAvatarsSuccessfully() {
+    Pageable pageable = PageRequest.ofSize(10);
+    var roles = List.of(buildRole("ADMIN"), buildRole("STUDENT"));
+
+    when(roleRepository.findAll(isA(Pageable.class))).thenReturn(new PageImpl<>(roles));
+
+    var result = roleService.getAllRoles(pageable).join();
+    assertNotNull(result);
+    assertEquals(result.getContent().size(), roles.size());
+    verify(roleRepository, times(1)).findAll(pageable);
+  }
+
+  @Test
+  void getRoleByIdFails_whenRoleDoesNotExist() {
+    when(roleRepository.findById(eq(1L))).thenReturn(Optional.empty());
+    var result = roleService.getRoleById(1L);
+    assertThatThrownBy(result::join)
+        .isInstanceOf(CompletionException.class)
+        .hasCause(exceptions.handleCreateBadRequest("Role does not exist"))
+        .extracting(Throwable::getCause)
+        .hasFieldOrPropertyWithValue("code", NOT_FOUND.value());
+  }
+
+  @Test
+  void shouldGetRoleByIdSuccessfully() {
+    when(roleRepository.findById(eq(1L))).thenReturn(Optional.of(buildRole("ADMIN")));
+    var result = roleService.getRoleById(1L).join();
+    assertNotNull(result);
+    assertEquals(result.getName(), "ADMIN");
+    assertEquals(result.getId(), 1L);
+    verify(roleRepository, times(1)).findById(1L);
+  }
+
+  @Test
+  void deleteRoleFails_whenRoleDoesNotExist() {
+    when(roleRepository.findById(eq(1L))).thenReturn(Optional.empty());
+    var result = roleService.deleteRoleById(1L);
+    assertThatThrownBy(result::join)
+        .isInstanceOf(CompletionException.class)
+        .hasCause(exceptions.handleCreateBadRequest("Role does not exist"))
+        .extracting(Throwable::getCause)
+        .hasFieldOrPropertyWithValue("code", NOT_FOUND.value());
+  }
+
+  @Test
+  void shouldDeleteRoleSuccessfully() {
+    when(roleRepository.findById(eq(1L))).thenReturn(Optional.of(buildRole("ADMIN")));
+    var result = roleService.deleteRoleById(1L).join();
+    assertNull(result);
+    verify(roleRepository, times(1)).findById(1L);
+    verify(roleRepository, times(1)).deleteById(1L);
+  }
+
   private CreateRoleRequest buildCreateRoleRequest(String name) {
     return CreateRoleRequest.builder()
         .name(name)
         .description(format("%s Description", name))
         .build();
+  }
+
+  private Role buildRole(String name) {
+    return Role.builder().id(1L).name(name).description(format("%s Description", name)).build();
   }
 }

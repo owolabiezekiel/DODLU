@@ -5,9 +5,9 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import com.dodlu.core.app.model.response.ResponseModel;
+import jakarta.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletionException;
-import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpHeaders;

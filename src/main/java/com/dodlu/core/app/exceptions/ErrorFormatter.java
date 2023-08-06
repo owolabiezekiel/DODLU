@@ -2,9 +2,9 @@ package com.dodlu.core.app.exceptions;
 
 import static java.util.stream.Collectors.toList;
 
+import jakarta.validation.ConstraintViolation;
 import java.util.List;
 import java.util.Set;
-import javax.validation.ConstraintViolation;
 import lombok.experimental.UtilityClass;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.BindingResult;

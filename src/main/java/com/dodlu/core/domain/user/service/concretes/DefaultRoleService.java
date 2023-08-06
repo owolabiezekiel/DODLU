@@ -1,5 +1,6 @@
 package com.dodlu.core.domain.user.service.concretes;
 
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
@@ -36,6 +37,32 @@ public class DefaultRoleService implements RoleService {
   @Override
   public CompletableFuture<Page<RoleModel>> getAllRoles(Pageable pageable) {
     return supplyAsync(() -> roleRepository.findAll(pageable).map(Role::toModel));
+  }
+
+  @Override
+  public CompletableFuture<RoleModel> getRoleById(Long roleId) {
+    return supplyAsync(
+        () ->
+            roleRepository
+                .findById(roleId)
+                .orElseThrow(
+                    () -> exceptionService.handleCreateNotFoundException("Role does not exist"))
+                .toModel());
+  }
+
+  @Override
+  public CompletableFuture<Void> deleteRoleById(Long roleId) {
+    return runAsync(
+        () -> {
+          var role =
+              roleRepository
+                  .findById(roleId)
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateNotFoundException(
+                              "Role does not exist", roleId));
+          roleRepository.deleteById(role.getId());
+        });
   }
 
   private void ensureRoleNameIsUnique(String name) {
