@@ -13,4 +13,6 @@
 
     <property dbms="h2" name="text" value="VARCHAR(255)"/>
     <property dbms="postgresql,mysql" name="text" value="TEXT"/>
+
+    <include file="db/changelog/001_role_migration.xml"/>
 </databaseChangeLog>
