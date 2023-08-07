@@ -6,6 +6,7 @@ import com.dodlu.core.persistence.base.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
@@ -23,6 +24,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Role extends BaseEntity {
   private String name;
   private String description;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    Role that = (Role) o;
+    return id.equals(that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), id);
+  }
 
   public static Role fromRequest(CreateRoleRequest request) {
     return Role.builder().name(request.getName()).description(request.getDescription()).build();
