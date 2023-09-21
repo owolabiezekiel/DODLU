@@ -6,11 +6,11 @@
     <changeSet author="tobiowolabi" id="role_migration">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="role"/>
+                <tableExists tableName="roles"/>
             </not>
         </preConditions>
-        <createTable tableName="role">
-            <column autoIncrement="true" name="id" type="BIGINT">
+        <createTable tableName="roles">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" primaryKey="true" unique="true"/>
             </column>
 
@@ -30,7 +30,7 @@
     </changeSet>
 
     <changeSet author="tobiowolabi" id="create_default_roles">
-        <insert tableName="role">
+        <insert tableName="roles">
             <column name="description" value="DODLU administrator role"/>
             <column name="name" value="ADMIN"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
@@ -39,7 +39,7 @@
             <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
 
-        <insert tableName="role">
+        <insert tableName="roles">
             <column name="description" value="DODLU lecturer role"/>
             <column name="name" value="LECTURER"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
@@ -48,7 +48,7 @@
             <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
 
-        <insert tableName="role">
+        <insert tableName="roles">
             <column name="description" value="DODLU student role"/>
             <column name="name" value="STUDENT"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>

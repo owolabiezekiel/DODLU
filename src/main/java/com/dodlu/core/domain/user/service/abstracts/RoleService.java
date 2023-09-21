@@ -11,7 +11,7 @@ public interface RoleService {
 
   CompletableFuture<Page<RoleModel>> getAllRoles(Pageable pageable);
 
-  CompletableFuture<RoleModel> getRoleById(Long roleId);
+  CompletableFuture<RoleModel> getRoleById(String roleId);
 
-  CompletableFuture<Void> deleteRoleById(Long roleId);
+  CompletableFuture<Void> deleteRoleById(String roleId);
 }

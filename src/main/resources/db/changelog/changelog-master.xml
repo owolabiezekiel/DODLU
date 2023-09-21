@@ -14,5 +14,11 @@
     <property dbms="h2" name="text" value="VARCHAR(255)"/>
     <property dbms="postgresql,mysql" name="text" value="TEXT"/>
 
+    <property name="uuid_type" value="uuid" dbms="postgresql"/>
+    <property name="uuid_type" value="uuid" dbms="h2"/>
+
+    <property name="uuid_function" value="gen_random_uuid()" dbms="postgresql"/>
+    <property name="uuid_function" value="RANDOM_UUID()" dbms="h2"/>
+
     <include file="db/changelog/001_role_migration.xml"/>
 </databaseChangeLog>

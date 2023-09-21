@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Data
 @Builder
 public class RoleModel {
-  private Long id;
+  private String id;
   private String name;
   private String description;
 }

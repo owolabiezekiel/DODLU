@@ -40,7 +40,7 @@ public class DefaultRoleService implements RoleService {
   }
 
   @Override
-  public CompletableFuture<RoleModel> getRoleById(Long roleId) {
+  public CompletableFuture<RoleModel> getRoleById(String roleId) {
     return supplyAsync(
         () ->
             roleRepository
@@ -51,7 +51,7 @@ public class DefaultRoleService implements RoleService {
   }
 
   @Override
-  public CompletableFuture<Void> deleteRoleById(Long roleId) {
+  public CompletableFuture<Void> deleteRoleById(String roleId) {
     return runAsync(
         () -> {
           var role =

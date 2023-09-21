@@ -1,5 +1,6 @@
 package com.dodlu.core.domain.user;
 
+import static com.dodlu.core.stubs.TextDataFixtures.DEFAULT_UUID_STRING;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,7 +80,7 @@ public class RoleTest {
         .then(
             i -> {
               var entity = i.getArgument(0, Role.class);
-              entity.setId(1L);
+              entity.setId("id");
               return entity;
             });
 
@@ -107,8 +108,9 @@ public class RoleTest {
 
   @Test
   void getRoleByIdFails_whenRoleDoesNotExist() {
-    when(roleRepository.findById(eq(1L))).thenReturn(Optional.empty());
-    var result = roleService.getRoleById(1L);
+    when(roleRepository.findById(eq(DEFAULT_UUID_STRING))).thenReturn(Optional.empty());
+
+    var result = roleService.getRoleById(DEFAULT_UUID_STRING);
     assertThatThrownBy(result::join)
         .isInstanceOf(CompletionException.class)
         .hasCause(exceptions.handleCreateBadRequest("Role does not exist"))
@@ -118,18 +120,19 @@ public class RoleTest {
 
   @Test
   void shouldGetRoleByIdSuccessfully() {
-    when(roleRepository.findById(eq(1L))).thenReturn(Optional.of(buildRole("ADMIN")));
-    var result = roleService.getRoleById(1L).join();
+    when(roleRepository.findById(eq(DEFAULT_UUID_STRING)))
+        .thenReturn(Optional.of(buildRole("ADMIN")));
+    var result = roleService.getRoleById(DEFAULT_UUID_STRING).join();
     assertNotNull(result);
     assertEquals(result.getName(), "ADMIN");
-    assertEquals(result.getId(), 1L);
-    verify(roleRepository, times(1)).findById(1L);
+    assertEquals(result.getId(), DEFAULT_UUID_STRING);
+    verify(roleRepository, times(1)).findById(DEFAULT_UUID_STRING);
   }
 
   @Test
   void deleteRoleFails_whenRoleDoesNotExist() {
-    when(roleRepository.findById(eq(1L))).thenReturn(Optional.empty());
-    var result = roleService.deleteRoleById(1L);
+    when(roleRepository.findById(eq(DEFAULT_UUID_STRING))).thenReturn(Optional.empty());
+    var result = roleService.deleteRoleById(DEFAULT_UUID_STRING);
     assertThatThrownBy(result::join)
         .isInstanceOf(CompletionException.class)
         .hasCause(exceptions.handleCreateBadRequest("Role does not exist"))
@@ -139,11 +142,12 @@ public class RoleTest {
 
   @Test
   void shouldDeleteRoleSuccessfully() {
-    when(roleRepository.findById(eq(1L))).thenReturn(Optional.of(buildRole("ADMIN")));
-    var result = roleService.deleteRoleById(1L).join();
+    when(roleRepository.findById(eq(DEFAULT_UUID_STRING)))
+        .thenReturn(Optional.of(buildRole("ADMIN")));
+    var result = roleService.deleteRoleById(DEFAULT_UUID_STRING).join();
     assertNull(result);
-    verify(roleRepository, times(1)).findById(1L);
-    verify(roleRepository, times(1)).deleteById(1L);
+    verify(roleRepository, times(1)).findById(DEFAULT_UUID_STRING);
+    verify(roleRepository, times(1)).deleteById(DEFAULT_UUID_STRING);
   }
 
   private CreateRoleRequest buildCreateRoleRequest(String name) {
@@ -154,6 +158,10 @@ public class RoleTest {
   }
 
   private Role buildRole(String name) {
-    return Role.builder().id(1L).name(name).description(format("%s Description", name)).build();
+    return Role.builder()
+        .id(DEFAULT_UUID_STRING)
+        .name(name)
+        .description(format("%s Description", name))
+        .build();
   }
 }

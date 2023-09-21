@@ -11,17 +11,18 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
 
 @Accessors(chain = true)
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "role")
+@Table(name = "roles")
 @Getter
 @Setter
 @ToString
 @SuperBuilder
 @RequiredArgsConstructor
-public class Role extends BaseEntity {
+public class Role extends BaseEntity implements GrantedAuthority {
   private String name;
   private String description;
 
@@ -45,5 +46,10 @@ public class Role extends BaseEntity {
 
   public RoleModel toModel() {
     return RoleModel.builder().id(id).name(name).description(description).build();
+  }
+
+  @Override
+  public String getAuthority() {
+    return null;
   }
 }
