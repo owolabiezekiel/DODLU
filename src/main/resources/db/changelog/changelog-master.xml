@@ -21,4 +21,5 @@
     <property name="uuid_function" value="RANDOM_UUID()" dbms="h2"/>
 
     <include file="db/changelog/001_role_migration.xml"/>
+    <include file="db/changelog/002_user_and_user_role_migration.xml"/>
 </databaseChangeLog>
