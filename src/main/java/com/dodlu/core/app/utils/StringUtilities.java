@@ -2,7 +2,9 @@ package com.dodlu.core.app.utils;
 
 import java.util.Collection;
 import java.util.stream.Stream;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class StringUtilities {
   public static boolean isNullOrBlank(String string) {
     return string == null || string.isBlank();

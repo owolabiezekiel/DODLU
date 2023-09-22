@@ -7,10 +7,9 @@ import java.util.stream.Stream;
 
 public enum UserType {
   ADMIN,
-  GAMER,
-  COMMUNITY_MANAGER,
-  COMMUNITY_REP,
-  SYSTEM,
+
+  STUDENT,
+  LECTURER,
   UNKNOWN;
 
   @JsonCreator

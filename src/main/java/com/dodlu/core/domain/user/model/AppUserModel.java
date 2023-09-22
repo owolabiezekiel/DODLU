@@ -1,6 +1,5 @@
 package com.dodlu.core.domain.user.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Data;
@@ -12,11 +11,8 @@ import lombok.experimental.Accessors;
 @Data
 public class AppUserModel {
   private String id;
-  private String firstName;
-  private String lastName;
   private String email;
   private String username;
-  private LocalDate dateOfBirth;
   private UserType type;
   private LocalDateTime lastLoginDate;
   private LocalDateTime createdAt;

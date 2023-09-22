@@ -9,7 +9,6 @@ import com.dodlu.core.domain.user.model.RoleModel;
 import com.dodlu.core.domain.user.model.UserType;
 import com.dodlu.core.persistence.base.BaseEntity;
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Getter;
@@ -49,10 +48,7 @@ public class AppUser extends BaseEntity {
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   private Set<Role> roles;
 
-  private String firstName;
-  private String lastName;
   private String password;
-  private LocalDate dateOfBirth;
   private LocalDateTime lastLoginDate;
 
   private Set<RoleModel> getRoleModels() {
@@ -62,11 +58,8 @@ public class AppUser extends BaseEntity {
   public AppUserModel toModel() {
     return new AppUserModel()
         .setId(getId())
-        .setFirstName(getFirstName())
-        .setLastName(getLastName())
         .setEmail(getEmail())
         .setUsername(getUsername())
-        .setDateOfBirth(getDateOfBirth())
         .setType(getType())
         .setLastLoginDate(getLastLoginDate())
         .setCreatedAt(getCreatedAt())
