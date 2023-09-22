@@ -23,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -67,15 +68,20 @@ public class DefaultAuthService implements AuthService {
   public CompletableFuture<LoginResponseModel> userLogin(UserLoginRequest request) {
     return supplyAsync(
         () -> {
-          Authentication authentication =
-              authenticationManager.authenticate(
-                  new UsernamePasswordAuthenticationToken(
-                      request.getUsername(), request.getPassword()));
-          String token = jwtService.generate(authentication).join();
-          return LoginResponseModel.builder()
-              .user(userRepository.findByUsernameIgnoreCase(request.getUsername()).get().toModel())
-              .jwt(token)
-              .build();
+          try {
+            Authentication authentication =
+                authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                        request.getUsername(), request.getPassword()));
+            String token = jwtService.generate(authentication).join();
+            return LoginResponseModel.builder()
+                .user(
+                    userRepository.findByUsernameIgnoreCase(request.getUsername()).get().toModel())
+                .jwt(token)
+                .build();
+          } catch (BadCredentialsException e) {
+            throw exceptionService.handleCreateBadRequest("Invalid username/password combination");
+          }
         });
   }
 
