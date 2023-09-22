@@ -62,10 +62,6 @@ public class AppUser extends BaseEntity {
         .setUsername(getUsername())
         .setType(getType())
         .setLastLoginDate(getLastLoginDate())
-        .setCreatedAt(getCreatedAt())
-        .setModifiedDate(getModifiedDate())
-        .setCreatedBy(getCreatedBy())
-        .setModifiedBy(getModifiedBy())
         .setStatus(getStatus())
         .setRole(getRoleModels());
   }

@@ -15,10 +15,6 @@ public class AppUserModel {
   private String username;
   private UserType type;
   private LocalDateTime lastLoginDate;
-  private LocalDateTime createdAt;
-  private LocalDateTime modifiedDate;
-  private String createdBy;
-  private String modifiedBy;
   private Set<RoleModel> role;
   private EntityStatus status;
 }

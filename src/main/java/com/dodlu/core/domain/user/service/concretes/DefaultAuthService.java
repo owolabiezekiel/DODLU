@@ -7,6 +7,9 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.user.CreateUserRequest;
+import com.dodlu.core.app.model.request.user.UserLoginRequest;
+import com.dodlu.core.app.model.response.user.LoginResponseModel;
+import com.dodlu.core.domain.auth.abstracts.JwtService;
 import com.dodlu.core.domain.user.model.AppUserModel;
 import com.dodlu.core.domain.user.model.EntityStatus;
 import com.dodlu.core.domain.user.model.UserType;
@@ -19,6 +22,9 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +35,8 @@ public class DefaultAuthService implements AuthService {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final RoleRepository roleRepository;
+  private final AuthenticationManager authenticationManager;
+  private final JwtService jwtService;
   private final CoreExceptionService exceptionService;
 
   @Override
@@ -52,6 +60,22 @@ public class DefaultAuthService implements AuthService {
                   .build();
 
           return userRepository.save(appUser).toModel();
+        });
+  }
+
+  @Override
+  public CompletableFuture<LoginResponseModel> userLogin(UserLoginRequest request) {
+    return supplyAsync(
+        () -> {
+          Authentication authentication =
+              authenticationManager.authenticate(
+                  new UsernamePasswordAuthenticationToken(
+                      request.getUsername(), request.getPassword()));
+          String token = jwtService.generate(authentication).join();
+          return LoginResponseModel.builder()
+              .user(userRepository.findByUsernameIgnoreCase(request.getUsername()).get().toModel())
+              .jwt(token)
+              .build();
         });
   }
 
