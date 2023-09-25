@@ -17,7 +17,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
@@ -33,6 +32,7 @@ import org.springframework.stereotype.Component;
 public class SecurityConfiguration {
   private final RsaKeyProperties keys;
   private final AuthenticationFilter authenticationFilter;
+  private final DodluUserDetailsPasswordService userDetailsPasswordService;
 
   @Bean
   public PasswordEncoder encoder() {
@@ -58,9 +58,9 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
+  public AuthenticationManager authenticationManager() {
     DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-    daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+    daoAuthenticationProvider.setUserDetailsService(userDetailsPasswordService);
     daoAuthenticationProvider.setPasswordEncoder(encoder());
     return new ProviderManager(daoAuthenticationProvider);
   }

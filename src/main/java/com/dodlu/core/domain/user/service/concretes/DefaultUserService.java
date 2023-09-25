@@ -27,7 +27,7 @@ public class DefaultUserService implements UserService, UserDetailsService {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     User user =
         userRepository
-            .findByUsernameIgnoreCase(username)
+            .findByUsernameEqualsIgnoreCase(username)
             .orElseThrow(
                 () -> new UsernameNotFoundException(format("User %s does not exist", username)));
 

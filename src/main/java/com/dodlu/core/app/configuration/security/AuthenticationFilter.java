@@ -46,7 +46,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         User user =
             userRepository
-                .findByUsernameIgnoreCase(authenticatedUsername)
+                .findByUsernameEqualsIgnoreCase(authenticatedUsername)
                 .orElseThrow(() -> exceptionService.handleCreateBadRequest("user not found"));
 
         UserDetails userDetails = AuthUser.build(user, token);

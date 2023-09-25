@@ -76,7 +76,10 @@ public class DefaultAuthService implements AuthService {
             String token = jwtService.generate(authentication).join();
             return LoginResponseModel.builder()
                 .user(
-                    userRepository.findByUsernameIgnoreCase(request.getUsername()).get().toModel())
+                    userRepository
+                        .findByUsernameEqualsIgnoreCase(request.getUsername())
+                        .get()
+                        .toModel())
                 .jwt(token)
                 .build();
           } catch (BadCredentialsException e) {

@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, String> {
-  Optional<User> findByUsernameIgnoreCase(String username);
+  Optional<User> findByUsernameEqualsIgnoreCase(String username);
+
+  Optional<User> findByEmailEqualsIgnoreCase(String email);
 
   boolean existsByUsernameEqualsIgnoreCase(String username);
 
