@@ -6,7 +6,7 @@ import com.dodlu.core.app.model.request.user.CreateUserRequest;
 import com.dodlu.core.app.model.request.user.UserLoginRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
-import com.dodlu.core.domain.user.model.AppUserModel;
+import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.domain.user.service.abstracts.AuthService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/auth", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/auth", produces = APPLICATION_JSON_VALUE)
 @CrossOrigin("*")
 public class AuthController {
   private final AuthService authService;
 
   @PostMapping(value = "/student/register", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint for students to register")
-  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = AppUserModel.class)})
-  public CompletableFuture<ResponseModel<AppUserModel>> studentRegister(
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
+  public CompletableFuture<ResponseModel<UserModel>> studentRegister(
       @Valid @RequestBody CreateUserRequest request) {
     return authService.registerStudentUser(request).thenApply(ResponseModel::new);
   }

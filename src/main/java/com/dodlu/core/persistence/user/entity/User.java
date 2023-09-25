@@ -1,15 +1,18 @@
 package com.dodlu.core.persistence.user.entity;
 
 import static com.dodlu.core.app.utils.StringUtilities.emptyIfNullStream;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import com.dodlu.core.domain.user.model.AppUserModel;
 import com.dodlu.core.domain.user.model.EntityStatus;
 import com.dodlu.core.domain.user.model.RoleModel;
+import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.domain.user.model.UserType;
 import com.dodlu.core.persistence.base.BaseEntity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,9 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Accessors(chain = true)
 @Entity
@@ -28,7 +34,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @ToString
 @SuperBuilder
 @RequiredArgsConstructor
-public class User extends BaseEntity {
+public class User extends BaseEntity implements UserDetails {
   @Column(unique = true)
   private String email;
 
@@ -51,12 +57,14 @@ public class User extends BaseEntity {
   private String password;
   private LocalDateTime lastLoginDate;
 
+  @Transient private List<GrantedAuthority> authorities;
+
   private Set<RoleModel> getRoleModels() {
     return emptyIfNullStream(getRoles()).map(Role::toModel).collect(toSet());
   }
 
-  public AppUserModel toModel() {
-    return new AppUserModel()
+  public UserModel toModel() {
+    return new UserModel()
         .setId(getId())
         .setEmail(getEmail())
         .setUsername(getUsername())
@@ -64,5 +72,39 @@ public class User extends BaseEntity {
         .setLastLoginDate(getLastLoginDate())
         .setStatus(getStatus())
         .setRole(getRoleModels());
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return this.roles.stream()
+        .map((Role::getName))
+        .map(String::toUpperCase)
+        .map(SimpleGrantedAuthority::new)
+        .collect(toList());
+  }
+
+  @Override
+  public String getUsername() {
+    return this.username;
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
   }
 }
