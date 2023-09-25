@@ -12,10 +12,12 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -36,21 +38,23 @@ public class RoleController {
 
   @GetMapping
   @Operation(description = "get all roles")
-  //  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'LECTURER')")
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = RoleResult.class)})
-  public CompletableFuture<ResponseModel<RoleResult>> getAllRoles(
-      @PageableDefault Pageable pageable) {
+  public ResponseModel<RoleResult> getAllRoles(@PageableDefault Pageable pageable)
+      throws ExecutionException, InterruptedException {
     return roleService
         .getAllRoles(pageable)
         .thenApply(RoleResult::new)
-        .thenApply(ResponseModel::new);
+        .thenApply(ResponseModel::new)
+        .get();
   }
 
   @GetMapping(value = "/{id}")
   @Operation(description = "get single role")
   //  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'LECTURER')")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = RoleModel.class)})
-  public CompletableFuture<ResponseModel<RoleModel>> getRole(@PathVariable("id") String id) {
-    return roleService.getRoleById(id).thenApply(ResponseModel::new);
+  public ResponseModel<RoleModel> getRole(@PathVariable("id") String id)
+      throws ExecutionException, InterruptedException {
+    return roleService.getRoleById(id).thenApply(ResponseModel::new).get();
   }
 }
