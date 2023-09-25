@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/api/v1/roles", produces = APPLICATION_JSON_VALUE)
 @Slf4j
+@CrossOrigin("*")
 public class RoleController {
   private final RoleService roleService;
 
@@ -43,5 +44,13 @@ public class RoleController {
         .getAllRoles(pageable)
         .thenApply(RoleResult::new)
         .thenApply(ResponseModel::new);
+  }
+
+  @GetMapping(value = "/{id}")
+  @Operation(description = "get single role")
+  //  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'LECTURER')")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = RoleModel.class)})
+  public CompletableFuture<ResponseModel<RoleModel>> getRole(@PathVariable("id") String id) {
+    return roleService.getRoleById(id).thenApply(ResponseModel::new);
   }
 }
