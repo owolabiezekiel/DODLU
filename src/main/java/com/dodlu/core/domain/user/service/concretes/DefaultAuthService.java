@@ -5,13 +5,13 @@ import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.app.utils.UserUtilities.generateUsername;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
+import com.dodlu.core.app.configuration.security.JwtService;
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.user.CreateUserRequest;
 import com.dodlu.core.app.model.request.user.UserLoginRequest;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
-import com.dodlu.core.domain.auth.abstracts.JwtService;
-import com.dodlu.core.domain.user.model.AppUserModel;
 import com.dodlu.core.domain.user.model.EntityStatus;
+import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.domain.user.model.UserType;
 import com.dodlu.core.domain.user.service.abstracts.AuthService;
 import com.dodlu.core.persistence.user.entity.Role;
@@ -23,9 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +39,7 @@ public class DefaultAuthService implements AuthService {
   private final CoreExceptionService exceptionService;
 
   @Override
-  public CompletableFuture<AppUserModel> registerStudentUser(CreateUserRequest request) {
+  public CompletableFuture<UserModel> registerStudentUser(CreateUserRequest request) {
     return supplyAsync(
         () -> {
           checkUniqueFields(request);
@@ -68,23 +66,18 @@ public class DefaultAuthService implements AuthService {
   public CompletableFuture<LoginResponseModel> userLogin(UserLoginRequest request) {
     return supplyAsync(
         () -> {
-          try {
-            Authentication authentication =
-                authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                        request.getUsername(), request.getPassword()));
-            String token = jwtService.generate(authentication).join();
-            return LoginResponseModel.builder()
-                .user(
-                    userRepository
-                        .findByUsernameEqualsIgnoreCase(request.getUsername())
-                        .get()
-                        .toModel())
-                .jwt(token)
-                .build();
-          } catch (BadCredentialsException e) {
-            throw exceptionService.handleCreateBadRequest("Invalid username/password combination");
-          }
+          authenticationManager.authenticate(
+              new UsernamePasswordAuthenticationToken(
+                  request.getUsername(), request.getPassword()));
+          User user =
+              userRepository
+                  .findByUsernameEqualsIgnoreCase(request.getUsername())
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateUnAuthorized(
+                              "Invalid username/password combination"));
+          String token = jwtService.generateToken(user);
+          return LoginResponseModel.builder().user(user.toModel()).accessToken(token).build();
         });
   }
 
