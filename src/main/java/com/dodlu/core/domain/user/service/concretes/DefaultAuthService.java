@@ -14,8 +14,8 @@ import com.dodlu.core.domain.user.model.AppUserModel;
 import com.dodlu.core.domain.user.model.EntityStatus;
 import com.dodlu.core.domain.user.model.UserType;
 import com.dodlu.core.domain.user.service.abstracts.AuthService;
-import com.dodlu.core.persistence.user.entity.AppUser;
 import com.dodlu.core.persistence.user.entity.Role;
+import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.RoleRepository;
 import com.dodlu.core.persistence.user.repository.UserRepository;
 import java.util.Set;
@@ -47,8 +47,8 @@ public class DefaultAuthService implements AuthService {
           checkUniqueFields(request);
           Role role = getRole(STUDENT_ROLE_NAME_STRING);
 
-          AppUser appUser =
-              AppUser.builder()
+          User user =
+              User.builder()
                   .username(
                       isNullOrBlank(request.getUsername())
                           ? generateUsername(request.getEmail()).toLowerCase().strip()
@@ -60,7 +60,7 @@ public class DefaultAuthService implements AuthService {
                   .status(EntityStatus.INACTIVE)
                   .build();
 
-          return userRepository.save(appUser).toModel();
+          return userRepository.save(user).toModel();
         });
   }
 

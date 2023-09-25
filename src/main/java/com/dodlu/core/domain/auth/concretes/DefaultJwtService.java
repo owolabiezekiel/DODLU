@@ -3,6 +3,7 @@ package com.dodlu.core.domain.auth.concretes;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.domain.auth.abstracts.JwtService;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -27,23 +28,28 @@ public class DefaultJwtService implements JwtService {
   public CompletableFuture<String> generate(Authentication auth) {
     return supplyAsync(
         () -> {
-          Instant now = Instant.now();
           String scope =
               auth.getAuthorities().stream()
                   .map(GrantedAuthority::getAuthority)
                   .collect(Collectors.joining(" "));
-
-          System.out.println("got here: " + auth.getName());
+          Instant now = Instant.now();
+          Instant expirationTime = now.plus(Duration.ofHours(1));
 
           JwtClaimsSet claims =
               JwtClaimsSet.builder()
                   .issuer("self")
                   .issuedAt(now)
+                  .expiresAt(expirationTime)
                   .subject(auth.getName())
                   .claim("roles", scope)
                   .build();
 
           return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
         });
+  }
+
+  @Override
+  public CompletableFuture<String> getUsernameFromToken(String token) {
+    return supplyAsync(jwtDecoder.decode(token)::getSubject);
   }
 }

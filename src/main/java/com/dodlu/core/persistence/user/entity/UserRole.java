@@ -22,7 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class UserRole extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "user_id")
-  private AppUser user;
+  private User user;
 
   @ManyToOne
   @JoinColumn(name = "role_id")

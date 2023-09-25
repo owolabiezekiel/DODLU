@@ -1,11 +1,11 @@
 package com.dodlu.core.persistence.user.repository;
 
-import com.dodlu.core.persistence.user.entity.AppUser;
+import com.dodlu.core.persistence.user.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<AppUser, String> {
-  Optional<AppUser> findByUsernameIgnoreCase(String username);
+public interface UserRepository extends JpaRepository<User, String> {
+  Optional<User> findByUsernameIgnoreCase(String username);
 
   boolean existsByUsernameEqualsIgnoreCase(String username);
 

@@ -5,4 +5,6 @@ import org.springframework.security.core.Authentication;
 
 public interface JwtService {
   CompletableFuture<String> generate(Authentication auth);
+
+  CompletableFuture<String> getUsernameFromToken(String token);
 }

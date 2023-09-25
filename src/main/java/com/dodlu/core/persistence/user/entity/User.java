@@ -28,7 +28,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @ToString
 @SuperBuilder
 @RequiredArgsConstructor
-public class AppUser extends BaseEntity {
+public class User extends BaseEntity {
   @Column(unique = true)
   private String email;
 
