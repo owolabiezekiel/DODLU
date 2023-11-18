@@ -11,9 +11,9 @@ spring:
       connection-timeout: 20000
       maximum-pool-size: 5
       connection-test-query: SELECT 1
-    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:dodlu_db}
-    username: ${RDS_USERNAME:root}
-    password: ${RDS_PASSWORD:root}
+    url: jdbc:postgresql://${RDS_HOSTNAME:dpg-clcg9it4lnec73e2p1r0-a}:${RDS_PORT:5432}/${RDS_DB_NAME:dodlu_db}
+    username: ${RDS_USERNAME:dodlu_db_user}
+    password: ${RDS_PASSWORD:ACgUbtvy4AEdTxPqIQLtbqxVmjnUGOIS}
 
   jpa:
     show-sql: false
