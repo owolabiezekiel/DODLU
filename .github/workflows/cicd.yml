@@ -25,6 +25,7 @@ jobs:
         run: docker build -t owolabiezekiel/dodlu-core-service .
       - name: Publish image to docker hub
         run: docker push owolabiezekiel/dodlu-core-service:latest
+
   deploy:
     needs: build
     runs-on: [aws-ec2]
