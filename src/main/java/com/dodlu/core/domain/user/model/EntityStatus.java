@@ -7,8 +7,7 @@ import java.util.stream.Stream;
 
 public enum EntityStatus {
   ACTIVE,
-  INACTIVE,
-  UNKNOWN;
+  INACTIVE;
 
   @JsonCreator
   public static EntityStatus create(String value) {
@@ -19,6 +18,6 @@ public enum EntityStatus {
     return Stream.of(EntityStatus.values())
         .filter(e -> e.toString().equalsIgnoreCase(value))
         .findFirst()
-        .orElse(UNKNOWN);
+        .orElse(INACTIVE);
   }
 }
