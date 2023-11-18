@@ -25,3 +25,13 @@ jobs:
         run: docker build -t owolabiezekiel/dodlu-core-service .
       - name: Publish image to docker hub
         run: docker push owolabiezekiel/dodlu-core-service:latest
+  deploy:
+    needs: build
+    runs-on: [aws-ec2]
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull owolabiezekiel/dodlu-core-service:latest
+      - name: Delete existing container
+        run: docker rm -f dodlu-core-service-container
+      - name: Docker run container
+        run: docker run -d -p 9001:9001 --name dodlu-core-service-container owolabiezekiel/dodlu-core-service
