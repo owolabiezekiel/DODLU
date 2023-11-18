@@ -11,7 +11,7 @@ spring:
       connection-timeout: 20000
       maximum-pool-size: 5
       connection-test-query: SELECT 1
-    url: jdbc:postgresql://${RDS_HOSTNAME:dpg-clcg9it4lnec73e2p1r0-a}:${RDS_PORT:5432}/${RDS_DB_NAME:dodlu_db}
+    url: jdbc:postgresql://${RDS_HOSTNAME:dodlu_db_user:ACgUbtvy4AEdTxPqIQLtbqxVmjnUGOIS@dpg-clcg9it4lnec73e2p1r0-a.ohio-postgres.render.com}:${RDS_PORT:5432}/${RDS_DB_NAME:dodlu_db}
     username: ${RDS_USERNAME:dodlu_db_user}
     password: ${RDS_PASSWORD:ACgUbtvy4AEdTxPqIQLtbqxVmjnUGOIS}
 
