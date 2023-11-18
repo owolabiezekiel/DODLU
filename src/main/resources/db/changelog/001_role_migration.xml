@@ -14,7 +14,6 @@
                 <constraints nullable="false" primaryKey="true" unique="true"/>
             </column>
 
-
             <column name="name" type="VARCHAR(50)">
                 <constraints nullable="false" unique="true"/>
             </column>
@@ -24,8 +23,12 @@
 
             <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="created_by" type="VARCHAR(100)"/>
-            <column name="modified_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="modified_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+
         </createTable>
     </changeSet>
 
@@ -35,8 +38,8 @@
             <column name="name" value="ADMIN"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="created_by" value="system"/>
-            <column name="modified_by" value="system"/>
-            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
 
         <insert tableName="roles">
@@ -44,8 +47,8 @@
             <column name="name" value="LECTURER"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="created_by" value="system"/>
-            <column name="modified_by" value="system"/>
-            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
 
         <insert tableName="roles">
@@ -53,8 +56,8 @@
             <column name="name" value="STUDENT"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="created_by" value="system"/>
-            <column name="modified_by" value="system"/>
-            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

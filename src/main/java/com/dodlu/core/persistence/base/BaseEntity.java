@@ -25,9 +25,10 @@ public class BaseEntity implements Serializable {
   @Id @UuidGenerator() protected String id;
 
   @CreationTimestamp LocalDateTime createdAt;
-  @UpdateTimestamp LocalDateTime modifiedDate;
+  @UpdateTimestamp LocalDateTime updatedAt;
   @CreatedBy String createdBy;
-  @LastModifiedBy String modifiedBy;
+  @LastModifiedBy String UpdatedBy;
+  protected boolean isDeleted;
 
   @Override
   public boolean equals(Object o) {

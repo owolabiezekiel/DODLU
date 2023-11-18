@@ -3,7 +3,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
-    <changeSet author="tobiowolabi" id="app-user-migration">
+    <changeSet author="tobiowolabi" id="user-migration">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="users" />
@@ -13,6 +13,8 @@
             <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" primaryKey="true" unique="true" primaryKeyName="pk_user"/>
             </column>
+
+
             <column name="username" type="VARCHAR(150)">
                 <constraints unique="true"/>
             </column>
@@ -22,14 +24,16 @@
             <column name="password" type="${text}"/>
             <column name="type" type="VARCHAR(100)"/>
             <column name="status" type="VARCHAR(100)" defaultValue="INACTIVE"/>
-            <column name="deleted" type="BOOLEAN" defaultValue="false">
-                <constraints nullable="false"/>
-            </column>
             <column name="last_login_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+
+
             <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="created_by" type="${text}"/>
             <column name="modified_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="modified_by" type="${text}"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createIndex tableName="users" indexName="username_idx" unique="true">
             <column name="username"/>
@@ -46,19 +50,22 @@
             <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" primaryKey="true" unique="true" primaryKeyName="pk_user_role"/>
             </column>
+
             <column name="role_id" type="TEXT">
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="deleted" type="BOOLEAN" defaultValue="false">
-                <constraints nullable="false"/>
-            </column>
+
+
             <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="created_by" type="${text}"/>
             <column name="modified_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="modified_by" type="${text}"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createIndex indexName="user_role_idx" tableName="user_role">
             <column name="role_id"/>

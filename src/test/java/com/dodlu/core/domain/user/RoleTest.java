@@ -94,7 +94,7 @@ public class RoleTest {
   }
 
   @Test
-  void shouldGetAllAvatarsSuccessfully() {
+  void shouldGetAllRolesSuccessfully() {
     Pageable pageable = PageRequest.ofSize(10);
     var roles = List.of(buildRole("ADMIN"), buildRole("STUDENT"));
 
