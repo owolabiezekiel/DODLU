@@ -23,6 +23,6 @@
     <property dbms="h2" name="text" value="VARCHAR(255)"/>
     <property dbms="h2,postgresql,mysql" name="ulid" value="VARCHAR(26)"/>
 
-    <include file="db/changelog/001_role_migration.xml"/>
-    <include file="db/changelog/002_user_and_user_role_migration.xml"/>
+    <include file="/changelog/001_role_migration.xml"/>
+    <include file="/changelog/002_user_and_user_role_migration.xml"/>
 </databaseChangeLog>

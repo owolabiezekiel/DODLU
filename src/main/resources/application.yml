@@ -27,7 +27,7 @@ spring:
 
   liquibase:
     enabled: true
-    change-log: ${LIQUIBASE_PATH:classpath:/db/changelog/changeLog-master.xml}
+    change-log: ${LIQUIBASE_PATH:classpath:/changelog/changeLog-master.xml}
   servlet:
     multipart:
       max-file-size: ${MAX_UPLOAD_SIZE:10MB}
