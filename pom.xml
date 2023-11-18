@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.dodlu</groupId>
-    <artifactId>core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>backend-core-service</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>DODLU</name>
     <description>DODLU Backend Service</description>
@@ -330,6 +330,21 @@
                                 <querydsl.packageSuffix>.querydsl</querydsl.packageSuffix>
                             </options>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.dodlu.core.Application</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

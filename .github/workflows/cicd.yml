@@ -1,0 +1,27 @@
+name: CICD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Build Project
+        run: mvn clean install
+      - name: Login to docker hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: Build docker image
+        run: docker build -t owolabiezekiel/dodlu-core-service .
+      - name: Publish image to docker hub
+        run: docker push owolabiezekiel/dodlu-core-service:latest
