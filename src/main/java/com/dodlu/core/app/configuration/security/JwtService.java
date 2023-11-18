@@ -19,9 +19,7 @@ public class JwtService {
       "KD/MXfo37ZP/D8ILhw2dxkSCYtd3gqPp8KliN8qZkgTQ6YOZ3HhoDEZc7njxeVgreuN80YaoN94zJ64LUZ4wnuysEN8qwb0jWNtasnGrSwjI0ju5S7KqgpQ4NLXNDK6wNMceKQh4i+RDuLsjNak+6MKPdckIqXwgXcIVG0iR/EDfCuZXdkydBvQAhGqSqnhD2yP3JtWIeaYiIDo3kkjBf7Gn+rmWjfecmWS70pj5fj3VSOIfyp8VxLjT2SQtBBcajzv+2nZn2AE3ZQ63ckPW0N5yfdB7OzDkujuR64WWcuQsVTb0UZksQ4zGnP+EpuSOWbAN8vj+vp+tKksGGrKpJZJJv1RGQvdAdjU+/CfHQEk=";
 
   public String extractUsername(String token) {
-    String username = extractClaim(token, Claims::getSubject);
-    System.out.println("Extracted username: " + username);
-    return username;
+    return extractClaim(token, Claims::getSubject);
   }
 
   public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

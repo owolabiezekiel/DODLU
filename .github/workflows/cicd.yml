@@ -30,6 +30,8 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
+      - name: Print out directory
+        run: ls
       - name: Pull image from docker hub
         run: sudo docker pull owolabiezekiel/dodlu-core-service:latest
       - name: Delete existing container
