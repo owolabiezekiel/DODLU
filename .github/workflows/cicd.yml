@@ -31,8 +31,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull image from docker hub
-        run: docker pull owolabiezekiel/dodlu-core-service:latest
+        run: sudo docker pull owolabiezekiel/dodlu-core-service:latest
       - name: Delete existing container
-        run: docker rm -f dodlu-core-service-container
+        run: sudo docker rm -f dodlu-core-service-container
       - name: Docker run container
-        run: docker run -d -p 9001:9001 --name dodlu-core-service-container owolabiezekiel/dodlu-core-service
+        run: sudo docker run -d -p 9001:9001 --name dodlu-core-service-container owolabiezekiel/dodlu-core-service
