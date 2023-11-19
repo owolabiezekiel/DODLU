@@ -45,8 +45,7 @@ public class DefaultRoleService implements RoleService {
         () ->
             roleRepository
                 .findById(roleId)
-                .orElseThrow(
-                    () -> exceptionService.handleCreateNotFoundException("Role does not exist"))
+                .orElseThrow(() -> exceptionService.handleCreateBadRequest("Role does not exist"))
                 .toModel());
   }
 

@@ -53,8 +53,7 @@ public class RoleController {
   @Operation(description = "get single role")
   //  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'LECTURER')")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = RoleModel.class)})
-  public ResponseModel<RoleModel> getRole(@PathVariable("id") String id)
-      throws ExecutionException, InterruptedException {
-    return roleService.getRoleById(id).thenApply(ResponseModel::new).get();
+  public CompletableFuture<ResponseModel<RoleModel>> getRole(@PathVariable("id") String id) {
+    return roleService.getRoleById(id).thenApply(ResponseModel::new);
   }
 }

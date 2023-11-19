@@ -1,6 +1,8 @@
 package com.dodlu.core.app.configuration;
 
-import com.dodlu.core.persistence.user.repository.UserRepository;
+import com.dodlu.core.app.configuration.security.DodluUserDetailsService;
+import java.time.Clock;
+import java.time.ZoneId;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,15 +10,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @AllArgsConstructor
 public class AppConfiguration {
-  private final UserRepository userRepository;
+  private final DodluUserDetailsService userDetailsService;
+
+  @Bean
+  public Clock clock() {
+    return Clock.system(ZoneId.of("Africa/Lagos"));
+  }
 
   @Bean
   public PasswordEncoder encoder() {
@@ -24,17 +29,9 @@ public class AppConfiguration {
   }
 
   @Bean
-  public UserDetailsService userDetailsService() {
-    return username ->
-        userRepository
-            .findByUsernameEqualsIgnoreCase(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-  }
-
-  @Bean
   public AuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    authProvider.setUserDetailsService(userDetailsService());
+    authProvider.setUserDetailsService(userDetailsService);
     authProvider.setPasswordEncoder(encoder());
     return authProvider;
   }
