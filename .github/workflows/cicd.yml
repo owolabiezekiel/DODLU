@@ -70,6 +70,12 @@ jobs:
         run: |
           mvn package -DskipTests
 
+      - name: Install Azure CLI
+        uses: azure/CLI@v1
+
+      - name: Set Azure CLI default API version
+        run: az configure --defaults group=final-year-project
+
       - name: Login via Azure CLI
         uses: azure/login@v1
         with:
@@ -84,4 +90,3 @@ jobs:
           app-name: final-year-spring-backend
           use-staging-deployment: false
           package: ${{ env.ASC_PACKAGE_PATH }}/**/*.jar
-          api-version: '2020-08-01'
