@@ -1,40 +1,86 @@
-name: CICD
+#name: CICD
+#
+#on:
+#  push:
+#    branches: [main]
+#  pull_request:
+#    branches: [master]
+#
+#jobs:
+#  build:
+#    runs-on: [ubuntu-latest]
+#    steps:
+#      - name: Checkout source
+#        uses: actions/checkout@v3
+#      - name: Setup Java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '17'
+#      - name: Build Project
+#        run: mvn clean install
+#      - name: Login to docker hub
+#        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+#      - name: Build docker image
+#        run: docker build -t owolabiezekiel/dodlu-core-service .
+#      - name: Publish image to docker hub
+#        run: docker push owolabiezekiel/dodlu-core-service:latest
+#
+#  deploy:
+#    needs: build
+#    runs-on: self-hosted
+#    steps:
+#      - name: Print out directory
+#        run: echo ls
+#      - name: Pull image from docker hub
+#        run: sudo docker pull owolabiezekiel/dodlu-core-service:latest
+#      - name: Delete existing container
+#        run: sudo docker rm -f dodlu-core-service-container
+#      - name: Docker run container
+#        run: sudo docker run -d -p 9001:9001 --name dodlu-core-service-container owolabiezekiel/dodlu-core-service
 
+
+name: AzureSpringCloud
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [master]
+env:
+  ASC_PACKAGE_PATH: ${{ github.workspace }}
+  JAVA_VERSION: 17
+  AZURE_SUBSCRIPTION: 6e3c37ac-f3dc-4386-9732-303779a5b12a
 
 jobs:
-  build:
-    runs-on: [ubuntu-latest]
+  deploy_to_production:
+    runs-on: ubuntu-latest
+    name: deploy to production with artifact
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v3
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Build Project
-        run: mvn clean install
-      - name: Login to docker hub
-        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-      - name: Build docker image
-        run: docker build -t owolabiezekiel/dodlu-core-service .
-      - name: Publish image to docker hub
-        run: docker push owolabiezekiel/dodlu-core-service:latest
+      - name: Checkout Github Action
+        uses: actions/checkout@v2
 
-  deploy:
-    needs: build
-    runs-on: self-hosted
-    steps:
-      - name: Print out directory
-        run: echo ls
-      - name: Pull image from docker hub
-        run: sudo docker pull owolabiezekiel/dodlu-core-service:latest
-      - name: Delete existing container
-        run: sudo docker rm -f dodlu-core-service-container
-      - name: Docker run container
-        run: sudo docker run -d -p 9001:9001 --name dodlu-core-service-container owolabiezekiel/dodlu-core-service
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: run tests
+        run: |
+          mvn clean test
+
+      - name: package for deployment
+        run: |
+          mvn package -DskipTests
+
+      - name: Login via Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: deploy to production with artifact
+        uses: azure/spring-cloud-deploy@v1
+        with:
+          azure-subscription: ${{ env.AZURE_SUBSCRIPTION }}
+          action: Deploy
+          service-name: final-year-spring-backend
+          app-name: final-year-spring-backend
+          use-staging-deployment: false
+          package: ${{ env.ASC_PACKAGE_PATH }}/**/*.jar
