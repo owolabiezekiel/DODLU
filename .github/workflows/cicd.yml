@@ -81,5 +81,5 @@ jobs:
           action: Deploy
           service-name: fy-spring-backend
           app-name: core
-          use-staging-deployment: false
+          use-staging-deployment: true
           package: ${{ env.ASC_PACKAGE_PATH }}/**/*.jar
