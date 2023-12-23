@@ -38,7 +38,6 @@
 #        run: sudo docker rm -f dodlu-core-service-container
 #      - name: Docker run container
 #        run: sudo docker run -d -p 9001:9001 --name dodlu-core-service-container owolabiezekiel/dodlu-core-service
-
 name: AzureSpringCloud
 on:
   push:
