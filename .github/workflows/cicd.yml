@@ -84,3 +84,4 @@ jobs:
           app-name: final-year-spring-backend
           use-staging-deployment: false
           package: ${{ env.ASC_PACKAGE_PATH }}/**/*.jar
+          api-version: '2020-08-01'
