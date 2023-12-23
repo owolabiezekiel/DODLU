@@ -58,6 +58,8 @@ public class SecurityConfiguration {
         .authorizeHttpRequests(
             auth -> {
               auth.requestMatchers("/api/v1/auth/**").permitAll();
+              auth.requestMatchers("/actuator").permitAll();
+              auth.requestMatchers("/actuator/**").permitAll();
               auth.anyRequest().authenticated();
             })
         .sessionManagement(

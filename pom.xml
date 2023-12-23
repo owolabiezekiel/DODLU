@@ -107,13 +107,13 @@
         </dependency>
         <!-- Web and Validation -->
 
-        <!-- Logging -->
+        <!-- Logging and visibility-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
             <version>1.7.32</version>
         </dependency>
-        <!-- Logging -->
+        <!-- Logging and visibility-->
 
         <!-- Lombok -->
         <dependency>
