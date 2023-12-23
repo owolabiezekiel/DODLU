@@ -70,12 +70,6 @@ jobs:
         run: |
           mvn package -DskipTests
 
-      - name: Install Azure CLI
-        uses: azure/CLI@v1
-
-      - name: Set Azure CLI default API version
-        run: az configure --defaults group=final-year-project
-
       - name: Login via Azure CLI
         uses: azure/login@v1
         with:
