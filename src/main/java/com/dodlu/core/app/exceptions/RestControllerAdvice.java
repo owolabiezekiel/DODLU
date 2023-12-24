@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -71,6 +72,15 @@ public class RestControllerAdvice<T> extends ResponseEntityExceptionHandler {
         new ResponseModel<>(
             null, "", ErrorFormatter.format(ex.getConstraintViolations()), BAD_REQUEST.value()),
         HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(value = {BadCredentialsException.class})
+  public ResponseEntity<ResponseModel<T>> handleBadCredentialsException(
+      BadCredentialsException ex) {
+    log.error("Error: {}", ex.getMessage(), ex);
+    return new ResponseEntity<>(
+        new ResponseModel<>(null, "", singletonList(ex.getMessage()), UNAUTHORIZED.value()),
+        UNAUTHORIZED);
   }
 
   @ExceptionHandler(value = {MultipartException.class})

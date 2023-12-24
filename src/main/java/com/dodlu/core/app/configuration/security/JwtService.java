@@ -16,7 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
   private static final String SECRET_KEY =
-      "KD/MXfo37ZP/D8ILhw2dxkSCYtd3gqPp8KliN8qZkgTQ6YOZ3HhoDEZc7njxeVgreuN80YaoN94zJ64LUZ4wnuysEN8qwb0jWNtasnGrSwjI0ju5S7KqgpQ4NLXNDK6wNMceKQh4i+RDuLsjNak+6MKPdckIqXwgXcIVG0iR/EDfCuZXdkydBvQAhGqSqnhD2yP3JtWIeaYiIDo3kkjBf7Gn+rmWjfecmWS70pj5fj3VSOIfyp8VxLjT2SQtBBcajzv+2nZn2AE3ZQ63ckPW0N5yfdB7OzDkujuR64WWcuQsVTb0UZksQ4zGnP+EpuSOWbAN8vj+vp+tKksGGrKpJZJJv1RGQvdAdjU+/CfHQEk=";
+      "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+  private final long jwtExpiration = 86400000;
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -27,12 +28,21 @@ public class JwtService {
     return claimsResolver.apply(claims);
   }
 
+  public String generateToken(UserDetails userDetails) {
+    return generateToken(new HashMap<>(), userDetails);
+  }
+
   public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    return buildToken(extraClaims, userDetails, jwtExpiration);
+  }
+
+  public String buildToken(
+      Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
     return Jwts.builder()
         .setClaims(extraClaims)
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+        .setExpiration(new Date(System.currentTimeMillis() + expiration))
         .signWith(getSigningKey(), SignatureAlgorithm.HS256)
         .compact();
   }
@@ -48,10 +58,6 @@ public class JwtService {
 
   private Date extractExpiration(String token) {
     return extractClaim(token, Claims::getExpiration);
-  }
-
-  public String generateToken(UserDetails userDetails) {
-    return generateToken(new HashMap<>(), userDetails);
   }
 
   private Claims extractAllClaims(String token) {

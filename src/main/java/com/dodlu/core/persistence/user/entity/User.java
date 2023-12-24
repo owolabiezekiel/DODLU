@@ -54,7 +54,7 @@ public class User extends BaseEntity implements UserDetails {
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   private Set<Role> roles;
 
-  private String password;
+  @ToString.Exclude private String password;
   private LocalDateTime lastLoginDate;
 
   @Transient private List<GrantedAuthority> authorities;
