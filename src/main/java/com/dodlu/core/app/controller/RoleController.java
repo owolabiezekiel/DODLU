@@ -51,7 +51,8 @@ public class RoleController {
   @Operation(description = "get single role")
   //  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'LECTURER')")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = RoleModel.class)})
-  public CompletableFuture<ResponseModel<RoleModel>> getRole(@PathVariable("id") String id) {
-    return roleService.getRoleById(id).thenApply(ResponseModel::new);
+  public ResponseModel<RoleModel> getRole(@PathVariable("id") String id) {
+    RoleModel role = roleService.getRoleById(id).join();
+    return new ResponseModel<>(role);
   }
 }
