@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/api/v1/roles", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/role", produces = APPLICATION_JSON_VALUE)
 @Slf4j
 @CrossOrigin("*")
 public class RoleController {

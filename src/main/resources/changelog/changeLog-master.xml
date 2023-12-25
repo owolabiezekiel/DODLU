@@ -25,4 +25,5 @@
 
     <include file="/changelog/001_role_migration.xml"/>
     <include file="/changelog/002_user_and_user_role_migration.xml"/>
+    <include file="/changelog/003_faculty_migration.xml"/>
 </databaseChangeLog>
