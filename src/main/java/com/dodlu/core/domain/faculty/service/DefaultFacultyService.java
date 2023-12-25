@@ -6,6 +6,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.faculty.CreateFacultyRequest;
 import com.dodlu.core.domain.faculty.model.FacultyModel;
+import com.dodlu.core.domain.utils.FacultyUtils;
 import com.dodlu.core.persistence.faculty.entity.Faculty;
 import com.dodlu.core.persistence.faculty.repository.FacultyRepository;
 import com.dodlu.core.persistence.user.entity.User;
@@ -44,12 +45,7 @@ public class DefaultFacultyService {
   @Transactional
   public CompletableFuture<FacultyModel> getFacultyById(String id) {
     return supplyAsync(
-        () ->
-            facultyRepository
-                .findById(id)
-                .orElseThrow(
-                    () -> exceptionService.handleCreateNotFoundException("Faculty does not exist"))
-                .toModel());
+        () -> FacultyUtils.getFacultyById(facultyRepository, exceptionService, id).toModel());
   }
 
   private void ensureFacultyNameIsUnique(String name) {

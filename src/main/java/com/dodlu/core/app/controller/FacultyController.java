@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class FacultyController {
   private final DefaultFacultyService facultyService;
 
   @PostMapping(consumes = APPLICATION_JSON_VALUE)
-  @Operation(description = "create faculty")
+  @Operation(description = "Create faculty")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = FacultyModel.class)})
   public ResponseModel<FacultyModel> createFaculty(
       @Valid @RequestBody CreateFacultyRequest request) {
@@ -37,8 +36,7 @@ public class FacultyController {
   }
 
   @GetMapping
-  @Operation(description = "get all roles")
-  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
+  @Operation(description = "Get all faculties")
   @ApiResponses({
     @ApiResponse(
         code = 200,
