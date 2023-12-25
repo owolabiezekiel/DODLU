@@ -17,6 +17,7 @@ import com.dodlu.core.persistence.faculty.entity.Faculty;
 import com.dodlu.core.persistence.faculty.repository.FacultyRepository;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.UserRepository;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -25,6 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class FacultyTest {
@@ -118,5 +122,18 @@ public class FacultyTest {
     verify(userRepository, times(1)).findById(request.getDeanId());
     verify(facultyRepository, times(1)).existsByDeanId(request.getDeanId());
     verify(facultyRepository, times(1)).save(any());
+  }
+
+  @Test
+  void shouldGetAllFacultiesSuccessfully() {
+    Pageable pageable = PageRequest.ofSize(10);
+    var faculties = List.of(buildFaculty("Science"), buildFaculty("Social Science"));
+
+    when(facultyRepository.findAll(isA(Pageable.class))).thenReturn(new PageImpl<>(faculties));
+
+    var result = facultyService.getAllFaculties(pageable).join();
+    assertNotNull(result);
+    assertEquals(result.getContent().size(), faculties.size());
+    verify(facultyRepository, times(1)).findAll(pageable);
   }
 }

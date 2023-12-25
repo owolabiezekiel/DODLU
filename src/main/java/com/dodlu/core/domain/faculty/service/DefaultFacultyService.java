@@ -13,6 +13,8 @@ import com.dodlu.core.persistence.user.repository.UserRepository;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,11 @@ public class DefaultFacultyService {
           Faculty faculty = buildFacultyFromRequest(request);
           return facultyRepository.save(faculty).toModel();
         });
+  }
+
+  @Transactional
+  public CompletableFuture<Page<FacultyModel>> getAllFaculties(Pageable pageable) {
+    return supplyAsync(() -> facultyRepository.findAll(pageable).map(Faculty::toModel));
   }
 
   private void ensureFacultyNameIsUnique(String name) {

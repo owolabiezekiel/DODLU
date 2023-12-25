@@ -1,6 +1,7 @@
 package com.dodlu.core.stubs;
 
 import com.dodlu.core.app.model.request.faculty.CreateFacultyRequest;
+import com.dodlu.core.persistence.faculty.entity.Faculty;
 import com.dodlu.core.persistence.user.entity.User;
 
 public class TextDataFixtures {
@@ -22,5 +23,9 @@ public class TextDataFixtures {
         .email(DEFAULT_USER_EMAIL)
         .username(DEFAULT_USERNAME)
         .build();
+  }
+
+  public static Faculty buildFaculty(String name) {
+    return Faculty.builder().name(name).dean(buildUser()).build();
   }
 }
