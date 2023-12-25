@@ -37,7 +37,7 @@ public class DefaultFacultyService {
   private void ensureFacultyNameIsUnique(String name) {
     log.info("Checking if faculty name -> {} <- is unique", name);
     if (facultyRepository.existsByName(name)) {
-      throw exceptionService.handleCreateBadRequest("faculty name already exists");
+      throw exceptionService.handleCreateBadRequest("Faculty already exists");
     }
   }
 
