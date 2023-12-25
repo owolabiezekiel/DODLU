@@ -6,6 +6,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.department.CreateDepartmentRequest;
 import com.dodlu.core.domain.department.model.DepartmentModel;
+import com.dodlu.core.domain.utils.DepartmentUtils;
 import com.dodlu.core.persistence.department.entity.Department;
 import com.dodlu.core.persistence.department.repository.DepartmentRepository;
 import com.dodlu.core.persistence.faculty.entity.Faculty;
@@ -13,6 +14,8 @@ import com.dodlu.core.persistence.faculty.repository.FacultyRepository;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +43,19 @@ public class DefaultDepartmentService {
         });
   }
 
+  @Transactional
+  public CompletableFuture<Page<DepartmentModel>> getAllDepartments(Pageable pageable) {
+    return supplyAsync(() -> departmentRepository.findAll(pageable).map(Department::toModel));
+  }
+
+  @Transactional
+  public CompletableFuture<DepartmentModel> getDepartmentById(String id) {
+    return supplyAsync(
+        () ->
+            DepartmentUtils.getDepartmentById(departmentRepository, exceptionService, id)
+                .toModel());
+  }
+
   private void ensureDepartmentIsUniqueInFaculty(CreateDepartmentRequest request) {
     log.info("Checking if department name -> {} <- is unique in faculty", request.getName());
     if (departmentRepository.existsByNameEqualsIgnoreCaseAndFacultyId(
@@ -51,29 +67,4 @@ public class DefaultDepartmentService {
   private Department buildDepartmentFromRequest(CreateDepartmentRequest request) {
     return Department.builder().name(request.getName()).build();
   }
-
-  //  @Transactional
-  //  public CompletableFuture<Page<FacultyModel>> getAllFaculties(Pageable pageable) {
-  //    return supplyAsync(() -> facultyRepository.findAll(pageable).map(Faculty::toModel));
-  //  }
-  //
-  //  @Transactional
-  //  public CompletableFuture<FacultyModel> getFacultyById(String id) {
-  //    return supplyAsync(
-  //        () ->
-  //            facultyRepository
-  //                .findById(id)
-  //                .orElseThrow(
-  //                    () -> exceptionService.handleCreateNotFoundException("Faculty does not
-  // exist"))
-  //                .toModel());
-  //  }
-
-  //  private void ensureUserIsNotDeanOfAnotherFaculty(String deanId) {
-  //    if (facultyRepository.existsByDeanId(deanId)) {
-  //      throw exceptionService.handleCreateBadRequest("User is already dean of another faculty");
-  //    }
-  //  }
-  //
-
 }
