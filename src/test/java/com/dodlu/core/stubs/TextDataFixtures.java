@@ -26,6 +26,6 @@ public class TextDataFixtures {
   }
 
   public static Faculty buildFaculty(String name) {
-    return Faculty.builder().name(name).dean(buildUser()).build();
+    return Faculty.builder().id(DEFAULT_UUID_STRING).name(name).dean(buildUser()).build();
   }
 }

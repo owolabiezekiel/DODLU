@@ -51,4 +51,12 @@ public class FacultyController {
     FacultyResult facultyResult = new FacultyResult(facultyPage);
     return new ResponseModel<>(facultyResult);
   }
+
+  @GetMapping(value = "/{id}")
+  @Operation(description = "get single faculty")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = FacultyModel.class)})
+  public ResponseModel<FacultyModel> getFaculty(@PathVariable("id") String id) {
+    FacultyModel faculty = facultyService.getFacultyById(id).join();
+    return new ResponseModel<>(faculty);
+  }
 }

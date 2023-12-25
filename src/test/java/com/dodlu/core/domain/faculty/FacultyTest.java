@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.faculty.CreateFacultyRequest;
@@ -135,5 +136,28 @@ public class FacultyTest {
     assertNotNull(result);
     assertEquals(result.getContent().size(), faculties.size());
     verify(facultyRepository, times(1)).findAll(pageable);
+  }
+
+  @Test
+  void getFacultyByIdFails_whenFacultyDoesNotExist() {
+    when(facultyRepository.findById(eq(DEFAULT_UUID_STRING))).thenReturn(Optional.empty());
+
+    var result = facultyService.getFacultyById(DEFAULT_UUID_STRING);
+    assertThatThrownBy(result::join)
+        .isInstanceOf(CompletionException.class)
+        .hasCause(exceptions.handleCreateBadRequest("Faculty does not exist"))
+        .extracting(Throwable::getCause)
+        .hasFieldOrPropertyWithValue("code", NOT_FOUND.value());
+  }
+
+  @Test
+  void shouldGetFacultyByIdSuccessfully() {
+    when(facultyRepository.findById(eq(DEFAULT_UUID_STRING)))
+        .thenReturn(Optional.of(buildFaculty("Science")));
+    var result = facultyService.getFacultyById(DEFAULT_UUID_STRING).join();
+    assertNotNull(result);
+    assertEquals(result.getName(), "Science");
+    assertEquals(result.getId(), DEFAULT_UUID_STRING);
+    verify(facultyRepository, times(1)).findById(DEFAULT_UUID_STRING);
   }
 }

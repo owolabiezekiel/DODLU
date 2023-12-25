@@ -41,6 +41,17 @@ public class DefaultFacultyService {
     return supplyAsync(() -> facultyRepository.findAll(pageable).map(Faculty::toModel));
   }
 
+  @Transactional
+  public CompletableFuture<FacultyModel> getFacultyById(String id) {
+    return supplyAsync(
+        () ->
+            facultyRepository
+                .findById(id)
+                .orElseThrow(
+                    () -> exceptionService.handleCreateNotFoundException("Faculty does not exist"))
+                .toModel());
+  }
+
   private void ensureFacultyNameIsUnique(String name) {
     log.info("Checking if faculty name -> {} <- is unique", name);
     if (facultyRepository.existsByName(name)) {
