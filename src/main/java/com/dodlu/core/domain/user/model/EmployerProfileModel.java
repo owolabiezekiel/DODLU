@@ -1,6 +1,5 @@
 package com.dodlu.core.domain.user.model;
 
-import com.dodlu.core.domain.user.enums.Industry;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,8 +19,5 @@ public class EmployerProfileModel {
   private String firstName;
   private String lastName;
   private String profileImageUrl;
-  private String companyName;
-  private String vision;
-  private String mission;
-  private Industry industry;
+  private CompanyModel company;
 }

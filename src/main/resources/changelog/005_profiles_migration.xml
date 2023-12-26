@@ -83,14 +83,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="profile_image_url" type="TEXT"/>
-            <column name="company_name" type="VARCHAR(250)">
+            <column name="company_id" type="${uuid_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="vision" type="TEXT" />
-            <column name="mission" type="TEXT" />
-            <column name="industry" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
+
 
             <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="created_by" type="VARCHAR(100)"/>
@@ -176,6 +172,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="title" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employer_id" type="${uuid_type}">
                 <constraints nullable="false"/>
             </column>
 

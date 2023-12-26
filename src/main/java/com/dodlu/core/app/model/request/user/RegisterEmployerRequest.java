@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
     first = "password",
     second = "confirmPassword",
     message = "Password and confirm password does not match")
-public class CreateEmployerRequest {
+public class RegisterEmployerRequest {
   @NotBlank(message = "username is required")
   @Size(min = 3, max = 150, message = "username must be between 3 - 250 characters")
   private String username;

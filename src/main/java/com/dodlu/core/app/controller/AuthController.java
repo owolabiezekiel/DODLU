@@ -2,8 +2,8 @@ package com.dodlu.core.app.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.dodlu.core.app.model.request.user.CreateEmployerRequest;
 import com.dodlu.core.app.model.request.user.CreateUserRequest;
+import com.dodlu.core.app.model.request.user.RegisterEmployerRequest;
 import com.dodlu.core.app.model.request.user.UserLoginRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
@@ -36,7 +36,7 @@ public class AuthController {
   @Operation(description = "Endpoint for employers to register")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
   public CompletableFuture<ResponseModel<UserModel>> employerRegister(
-      @Valid @RequestBody CreateEmployerRequest request) {
+      @Valid @RequestBody RegisterEmployerRequest request) {
     return authService.registerEmployer(request).thenApply(ResponseModel::new);
   }
 

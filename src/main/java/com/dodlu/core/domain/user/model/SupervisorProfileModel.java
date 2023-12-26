@@ -22,4 +22,5 @@ public class SupervisorProfileModel {
   private String profileImageUrl;
   private Gender gender;
   private String title;
+  private EmployerProfileModel employer;
 }

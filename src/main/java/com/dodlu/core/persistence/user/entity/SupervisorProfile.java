@@ -28,6 +28,10 @@ public class SupervisorProfile extends UserProfile {
 
   private String title;
 
+  @ManyToOne
+  @JoinColumn(name = "employer_id", referencedColumnName = "id")
+  private EmployerProfile employer;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -53,6 +57,7 @@ public class SupervisorProfile extends UserProfile {
         .profileImageUrl(getProfileImageUrl())
         .gender(gender)
         .title(title)
+        .employer(employer.toModel())
         .build();
   }
 }

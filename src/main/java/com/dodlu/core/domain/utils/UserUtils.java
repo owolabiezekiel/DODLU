@@ -26,4 +26,11 @@ public class UserUtils {
   public static User getUserOrNull(UserRepository userRepository, String id) {
     return userRepository.findById(id).orElse(null);
   }
+
+  public static void checkForDuplicateEmail(
+      UserRepository userRepository, CoreExceptionService exceptionService, String email) {
+    if (userRepository.existsByEmailEqualsIgnoreCase(email.strip())) {
+      throw exceptionService.handleCreateBadRequest("A user with this email already exists");
+    }
+  }
 }

@@ -1,8 +1,8 @@
 package com.dodlu.core.persistence.user.entity;
 
-import com.dodlu.core.domain.user.enums.Industry;
 import com.dodlu.core.domain.user.model.EmployerProfileModel;
 import com.dodlu.core.persistence.base.UserProfile;
+import com.dodlu.core.persistence.company.entity.Company;
 import jakarta.persistence.*;
 import java.util.Objects;
 import lombok.Getter;
@@ -23,12 +23,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SuperBuilder
 @RequiredArgsConstructor
 public class EmployerProfile extends UserProfile {
-  private String companyName;
-  private String vision;
-  private String mission;
-
-  @Enumerated(EnumType.STRING)
-  private Industry industry;
+  @ManyToOne
+  @JoinColumn(name = "company_id", referencedColumnName = "id")
+  private Company company;
 
   @Override
   public boolean equals(Object o) {
@@ -53,10 +50,7 @@ public class EmployerProfile extends UserProfile {
         .firstName(getFirstName())
         .lastName(getLastName())
         .profileImageUrl(getProfileImageUrl())
-        .companyName(companyName)
-        .vision(vision)
-        .mission(mission)
-        .industry(industry)
+        .company(company.toModel())
         .build();
   }
 }

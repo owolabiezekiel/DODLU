@@ -7,6 +7,7 @@ import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.user.CreateRoleRequest;
 import com.dodlu.core.domain.user.model.RoleModel;
 import com.dodlu.core.domain.user.service.abstracts.RoleService;
+import com.dodlu.core.domain.utils.RoleUtils;
 import com.dodlu.core.persistence.user.entity.Role;
 import com.dodlu.core.persistence.user.repository.RoleRepository;
 import java.util.concurrent.CompletableFuture;
@@ -43,10 +44,10 @@ public class DefaultRoleService implements RoleService {
   public CompletableFuture<RoleModel> getRoleById(String roleId) {
     return supplyAsync(
         () ->
-            roleRepository
-                .findById(roleId)
-                .orElseThrow(
-                    () -> exceptionService.handleCreateNotFoundException("Role does not exist"))
+            RoleUtils.getRoleById(
+                    roleRepository,
+                    () -> exceptionService.handleCreateNotFoundException("Role does not exist"),
+                    roleId)
                 .toModel());
   }
 

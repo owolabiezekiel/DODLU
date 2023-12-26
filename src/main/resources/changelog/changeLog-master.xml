@@ -28,4 +28,5 @@
     <include file="/changelog/003_faculty_migration.xml"/>
     <include file="/changelog/004_department_migration.xml"/>
     <include file="/changelog/005_profiles_migration.xml"/>
+    <include file="/changelog/006_company_migration.xml"/>
 </databaseChangeLog>
