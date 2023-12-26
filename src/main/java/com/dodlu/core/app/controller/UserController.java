@@ -2,8 +2,10 @@ package com.dodlu.core.app.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
+import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
 import com.dodlu.core.domain.user.model.SupervisorProfileModel;
 import com.dodlu.core.domain.user.service.concretes.DefaultUserService;
 import com.dodlu.core.persistence.user.entity.User;
@@ -13,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,11 +32,24 @@ public class UserController {
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = SupervisorProfileModel.class)
   })
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYER')")
   public ResponseModel<SupervisorProfileModel> createSupervisor(
       @AuthenticationPrincipal User user, @Valid @RequestBody CreateSupervisorRequest request) {
     SupervisorProfileModel supervisorProfileModel =
         userService.createSupervisor(user, request).join();
     return new ResponseModel<>(supervisorProfileModel);
+  }
+
+  @PostMapping(value = "/admin/coordinator", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Admin create coordinator")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = CoordinatorProfileModel.class)
+  })
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYER')")
+  public ResponseModel<CoordinatorProfileModel> createCoordinator(
+      @Valid @RequestBody CreateCoordinatorRequest request) {
+    CoordinatorProfileModel coordinatorProfileModel = userService.createCoordinator(request).join();
+    return new ResponseModel<>(coordinatorProfileModel);
   }
 
   //  @GetMapping

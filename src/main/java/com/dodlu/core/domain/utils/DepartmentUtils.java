@@ -14,8 +14,7 @@ public class DepartmentUtils {
       DepartmentRepository departmentRepository, CoreExceptionService exceptionService, String id) {
     return departmentRepository
         .findById(id)
-        .orElseThrow(
-            () -> exceptionService.handleCreateNotFoundException("Department does not exist"));
+        .orElseThrow(() -> exceptionService.handleCreateBadRequest("Department does not exist"));
   }
 
   public static Department getDepartmentById(
