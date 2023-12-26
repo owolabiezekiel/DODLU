@@ -52,7 +52,11 @@ public class DefaultDepartmentService {
   public CompletableFuture<DepartmentModel> getDepartmentById(String id) {
     return supplyAsync(
         () ->
-            DepartmentUtils.getDepartmentById(departmentRepository, exceptionService, id)
+            DepartmentUtils.getDepartmentById(
+                    departmentRepository,
+                    () ->
+                        exceptionService.handleCreateNotFoundException("Department does not exist"),
+                    id)
                 .toModel());
   }
 
