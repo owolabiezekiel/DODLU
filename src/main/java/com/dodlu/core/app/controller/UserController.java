@@ -3,9 +3,11 @@ package com.dodlu.core.app.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
+import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
+import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.user.model.SupervisorProfileModel;
 import com.dodlu.core.domain.user.service.concretes.DefaultUserService;
 import com.dodlu.core.persistence.user.entity.User;
@@ -21,13 +23,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/api/v1", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/user", produces = APPLICATION_JSON_VALUE)
 @Slf4j
 @CrossOrigin("*")
 public class UserController {
   private final DefaultUserService userService;
 
-  @PostMapping(value = "/employer/supervisor", consumes = APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/supervisor", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Employer create supervisor")
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = SupervisorProfileModel.class)
@@ -40,7 +42,7 @@ public class UserController {
     return new ResponseModel<>(supervisorProfileModel);
   }
 
-  @PostMapping(value = "/admin/coordinator", consumes = APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/coordinator", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Admin create coordinator")
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = CoordinatorProfileModel.class)
@@ -50,6 +52,18 @@ public class UserController {
       @Valid @RequestBody CreateCoordinatorRequest request) {
     CoordinatorProfileModel coordinatorProfileModel = userService.createCoordinator(request).join();
     return new ResponseModel<>(coordinatorProfileModel);
+  }
+
+  @PostMapping(value = "/student", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Create student")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = StudentProfileModel.class)
+  })
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'COORDINATOR')")
+  public ResponseModel<StudentProfileModel> createStudent(
+      @AuthenticationPrincipal User user, @Valid @RequestBody CreateStudentRequest request) {
+    StudentProfileModel studentProfileModel = userService.createStudent(user, request).join();
+    return new ResponseModel<>(studentProfileModel);
   }
 
   //  @GetMapping

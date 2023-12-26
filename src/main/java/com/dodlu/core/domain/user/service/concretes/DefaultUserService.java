@@ -1,13 +1,12 @@
 package com.dodlu.core.domain.user.service.concretes;
 
-import static com.dodlu.core.app.utils.Constants.COORDINATOR_ROLE_NAME_STRING;
-import static com.dodlu.core.app.utils.Constants.SUPERVISOR_ROLE_NAME_STRING;
+import static com.dodlu.core.app.utils.Constants.*;
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.app.utils.UserUtilities.generateRandomPassword;
 import static com.dodlu.core.app.utils.UserUtilities.generateUsername;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
-import static com.dodlu.core.domain.user.model.UserType.COORDINATOR;
-import static com.dodlu.core.domain.user.model.UserType.SUPERVISOR;
+import static com.dodlu.core.domain.user.model.UserType.*;
+import static com.dodlu.core.domain.utils.CoordinatorProfileUtils.getCoordinatorByUsername;
 import static com.dodlu.core.domain.utils.DepartmentUtils.getDepartmentById;
 import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUsername;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
@@ -16,8 +15,10 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
+import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
+import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.user.model.SupervisorProfileModel;
 import com.dodlu.core.persistence.department.entity.Department;
 import com.dodlu.core.persistence.department.repository.DepartmentRepository;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultUserService {
+  private final StudentProfileRepository studentProfileRepository;
   private final DepartmentRepository departmentRepository;
   private final SupervisorProfileRepository supervisorProfileRepository;
   private final CoordinatorProfileRepository coordinatorProfileRepository;
@@ -116,6 +118,45 @@ public class DefaultUserService {
         });
   }
 
+  public CompletableFuture<StudentProfileModel> createStudent(
+      User user, CreateStudentRequest request) {
+    return supplyAsync(
+        () -> {
+          doStudentValidation(request);
+          Role role = getRoleByName(roleRepository, exceptionService, STUDENT_ROLE_NAME_STRING);
+          CoordinatorProfile coordinator =
+              getCoordinatorByUsername(
+                  coordinatorProfileRepository, exceptionService, user.getUsername());
+
+          String plainPassword = generateRandomPassword();
+          User student =
+              buildUser(request.getMatricNumber(), request.getEmail(), plainPassword, role);
+          student.setStatus(ACTIVE).setType(STUDENT);
+          student = userRepository.save(student);
+
+          StudentProfile studentProfile =
+              StudentProfile.builder()
+                  .username(student.getUsername())
+                  .email(student.getEmail())
+                  .phoneNumber(request.getPhoneNumber())
+                  .firstName(request.getFirstName())
+                  .lastName(request.getLastName())
+                  .gender(request.getGender())
+                  .programme(request.getProgramme())
+                  .level(request.getLevel())
+                  .department(coordinator.getDepartment())
+                  .faculty(coordinator.getDepartment().getFaculty())
+                  .build();
+          log.info(
+              "Will send email. Dear {} {} a student account has been created for you with username {} and password {}",
+              studentProfile.getFirstName(),
+              studentProfile.getLastName(),
+              studentProfile.getUsername(),
+              plainPassword);
+          return studentProfileRepository.save(studentProfile).toModel();
+        });
+  }
+
   private User buildUser(String username, String email, String password, Role role) {
     return User.builder()
         .username(
@@ -134,6 +175,10 @@ public class DefaultUserService {
   }
 
   private void doCoordinatorValidation(CreateCoordinatorRequest request) {
+    checkForDuplicateEmail(userRepository, exceptionService, request.getEmail());
+  }
+
+  private void doStudentValidation(CreateStudentRequest request) {
     checkForDuplicateEmail(userRepository, exceptionService, request.getEmail());
   }
 }
