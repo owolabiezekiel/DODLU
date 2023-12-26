@@ -60,4 +60,33 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
     </changeSet>
+
+    <changeSet author="tobiowolabi" id="create_employer_coordinator_supervisor_roles">
+        <insert tableName="roles">
+            <column name="description" value="DODLU employer role"/>
+            <column name="name" value="EMPLOYER"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="roles">
+            <column name="description" value="DODLU IT coordinator role"/>
+            <column name="name" value="COORDINATOR"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="roles">
+            <column name="description" value="DODLU supervisor role"/>
+            <column name="name" value="SUPERVISOR"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

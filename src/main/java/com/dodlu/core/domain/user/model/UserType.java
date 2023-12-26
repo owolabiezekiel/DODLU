@@ -7,7 +7,9 @@ import java.util.stream.Stream;
 
 public enum UserType {
   ADMIN,
-
+  EMPLOYER,
+  COORDINATOR,
+  SUPERVISOR,
   STUDENT,
   LECTURER,
   UNKNOWN;

@@ -1,0 +1,192 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="tobiowolabi" id="student_profile_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="student_profiles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="student_profiles">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="username" type="VARCHAR(150)">
+                <constraints unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(150)">
+                <constraints unique="true"/>
+            </column>
+
+            <column name="phone_number" type="VARCHAR(15)" />
+            <column name="first_name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gender" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="profile_image_url" type="TEXT"/>
+            <column name="programme" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cgpa" type="decimal"/>
+            <column name="department_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="faculty_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet author="tobiowolabi" id="employer_profile_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="employer_profiles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="employer_profiles">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="username" type="VARCHAR(150)">
+                <constraints unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(150)">
+                <constraints unique="true"/>
+            </column>
+
+            <column name="phone_number" type="VARCHAR(15)" />
+            <column name="first_name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="profile_image_url" type="TEXT"/>
+            <column name="company_name" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vision" type="TEXT" />
+            <column name="mission" type="TEXT" />
+            <column name="industry" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="tobiowolabi" id="coordinator_profile_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="coordinator_profiles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="coordinator_profiles">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="username" type="VARCHAR(150)">
+                <constraints unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(150)">
+                <constraints unique="true"/>
+            </column>
+            <column name="phone_number" type="VARCHAR(15)" />
+            <column name="first_name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="profile_image_url" type="TEXT"/>
+            <column name="gender" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="department_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="tobiowolabi" id="supervisor_profile_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="supervisor_profiles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="supervisor_profiles">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="username" type="VARCHAR(150)">
+                <constraints unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(150)">
+                <constraints unique="true"/>
+            </column>
+            <column name="phone_number" type="VARCHAR(15)" />
+            <column name="first_name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="profile_image_url" type="TEXT"/>
+            <column name="gender" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
