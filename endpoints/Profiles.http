@@ -1,0 +1,48 @@
+### Create Supervisor
+POST {{host}}/employer/supervisor
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "email": "csb@yahoo.com",
+  "gender": "male",
+  "firstName": "Sam",
+  "lastName": "Loco",
+  "phoneNumber": "08006723910",
+  "title": "Mr."
+
+}
+
+### Create Coordinator
+POST {{host}}/admin/coordinator
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "username": "chinese--woman",
+  "email": "chiwoman@yurok.com",
+  "gender": "female",
+  "firstName": "Chinese",
+  "lastName": "Woman",
+  "phoneNumber": "09006723910",
+  "title": "Mrs.",
+  "departmentId": "5707150b-a3f5-4c7f-852b-6c2d273c335b"
+}
+
+### Create Student
+POST {{host}}/user/student
+Content-Type: application/json
+Authorization: {{coord_token}}
+
+{
+  "username": "chinese--woman",
+  "matricNumber": "205537",
+  "email": "lonewolf@live.co.uk",
+  "gender": "male",
+  "firstName": "Lone",
+  "lastName": "Wolf",
+  "phoneNumber": "09006723810",
+  "level": "LEVEL_100",
+  "programme": "Undergraduate",
+  "title": "Mr."
+}

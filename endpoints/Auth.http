@@ -1,0 +1,71 @@
+### Get all roles
+GET {{host}}/roles
+
+
+### Get single role
+GET {{host}}/roles/00f4d1a9-e22e-4841-8619-627e6a7857ef
+Authorization: {{token}}
+
+### Student register
+POST {{host}}/auth/student/register
+Content-Type: application/json
+
+{
+  "username": "tobyJAva3",
+  "email": "owo.ezekiel3@gmail.com",
+  "password": "password",
+  "confirmPassword": "password"
+}
+
+### Employer register
+POST {{host}}/auth/employer/register
+Content-Type: application/json
+
+{
+  "username": "buypowerbabs",
+  "email": "owo.ezekiel1@gmail.com",
+  "password": "password",
+  "confirmPassword": "password",
+  "firstName": "Babatunde",
+  "lastName": "Sanwo-Olu",
+  "phoneNumber": "08106723916",
+  "companyName": "Buy Power NG",
+  "industry": "Engineering"
+}
+
+### login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "tobyJAva3",
+  "password": "password"
+}
+
+### student login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "205537",
+  "password": "Y80377MCPlZ3XrnVhuBdQOPFsRs7u9"
+}
+
+
+### Student login
+POST {{host}}/auth/authenticate
+Content-Type: application/json
+
+{
+  "email": "owo.ezekiel@gmail.com",
+  "password": "password"
+}
+
+### Coordinator login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "chinese--woman",
+  "password": "WVZC9PjZVgCuQy0rOoMSCNTnqYM21z"
+}

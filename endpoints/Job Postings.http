@@ -1,0 +1,34 @@
+### Create Job Posting
+POST {{host}}/job-posting
+Content-Type: application/json
+Authorization: {{employer_token}}
+
+{
+  "title": "Ui/UX Design Intern",
+  "description": "A person that will help us design some things",
+  "durationInMonths": 2,
+  "numberOfOpenPositions": 1,
+  "expirationDate": "2024-12-10T15:53:16",
+  "isCgpaRequired": false,
+  "isResumeRequired": false,
+  "isCoverLetterRequired": true,
+  "eligibleDepartments": ["Computer Science", "Information Management Science"]
+}
+
+### Get all Job Postings
+GET {{host}}/job-posting
+Authorization: {{token}}
+
+### Get Job Posting By Id
+GET {{host}}/job-posting/073332ca-2549-459e-b37e-309df367bb5f
+Authorization: {{token}}
+
+### Apply to job posting
+POST {{host}}/job-posting/073332ca-2549-459e-b37e-309df367bb5f/apply
+Content-Type: application/json
+Authorization: {{student_token}}
+
+{
+  "coverLetterLink": "https://www.aws_bucket.com/cover_letter",
+  "cgpa": 2.8
+}
