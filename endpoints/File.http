@@ -1,0 +1,32 @@
+### Upload Image File
+POST {{host}}/file/image-upload
+Authorization: {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="20220906_094414.jpg"
+
+< /Users/tobilobaowolabi/Documents/pictures/20220906_094414.jpg
+--WebAppBoundary
+
+
+### Upload Document File
+POST {{host}}/file/document-upload
+Authorization: {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="Tobiloba_Owolabi_Resume_Two.pdf"
+
+< /Users/tobilobaowolabi/Documents/Professional/Resume/Tobiloba_Owolabi_Resume_Two.pdf
+--WebAppBoundary
+
+
+### Download a file
+GET {{host}}/file/download
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "imageUrl": "https://gameporte-test.s3.us-east-2.amazonaws.com/257033f8-26dd-4a68-b3e1-175d580badc2.pdf"
+}

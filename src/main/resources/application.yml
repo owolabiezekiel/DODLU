@@ -74,3 +74,12 @@ logging:
       max-file-size: 60MB
 resource:
   id: dodlu-backend-service
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY:ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY:secret_key}
+    region:
+      static: ${AWS_REGION:us-east-2}
+    bucket-name: ${S3_BUCKET_NAME:gameporte-test}
