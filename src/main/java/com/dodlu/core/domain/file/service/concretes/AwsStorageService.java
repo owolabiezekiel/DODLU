@@ -3,9 +3,11 @@ package com.dodlu.core.domain.file.service.concretes;
 import static com.dodlu.core.app.utils.FileUtils.isValidDocumentFormat;
 import static com.dodlu.core.app.utils.FileUtils.isValidImageFormat;
 import static java.lang.String.format;
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
@@ -103,6 +105,25 @@ public class AwsStorageService implements StorageService {
           } catch (ArrayIndexOutOfBoundsException e) {
             throw exceptionService.handleCreateBadRequest(
                 format("Invalid file url supplied %s", request.getImageUrl()));
+          }
+        });
+  }
+
+  @Override
+  public CompletableFuture<Void> deleteFile(ImageDownloadRequest request) {
+    return runAsync(
+        () -> {
+          String[] split = request.getImageUrl().split("(?<!/)/(?!/)");
+
+          try {
+            String key = split[1];
+            amazonS3.deleteObject(awsBucketName, key);
+          } catch (SdkClientException e) {
+            throw exceptionService.handleCreateBadRequest(
+                "Failed to delete the file", e.getCause());
+          } catch (Exception e) {
+            throw exceptionService.handleCreateException(
+                format("Unknown error occurred while deleting file : %s", e.getMessage()));
           }
         });
   }

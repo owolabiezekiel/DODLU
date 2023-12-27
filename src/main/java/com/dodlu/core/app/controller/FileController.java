@@ -48,4 +48,12 @@ public class FileController {
     byte[] fileContent = storageService.downloadFile(imageUrl).join();
     return new ResponseModel<>(fileContent);
   }
+
+  @DeleteMapping(value = "/delete", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Delete file from storage bucket")
+  @ApiResponse(code = 200, message = "Success")
+  public ResponseModel<Void> deleteFile(@RequestBody ImageDownloadRequest request) {
+    storageService.deleteFile(request).join();
+    return new ResponseModel<>(null);
+  }
 }

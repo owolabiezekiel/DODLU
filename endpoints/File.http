@@ -22,11 +22,11 @@ Content-Disposition: form-data; name="file"; filename="Tobiloba_Owolabi_Resume_T
 --WebAppBoundary
 
 
-### Download a file
-GET {{host}}/file/download
-Authorization: {{token}}
+### Delete a file
+DELETE {{host}}/file/delete
+Authorization: {{student_token}}
 Content-Type: application/json
 
 {
-  "imageUrl": "https://gameporte-test.s3.us-east-2.amazonaws.com/257033f8-26dd-4a68-b3e1-175d580badc2.pdf"
+  "imageUrl": "https://gameporte-test.s3.us-east-2.amazonaws.com/6d4e3a4f-ae8e-4738-91cf-e7a24c93f6aa.jpg"
 }

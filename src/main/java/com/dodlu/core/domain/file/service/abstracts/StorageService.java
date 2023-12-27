@@ -10,4 +10,6 @@ public interface StorageService {
   CompletableFuture<String> uploadImage(MultipartFile file);
 
   CompletableFuture<byte[]> downloadFile(ImageDownloadRequest imageDownloadRequest);
+
+  CompletableFuture<Void> deleteFile(ImageDownloadRequest imageDownloadRequest);
 }
