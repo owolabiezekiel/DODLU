@@ -5,8 +5,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.PagingAndSortingParams;
 import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
+import com.dodlu.core.app.model.request.internship.JobPostingApplicationRequest;
 import com.dodlu.core.app.model.response.JobPostingResult;
 import com.dodlu.core.app.model.response.ResponseModel;
+import com.dodlu.core.domain.internship.model.JobPostingApplicationModel;
 import com.dodlu.core.domain.internship.model.JobPostingModel;
 import com.dodlu.core.domain.internship.service.DefaultJobPostingService;
 import com.dodlu.core.persistence.user.entity.User;
@@ -58,10 +60,24 @@ public class JobPostingController {
   }
 
   @GetMapping(value = "/{id}")
-  @Operation(description = "get single job posting")
+  @Operation(description = "Get single job posting")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = JobPostingModel.class)})
   public ResponseModel<JobPostingModel> getJobPosting(@PathVariable("id") String id) {
     JobPostingModel jobPosting = jobPostingService.getJobPostingById(id).join();
     return new ResponseModel<>(jobPosting);
+  }
+
+  @PostMapping(value = "/{jobPostingId}/apply", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Apply to job posting")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = JobPostingApplicationModel.class)
+  })
+  public ResponseModel<JobPostingApplicationModel> applyToJobPosting(
+      @AuthenticationPrincipal User user,
+      @Valid @RequestBody JobPostingApplicationRequest request,
+      @PathVariable("jobPostingId") String jobPostingId) {
+    JobPostingApplicationModel jobPostingApplication =
+        jobPostingService.applyToJobPosting(user, request, jobPostingId).join();
+    return new ResponseModel<>(jobPostingApplication);
   }
 }

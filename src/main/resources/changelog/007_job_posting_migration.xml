@@ -54,4 +54,40 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="tobiowolabi" id="job_posting_application_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="job_posting_applications"/>
+            </not>
+        </preConditions>
+        <createTable tableName="job_posting_applications">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="job_posting_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="applicant_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resume_link" type="TEXT"/>
+            <column name="cover_letter_link" type="TEXT"/>
+            <column name="cgpa" type="DECIMAL"/>
+            <column name="application_status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updates" type="TEXT"/>
+            <column name="reject_reason" type="TEXT"/>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
