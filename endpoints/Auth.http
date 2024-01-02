@@ -1,10 +1,10 @@
 ### Get all roles
-GET {{host}}/roles
-
+GET {{host}}/role
+Authorization: {{coord_token}}
 
 ### Get single role
-GET {{host}}/roles/00f4d1a9-e22e-4841-8619-627e6a7857ef
-Authorization: {{token}}
+GET {{host}}/role/00f4d1a9-e22e-4841-8619-627e6a7857ef
+Authorization: {{coord_token}}
 
 ### Student register
 POST {{host}}/auth/student/register
@@ -31,6 +31,16 @@ Content-Type: application/json
   "phoneNumber": "08106723916",
   "companyName": "Buy Power NG",
   "industry": "Engineering"
+}
+
+
+### employer login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "buypowerbabs",
+  "password": "password"
 }
 
 ### login

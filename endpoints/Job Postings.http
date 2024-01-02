@@ -32,3 +32,11 @@ Authorization: {{student_token}}
   "coverLetterLink": "https://www.aws_bucket.com/cover_letter",
   "cgpa": 2.8
 }
+
+### Get User's Job Posting Applications
+GET {{host}}/job-posting/applications
+Authorization: {{student_token}}
+
+### Get User's Job Posting Applications
+GET {{host}}/job-posting/073332ca-2549-459e-b37e-309df367bb5f/applicants
+Authorization: {{employer_token}}

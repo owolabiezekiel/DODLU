@@ -83,3 +83,10 @@ cloud:
     region:
       static: ${AWS_REGION:us-east-2}
     bucket-name: ${S3_BUCKET_NAME:gameporte-test}
+
+email:
+  provider:
+    name: ${EMAIL_PROVIDER:send-grid}
+    sendgrid:
+      api-key: ${SENDGRID_API_KEY:some-api-key}
+      base-url: ${SENDGRID_BASE_URL:some-base-url}

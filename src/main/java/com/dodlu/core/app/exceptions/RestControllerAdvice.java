@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import com.dodlu.core.app.model.response.ResponseModel;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletionException;
@@ -78,6 +79,14 @@ public class RestControllerAdvice<T> extends ResponseEntityExceptionHandler {
   public ResponseEntity<ResponseModel<T>> handleBadCredentialsException(
       BadCredentialsException ex) {
     log.error("Error: {}", ex.getMessage(), ex);
+    return new ResponseEntity<>(
+        new ResponseModel<>(null, "", singletonList(ex.getMessage()), UNAUTHORIZED.value()),
+        UNAUTHORIZED);
+  }
+
+  @ExceptionHandler(value = {ExpiredJwtException.class})
+  public ResponseEntity<ResponseModel<T>> handleTokenExpiredException(ExpiredJwtException ex) {
+    log.error("Token has expired {}", ex.getMessage(), ex);
     return new ResponseEntity<>(
         new ResponseModel<>(null, "", singletonList(ex.getMessage()), UNAUTHORIZED.value()),
         UNAUTHORIZED);

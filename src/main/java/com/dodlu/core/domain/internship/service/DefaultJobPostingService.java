@@ -4,6 +4,7 @@ import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.domain.internship.enums.ApplicationStatus.PENDING;
 import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUsername;
 import static com.dodlu.core.domain.utils.JobPostingUtils.checkForDuplicateJobTitle;
+import static com.dodlu.core.domain.utils.StudentProfileUtils.getStudentProfileByUsername;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
@@ -11,8 +12,8 @@ import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
 import com.dodlu.core.app.model.request.internship.JobPostingApplicationRequest;
 import com.dodlu.core.domain.internship.model.JobPostingApplicationModel;
 import com.dodlu.core.domain.internship.model.JobPostingModel;
+import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.utils.JobPostingUtils;
-import com.dodlu.core.domain.utils.StudentProfileUtils;
 import com.dodlu.core.persistence.internship.entity.JobPosting;
 import com.dodlu.core.persistence.internship.entity.JobPostingApplication;
 import com.dodlu.core.persistence.internship.repository.JobPostingApplicationRepository;
@@ -23,10 +24,12 @@ import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.EmployerProfileRepository;
 import com.dodlu.core.persistence.user.repository.StudentProfileRepository;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,7 +91,7 @@ public class DefaultJobPostingService {
           JobPosting jobPosting = getJobPosting(jobPostingId);
           log.info("is CGPA required for job? {}", jobPosting.getIsCgpaRequired());
           StudentProfile applicant =
-              StudentProfileUtils.getStudentProfileByUsername(
+              getStudentProfileByUsername(
                   studentProfileRepository, exceptionService, user.getUsername());
           doJobApplicationValidations(request, jobPosting, applicant);
 
@@ -102,6 +105,49 @@ public class DefaultJobPostingService {
                   .applicationStatus(PENDING)
                   .build();
           return jobPostApplicationRepository.save(application).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Page<JobPostingApplicationModel>> getUserJobApplications(
+      User user, Pageable pageable) {
+    return supplyAsync(
+        () -> {
+          StudentProfile studentProfile =
+              getStudentProfileByUsername(
+                  studentProfileRepository, exceptionService, user.getUsername());
+          return jobPostApplicationRepository
+              .findJobPostingApplicationsByApplicantId(pageable, studentProfile.getId())
+              .map(JobPostingApplication::toModel);
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Page<StudentProfileModel>> getJobPostingApplicants(
+      User user, Pageable pageable, String jobId) {
+    return supplyAsync(
+        () -> {
+          EmployerProfile employerProfile =
+              getEmployerByUsername(
+                  employerProfileRepository, exceptionService, user.getUsername());
+
+          JobPosting jobPosting = getJobPosting(jobId);
+          if (!jobPosting.getEmployer().getId().equals(employerProfile.getId())) {
+            throw exceptionService.handleCreateUnAuthorized(
+                "Only the job poster can view applicants");
+          }
+
+          Page<JobPostingApplication> pagedContent =
+              jobPostApplicationRepository.findJobPostingApplicationByJobPostingId(
+                  pageable, jobPosting.getId());
+
+          List<StudentProfileModel> studentProfiles =
+              pagedContent.stream()
+                  .map(jobPostingApplication -> jobPostingApplication.getApplicant().toModel())
+                  .toList();
+
+          return new PageImpl<>(
+              studentProfiles, pagedContent.getPageable(), pagedContent.getTotalElements());
         });
   }
 

@@ -265,6 +265,14 @@
             <version>5.6.0</version>
         </dependency>
         <!-- Shared Lock Processing -->
+
+        <!-- Email providers -->
+        <dependency>
+            <groupId>com.sendgrid</groupId>
+            <artifactId>sendgrid-java</artifactId>
+            <version>4.9.3</version>
+        </dependency>
+        <!-- Email providers -->
     </dependencies>
 
     <build>

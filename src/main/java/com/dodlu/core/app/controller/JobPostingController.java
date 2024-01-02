@@ -6,11 +6,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.dodlu.core.app.model.PagingAndSortingParams;
 import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
 import com.dodlu.core.app.model.request.internship.JobPostingApplicationRequest;
+import com.dodlu.core.app.model.response.JobPostingApplicationResult;
 import com.dodlu.core.app.model.response.JobPostingResult;
 import com.dodlu.core.app.model.response.ResponseModel;
+import com.dodlu.core.app.model.response.StudentProfileResult;
 import com.dodlu.core.domain.internship.model.JobPostingApplicationModel;
 import com.dodlu.core.domain.internship.model.JobPostingModel;
 import com.dodlu.core.domain.internship.service.DefaultJobPostingService;
+import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.persistence.user.entity.User;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -79,5 +82,44 @@ public class JobPostingController {
     JobPostingApplicationModel jobPostingApplication =
         jobPostingService.applyToJobPosting(user, request, jobPostingId).join();
     return new ResponseModel<>(jobPostingApplication);
+  }
+
+  @GetMapping(value = "/{jobPostingId}/applicants")
+  @Operation(description = "Get all job posting applicants")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = StudentProfileResult.class,
+        responseContainer = "page")
+  })
+  public ResponseModel<StudentProfileResult> getJobPostingApplicants(
+      @AuthenticationPrincipal User user,
+      @ModelAttribute PagingAndSortingParams paging,
+      @PathVariable("jobPostingId") String jobPostingId) {
+    Pageable pageable = buildPageable(paging);
+    Page<StudentProfileModel> applicantsPage =
+        jobPostingService.getJobPostingApplicants(user, pageable, jobPostingId).join();
+    StudentProfileResult applicantsResult = new StudentProfileResult(applicantsPage);
+    return new ResponseModel<>(applicantsResult);
+  }
+
+  @GetMapping(value = "/applications")
+  @Operation(description = "Get all job applications")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = JobPostingApplicationResult.class,
+        responseContainer = "page")
+  })
+  public ResponseModel<JobPostingApplicationResult> getJobPostingApplications(
+      @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
+    Pageable pageable = buildPageable(paging);
+    Page<JobPostingApplicationModel> jobPostingApplicationPage =
+        jobPostingService.getUserJobApplications(user, pageable).join();
+    JobPostingApplicationResult jobPostingApplicationResult =
+        new JobPostingApplicationResult(jobPostingApplicationPage);
+    return new ResponseModel<>(jobPostingApplicationResult);
   }
 }
