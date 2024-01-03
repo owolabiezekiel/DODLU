@@ -1,6 +1,7 @@
 package com.dodlu.core.domain.internship.service;
 
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
+import static com.dodlu.core.domain.internship.enums.ApplicationStatus.ACCEPTED;
 import static com.dodlu.core.domain.internship.enums.ApplicationStatus.PENDING;
 import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUsername;
 import static com.dodlu.core.domain.utils.JobPostingUtils.checkForDuplicateJobTitle;
@@ -16,13 +17,16 @@ import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.utils.JobPostingUtils;
 import com.dodlu.core.persistence.internship.entity.JobPosting;
 import com.dodlu.core.persistence.internship.entity.JobPostingApplication;
+import com.dodlu.core.persistence.internship.entity.Placement;
 import com.dodlu.core.persistence.internship.repository.JobPostingApplicationRepository;
 import com.dodlu.core.persistence.internship.repository.JobPostingRepository;
+import com.dodlu.core.persistence.internship.repository.PlacementRepository;
 import com.dodlu.core.persistence.user.entity.EmployerProfile;
 import com.dodlu.core.persistence.user.entity.StudentProfile;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.EmployerProfileRepository;
 import com.dodlu.core.persistence.user.repository.StudentProfileRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -41,6 +45,7 @@ public class DefaultJobPostingService {
   private final EmployerProfileRepository employerProfileRepository;
   private final StudentProfileRepository studentProfileRepository;
   private final JobPostingRepository jobPostingRepository;
+  private final PlacementRepository placementRepository;
   private final JobPostingApplicationRepository jobPostApplicationRepository;
   private final CoreExceptionService exceptionService;
 
@@ -87,9 +92,8 @@ public class DefaultJobPostingService {
       User user, JobPostingApplicationRequest request, String jobPostingId) {
     return supplyAsync(
         () -> {
-          log.info("CGPA is null? {}, value is {}", request.getCgpa() == null, request.getCgpa());
           JobPosting jobPosting = getJobPosting(jobPostingId);
-          log.info("is CGPA required for job? {}", jobPosting.getIsCgpaRequired());
+
           StudentProfile applicant =
               getStudentProfileByUsername(
                   studentProfileRepository, exceptionService, user.getUsername());
@@ -151,6 +155,31 @@ public class DefaultJobPostingService {
         });
   }
 
+  @Transactional
+  public CompletableFuture<JobPostingApplicationModel> approveJobPostingApplication(
+      User user, String jobApplicationId) {
+    return supplyAsync(
+        () -> {
+          EmployerProfile employerProfile =
+              getEmployerByUsername(
+                  employerProfileRepository, exceptionService, user.getUsername());
+          JobPostingApplication jobPostingApplication = getJobPostingApplication(jobApplicationId);
+
+          doApproveJobValidations(jobPostingApplication, employerProfile);
+
+          JobPosting jobPosting = getJobPosting(jobPostingApplication.getJobPosting().getId());
+          int numberOfOpenPositions = jobPosting.getNumberOfOpenPositions();
+          jobPosting.setNumberOfOpenPositions(numberOfOpenPositions - 1);
+          jobPostingApplication.setApplicationStatus(ACCEPTED);
+
+          Placement placement = buildPlacement(jobPostingApplication, jobPosting);
+
+          jobPostingRepository.save(jobPosting);
+          placementRepository.save(placement);
+          return jobPostApplicationRepository.save(jobPostingApplication).toModel();
+        });
+  }
+
   private JobPosting getJobPosting(String id) {
     return JobPostingUtils.getJobPostingById(
         jobPostingRepository,
@@ -158,11 +187,21 @@ public class DefaultJobPostingService {
         id);
   }
 
+  private JobPostingApplication getJobPostingApplication(String id) {
+    return jobPostApplicationRepository
+        .findById(id)
+        .orElseThrow(() -> exceptionService.handleCreateBadRequest("Application does not exist"));
+  }
+
   private void doJobApplicationValidations(
       JobPostingApplicationRequest request, JobPosting jobPosting, StudentProfile applicant) {
     if (jobPostApplicationRepository.existsByJobPostingIdAndApplicantId(
         jobPosting.getId(), applicant.getId())) {
       throw exceptionService.handleCreateBadRequest("You have already applied to this job");
+    }
+
+    if (jobPosting.getNumberOfOpenPositions() < 1) {
+      throw exceptionService.handleCreateBadRequest("This job does not have any open position");
     }
 
     if (jobPosting.getIsCgpaRequired() && request.getCgpa() == null) {
@@ -179,8 +218,34 @@ public class DefaultJobPostingService {
     }
   }
 
+  private void doApproveJobValidations(
+      JobPostingApplication jobPostingApplication, EmployerProfile employerProfile) {
+    if (!jobPostingApplication
+        .getJobPosting()
+        .getEmployer()
+        .getId()
+        .equals(employerProfile.getId())) {
+      throw exceptionService.handleCreateUnAuthorized(
+          "Only the job poster can approve this application");
+    }
+    if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED)) {
+      throw (exceptionService.handleCreateBadRequest("Application has already been approved"));
+    }
+  }
+
   private void doPostingValidations(CreateJobPostingRequest request, EmployerProfile employer) {
     checkForDuplicateJobTitle(
         jobPostingRepository, exceptionService, request.getTitle(), employer.getId());
+  }
+
+  private Placement buildPlacement(
+      JobPostingApplication jobPostingApplication, JobPosting jobPosting) {
+    LocalDateTime validUntil = LocalDateTime.now().plusMonths(jobPosting.getDurationInMonths());
+    return Placement.builder()
+        .active(true)
+        .validUntil(validUntil)
+        .company(jobPosting.getEmployer().getCompany())
+        .student(jobPostingApplication.getApplicant())
+        .build();
   }
 }

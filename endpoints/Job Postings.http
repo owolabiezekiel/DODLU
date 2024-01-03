@@ -40,3 +40,12 @@ Authorization: {{student_token}}
 ### Get User's Job Posting Applications
 GET {{host}}/job-posting/073332ca-2549-459e-b37e-309df367bb5f/applicants
 Authorization: {{employer_token}}
+
+### Get User's Placement
+GET {{host}}/placement/student
+Authorization: {{student_token}}
+
+### Approve job posting application
+POST {{host}}/job-posting/34331a2a-2de2-4ce9-b5a8-63f39406249a/approve
+Content-Type: application/json
+Authorization: {{employer_token}}

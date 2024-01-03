@@ -104,6 +104,18 @@ public class JobPostingController {
     return new ResponseModel<>(applicantsResult);
   }
 
+  @PostMapping(value = "/{applicationId}/approve")
+  @Operation(description = "Approve job posting application")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = JobPostingApplicationModel.class)
+  })
+  public ResponseModel<JobPostingApplicationModel> approveJobPostingApplication(
+      @AuthenticationPrincipal User user, @PathVariable("applicationId") String applicationId) {
+    JobPostingApplicationModel jobPostingApplication =
+        jobPostingService.approveJobPostingApplication(user, applicationId).join();
+    return new ResponseModel<>(jobPostingApplication);
+  }
+
   @GetMapping(value = "/applications")
   @Operation(description = "Get all job applications")
   @ApiResponses({
