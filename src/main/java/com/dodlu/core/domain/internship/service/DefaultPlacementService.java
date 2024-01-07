@@ -54,7 +54,9 @@ public class DefaultPlacementService {
                   studentProfileRepository, exceptionService, user.getUsername());
 
           Placement placement =
-              placementRepository.findPlacementByStudentIdAndActiveIsTrue(studentProfile.getId()).orElse(null);
+              placementRepository
+                  .findPlacementByStudentIdAndActiveIsTrue(studentProfile.getId())
+                  .orElse(null);
           return placement == null ? null : placement.toModel();
         });
   }

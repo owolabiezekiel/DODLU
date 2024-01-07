@@ -1,0 +1,8 @@
+### Get User's Logbook
+GET {{host}}/logbook
+Authorization: {{student_token}}
+
+
+### Get User's Logbook Contents
+GET {{host}}/logbook/entries
+Authorization: {{student_token}}

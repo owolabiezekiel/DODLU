@@ -17,13 +17,17 @@ import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
+import com.dodlu.core.domain.user.enums.Level;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
 import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.user.model.SupervisorProfileModel;
 import com.dodlu.core.persistence.department.entity.Department;
 import com.dodlu.core.persistence.department.repository.DepartmentRepository;
+import com.dodlu.core.persistence.internship.entity.Logbook;
+import com.dodlu.core.persistence.internship.repository.LogbookRepository;
 import com.dodlu.core.persistence.user.entity.*;
 import com.dodlu.core.persistence.user.repository.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +47,7 @@ public class DefaultUserService {
   private final UserRepository userRepository;
   private final RoleRepository roleRepository;
   private final EmployerProfileRepository employerProfileRepository;
+  private final LogbookRepository logbookRepository;
   private final CoreExceptionService exceptionService;
 
   public CompletableFuture<SupervisorProfileModel> createSupervisor(
@@ -153,7 +158,12 @@ public class DefaultUserService {
               studentProfile.getLastName(),
               studentProfile.getUsername(),
               plainPassword);
-          return studentProfileRepository.save(studentProfile).toModel();
+          studentProfile = studentProfileRepository.save(studentProfile);
+
+          Logbook logbook = buildLogbook(studentProfile);
+          logbookRepository.save(logbook);
+
+          return studentProfile.toModel();
         });
   }
 
@@ -170,6 +180,17 @@ public class DefaultUserService {
         .build();
   }
 
+  private Logbook buildLogbook(StudentProfile studentProfile) {
+    int logbookCapacity = calculateDurationFromLevel(studentProfile.getLevel());
+    LocalDateTime validUntil = LocalDateTime.now().plusMonths(logbookCapacity);
+    return Logbook.builder()
+        .student(studentProfile)
+        .capacityInMonths(logbookCapacity)
+        .active(true)
+        .validUntil(validUntil)
+        .build();
+  }
+
   private void doSuperVisorValidation(CreateSupervisorRequest request) {
     checkForDuplicateEmail(userRepository, exceptionService, request.getEmail());
   }
@@ -180,5 +201,13 @@ public class DefaultUserService {
 
   private void doStudentValidation(CreateStudentRequest request) {
     checkForDuplicateEmail(userRepository, exceptionService, request.getEmail());
+  }
+
+  private int calculateDurationFromLevel(Level level) {
+    return switch (level) {
+      case LEVEL_200 -> 2;
+      case LEVEL_300 -> 3;
+      case LEVEL_400 -> 6;
+    };
   }
 }

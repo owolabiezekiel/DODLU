@@ -35,9 +35,8 @@ Content-Type: application/json
 Authorization: {{coord_token}}
 
 {
-  "username": "chinese--woman",
-  "matricNumber": "205537",
-  "email": "lonewolf@live.co.uk",
+  "matricNumber": "205538",
+  "email": "lonewolf2@live.co.uk",
   "gender": "male",
   "firstName": "Lone",
   "lastName": "Wolf",
