@@ -31,4 +31,5 @@
     <include file="/changelog/006_company_migration.xml"/>
     <include file="changelog/007_job_posting_migration.xml"/>
     <include file="changelog/008_placement_migration.xml"/>
+    <include file="changelog/009_student_supervisor_migration.xml"/>
 </databaseChangeLog>

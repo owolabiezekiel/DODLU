@@ -54,7 +54,7 @@ public class JobPostingController {
         response = JobPostingResult.class,
         responseContainer = "page")
   })
-  public ResponseModel<JobPostingResult> getAllDepartments(
+  public ResponseModel<JobPostingResult> getAllJobPostings(
       @ModelAttribute PagingAndSortingParams paging) {
     Pageable pageable = buildPageable(paging);
     Page<JobPostingModel> jobPostingPage = jobPostingService.getAllJobPostings(pageable).join();

@@ -79,3 +79,13 @@ Content-Type: application/json
   "username": "chinese--woman",
   "password": "WVZC9PjZVgCuQy0rOoMSCNTnqYM21z"
 }
+
+### Suoervisor login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "a2a73",
+  "password": "LrGPClJR6hDR0ha5S1cK20ELulpFtC"
+}
+

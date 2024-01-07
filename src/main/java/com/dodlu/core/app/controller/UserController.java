@@ -55,7 +55,7 @@ public class UserController {
   }
 
   @PostMapping(value = "/student", consumes = APPLICATION_JSON_VALUE)
-  @Operation(description = "Create student")
+  @Operation(description = "Coordinator Create student")
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = StudentProfileModel.class)
   })

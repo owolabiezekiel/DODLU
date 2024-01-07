@@ -18,4 +18,14 @@ public class StudentProfileUtils {
         .orElseThrow(
             () -> exceptionService.handleCreateBadRequest("Student profile does not exist"));
   }
+
+  public static StudentProfile getStudentProfileById(
+      StudentProfileRepository studentProfileRepository,
+      CoreExceptionService exceptionService,
+      String id) {
+    return studentProfileRepository
+        .findById(id)
+        .orElseThrow(
+            () -> exceptionService.handleCreateBadRequest("Student profile does not exist"));
+  }
 }

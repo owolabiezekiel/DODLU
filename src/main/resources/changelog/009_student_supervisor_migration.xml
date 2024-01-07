@@ -1,0 +1,41 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet author="tobiowolabi" id="student_supervisor_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="student_supervisor"/>
+            </not>
+        </preConditions>
+        <createTable tableName="student_supervisor">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="company_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="supervisor_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="student_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

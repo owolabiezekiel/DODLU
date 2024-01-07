@@ -1,0 +1,21 @@
+### Get User's Placement
+GET {{host}}/placement/student
+Authorization: {{student_token}}
+
+### Apply to job posting
+POST {{host}}/placement/supervisor
+Content-Type: application/json
+Authorization: {{employer_token}}
+
+{
+  "studentId": "d751eeea-5611-407a-982e-33a5353e685e",
+  "supervisorId": "4ee4784a-b2ae-4b6e-926e-9d6d64ee0a18"
+}
+
+### Get User's Supervisor
+GET {{host}}/placement/student/supervisor
+Authorization: {{student_token}}
+
+### Get Supervisor Students
+GET {{host}}/placement/supervisor/students
+Authorization: {{supervisor_token}}
