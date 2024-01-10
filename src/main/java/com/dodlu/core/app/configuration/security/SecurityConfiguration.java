@@ -61,6 +61,20 @@ public class SecurityConfiguration {
               auth.requestMatchers("/v1/health").permitAll();
               auth.requestMatchers("/actuator").permitAll();
               auth.requestMatchers("/actuator/**").permitAll();
+              auth.requestMatchers("/actuator/**").permitAll();
+
+              auth.requestMatchers(
+                      "/swagger**",
+                      "/swagger-resources/**",
+                      "/v2/api-docs",
+                      "/v3/api-docs**",
+                      "/v3/api-docs/**",
+                      "/swagger-ui**",
+                      "/swagger-ui/**",
+                      "/csrf",
+                      "/refresh",
+                      "/webjars/**")
+                  .permitAll();
               auth.anyRequest().authenticated();
             })
         .sessionManagement(
@@ -69,7 +83,6 @@ public class SecurityConfiguration {
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
-
   //  @Bean
   //  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
   //    http.csrf(AbstractHttpConfigurer::disable)
