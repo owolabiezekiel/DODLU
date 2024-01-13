@@ -41,11 +41,11 @@ public class AuthController {
   }
 
   @PostMapping(value = "/login", consumes = APPLICATION_JSON_VALUE)
-  @Operation(description = "Endpoint for students to login")
+  @Operation(description = "Endpoint to login")
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = LoginResponseModel.class)
   })
-  public CompletableFuture<ResponseModel<LoginResponseModel>> studentLogin(
+  public CompletableFuture<ResponseModel<LoginResponseModel>> login(
       @Valid @RequestBody UserLoginRequest request) {
     return authService.userLogin(request).thenApply(ResponseModel::new);
   }
