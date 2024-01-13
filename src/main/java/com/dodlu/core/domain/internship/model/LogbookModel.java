@@ -19,6 +19,6 @@ public class LogbookModel {
   private int capacityInMonths;
   private LocalDateTime validUntil;
   private boolean active;
-  private int supervisorGrade;
-  private int itccGrade;
+  private Integer supervisorGrade;
+  private Integer itccGrade;
 }

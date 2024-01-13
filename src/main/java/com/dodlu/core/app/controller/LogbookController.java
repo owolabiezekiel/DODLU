@@ -4,6 +4,7 @@ import static com.dodlu.core.app.utils.MapperUtil.buildPageable;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.PagingAndSortingParams;
+import com.dodlu.core.app.model.request.internship.InsertLogbookEntryRequest;
 import com.dodlu.core.app.model.response.LogbookEntryResult;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.internship.model.LogbookEntryModel;
@@ -13,6 +14,7 @@ import com.dodlu.core.persistence.user.entity.User;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -52,5 +54,14 @@ public class LogbookController {
         logbookService.getLogbookEntries(user, pageable).join();
     LogbookEntryResult logbookEntryResult = new LogbookEntryResult(logbookEntryPage);
     return new ResponseModel<>(logbookEntryResult);
+  }
+
+  @PostMapping(value = "/entries", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Fill logbook for today")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = LogbookEntryModel.class)})
+  public ResponseModel<LogbookEntryModel> insertLogbookEntry(
+      @AuthenticationPrincipal User user, @Valid @RequestBody InsertLogbookEntryRequest request) {
+    LogbookEntryModel entry = logbookService.insertLogbookEntry(user, request).join();
+    return new ResponseModel<>(entry);
   }
 }

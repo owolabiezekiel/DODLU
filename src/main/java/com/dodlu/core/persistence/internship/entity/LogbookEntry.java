@@ -23,10 +23,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SuperBuilder
 @RequiredArgsConstructor
 public class LogbookEntry extends BaseEntity {
-  //  @ManyToOne
-  //  @JoinColumn(name = "logbook_id", referencedColumnName = "id")
-  //  private Logbook logbook;
-  private String logbookId;
+  @ManyToOne
+  @JoinColumn(name = "logbook_id", referencedColumnName = "id")
+  private Logbook logbook;
+
   private String description;
   private LocalDateTime dateTime;
   private Boolean approved;
@@ -49,7 +49,7 @@ public class LogbookEntry extends BaseEntity {
   public LogbookEntryModel toModel() {
     return LogbookEntryModel.builder()
         .id(id)
-        .logbookId(logbookId)
+        .logbookId(logbook.getId())
         .description(description)
         .dateTime(dateTime)
         .approved(approved)

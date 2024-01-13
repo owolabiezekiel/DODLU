@@ -6,3 +6,13 @@ Authorization: {{student_token}}
 ### Get User's Logbook Contents
 GET {{host}}/logbook/entries
 Authorization: {{student_token}}
+
+
+### Insert logbook entry
+POST {{host}}/logbook/entries
+Content-Type: application/json
+Authorization: {{student_token}}
+
+{
+  "description": "Updated random description"
+}
