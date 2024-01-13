@@ -14,7 +14,7 @@ Authorization: {{token}}
 }
 
 ### Create Coordinator
-POST {{host}}/admin/coordinator
+POST {{host}}/user/coordinator
 Content-Type: application/json
 Authorization: {{token}}
 

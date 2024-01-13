@@ -34,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +51,7 @@ public class DefaultUserService {
   private final LogbookRepository logbookRepository;
   private final CoreExceptionService exceptionService;
 
+  @Transactional
   public CompletableFuture<SupervisorProfileModel> createSupervisor(
       User user, CreateSupervisorRequest request) {
     return supplyAsync(
@@ -87,6 +89,7 @@ public class DefaultUserService {
         });
   }
 
+  @Transactional
   public CompletableFuture<CoordinatorProfileModel> createCoordinator(
       CreateCoordinatorRequest request) {
     return supplyAsync(
@@ -101,6 +104,9 @@ public class DefaultUserService {
               buildUser(request.getUsername(), request.getEmail(), plainPassword, role);
           coordinator.setStatus(ACTIVE).setType(COORDINATOR);
           coordinator = userRepository.save(coordinator);
+
+          department.setCoordinator(coordinator);
+          departmentRepository.save(department);
 
           CoordinatorProfile coordinatorProfile =
               CoordinatorProfile.builder()
@@ -123,6 +129,7 @@ public class DefaultUserService {
         });
   }
 
+  @Transactional
   public CompletableFuture<StudentProfileModel> createStudent(
       User user, CreateStudentRequest request) {
     return supplyAsync(

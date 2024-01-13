@@ -43,7 +43,7 @@ Content-Type: application/json
   "password": "password"
 }
 
-### login
+### admin login
 POST {{host}}/auth/login
 Content-Type: application/json
 
@@ -85,7 +85,7 @@ Content-Type: application/json
 
 {
   "username": "chinese--woman",
-  "password": "WVZC9PjZVgCuQy0rOoMSCNTnqYM21z"
+  "password": "xVARq3v41mrsLVrubjm1AcfmcZd8pa"
 }
 
 ### Suoervisor login

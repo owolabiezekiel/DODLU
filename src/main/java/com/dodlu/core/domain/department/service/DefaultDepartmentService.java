@@ -60,12 +60,34 @@ public class DefaultDepartmentService {
                 .toModel());
   }
 
+  @Transactional
+  public CompletableFuture<DepartmentModel> updateDepartment(
+      String id, CreateDepartmentRequest request) {
+    return supplyAsync(
+        () -> {
+          Department department = getDepartment(id);
+          Faculty faculty =
+              getFacultyById(
+                  facultyRepository,
+                  () -> exceptionService.handleCreateBadRequest("Faculty does not exist"),
+                  request.getFacultyId());
+
+          ensureDepartmentIsUniqueInFaculty(request);
+          department.setName(request.getName()).setFaculty(faculty);
+          return departmentRepository.save(department).toModel();
+        });
+  }
+
   private void ensureDepartmentIsUniqueInFaculty(CreateDepartmentRequest request) {
     log.info("Checking if department name -> {} <- is unique in faculty", request.getName());
     if (departmentRepository.existsByNameEqualsIgnoreCaseAndFacultyId(
         request.getName(), request.getFacultyId())) {
       throw exceptionService.handleCreateBadRequest("Department already exists in faculty");
     }
+  }
+
+  private Department getDepartment(String deptId) {
+    return DepartmentUtils.getDepartmentById(departmentRepository, exceptionService, deptId);
   }
 
   private Department buildDepartmentFromRequest(CreateDepartmentRequest request) {

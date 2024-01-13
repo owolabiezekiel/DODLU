@@ -80,7 +80,11 @@ public class RestControllerAdvice<T> extends ResponseEntityExceptionHandler {
       BadCredentialsException ex) {
     log.error("Error: {}", ex.getMessage(), ex);
     return new ResponseEntity<>(
-        new ResponseModel<>(null, "", singletonList("Invalid username / password combination"), UNAUTHORIZED.value()),
+        new ResponseModel<>(
+            null,
+            "",
+            singletonList("Invalid username / password combination"),
+            UNAUTHORIZED.value()),
         UNAUTHORIZED);
   }
 
