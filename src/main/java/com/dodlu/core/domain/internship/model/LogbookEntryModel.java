@@ -18,4 +18,5 @@ public class LogbookEntryModel {
   private String description;
   private LocalDateTime dateTime;
   private boolean approved;
+  private String comment;
 }

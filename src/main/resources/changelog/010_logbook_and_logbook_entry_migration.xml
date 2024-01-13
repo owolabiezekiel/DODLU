@@ -73,4 +73,36 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="add_grades_to_logbook" author="tobilobaowolabi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="logbooks" columnName="supervisor_grade"/>
+                <columnExists tableName="logbooks" columnName="itcc_grade"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="logbooks">
+            <column name="supervisor_grade" type="INTEGER">
+                <constraints nullable="true"/>
+            </column>
+            <column name="itcc_grade" type="INTEGER">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add_description_to_logbook_entry" author="tobilobaowolabi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="logbook_entries" columnName="comment"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="logbook_entries">
+            <column name="comment" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

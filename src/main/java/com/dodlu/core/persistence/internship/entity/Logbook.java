@@ -31,6 +31,8 @@ public class Logbook extends BaseEntity {
   private Integer capacityInMonths;
   private LocalDateTime validUntil;
   private Boolean active;
+  private Integer supervisorGrade;
+  private Integer itccGrade;
 
   @Override
   public boolean equals(Object o) {
@@ -53,6 +55,8 @@ public class Logbook extends BaseEntity {
         .validUntil(validUntil)
         .capacityInMonths(capacityInMonths)
         .active(active)
+        .supervisorGrade(supervisorGrade)
+        .itccGrade(itccGrade)
         .build();
   }
 }

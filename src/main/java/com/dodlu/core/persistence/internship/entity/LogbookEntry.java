@@ -30,6 +30,7 @@ public class LogbookEntry extends BaseEntity {
   private String description;
   private LocalDateTime dateTime;
   private Boolean approved;
+  private String comment;
 
   @Override
   public boolean equals(Object o) {
@@ -52,6 +53,7 @@ public class LogbookEntry extends BaseEntity {
         .description(description)
         .dateTime(dateTime)
         .approved(approved)
+        .comment(comment)
         .build();
   }
 }
