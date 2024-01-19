@@ -21,7 +21,7 @@ public class JobPostingModel {
   private Integer durationInMonths;
   private Integer numberOfOpenPositions;
   private LocalDateTime expirationDate;
-  private Boolean isCgpaRequired;
+  private Boolean isTranscriptRequired;
   private Boolean isResumeRequired;
   private Boolean isCoverLetterRequired;
   private List<String> eligibleDepartments;

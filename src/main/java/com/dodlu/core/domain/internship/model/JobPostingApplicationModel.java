@@ -19,6 +19,7 @@ public class JobPostingApplicationModel {
   private StudentProfileModel applicant;
   private String resumeLink;
   private String coverLetterLink;
+  private String transcriptLink;
   private Double cgpa;
   private ApplicationStatus applicationStatus;
   private String updates;

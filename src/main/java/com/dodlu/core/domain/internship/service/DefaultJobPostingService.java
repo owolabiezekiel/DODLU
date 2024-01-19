@@ -66,7 +66,7 @@ public class DefaultJobPostingService {
                   .durationInMonths(request.getDurationInMonths())
                   .numberOfOpenPositions(request.getNumberOfOpenPositions())
                   .expirationDate(request.getExpirationDate())
-                  .isCgpaRequired(request.getIsCgpaRequired())
+                  .isTranscriptRequired(request.getIsCgpaRequired())
                   .isResumeRequired(request.getIsResumeRequired())
                   .isCoverLetterRequired(request.getIsCoverLetterRequired())
                   .eligibleDepartments(new ArrayList<>(request.getEligibleDepartments()))
@@ -105,7 +105,7 @@ public class DefaultJobPostingService {
                   .applicant(applicant)
                   .resumeLink(request.getResumeLink())
                   .coverLetterLink(request.getCoverLetterLink())
-                  .cgpa(request.getCgpa())
+                  .transcriptLink(request.getTranscriptLink())
                   .applicationStatus(PENDING)
                   .build();
           return jobPostApplicationRepository.save(application).toModel();
@@ -204,8 +204,8 @@ public class DefaultJobPostingService {
       throw exceptionService.handleCreateBadRequest("This job does not have any open position");
     }
 
-    if (jobPosting.getIsCgpaRequired() && request.getCgpa() == null) {
-      throw exceptionService.handleCreateBadRequest("CGPA is required to apply to this job");
+    if (jobPosting.getIsTranscriptRequired() && request.getTranscriptLink() == null) {
+      throw exceptionService.handleCreateBadRequest("Transcript is required to apply to this job");
     }
 
     if (jobPosting.getIsResumeRequired() && isNullOrBlank(request.getResumeLink())) {

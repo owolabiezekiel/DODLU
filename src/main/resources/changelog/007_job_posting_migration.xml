@@ -90,4 +90,24 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="tobiowolabi" id="change_isCGpaRequired_to_isTranscriptRequired">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="job_postings" columnName="is_cgpa_required"/>
+        </preConditions>
+
+        <renameColumn tableName="job_postings" oldColumnName="is_cgpa_required" newColumnName="is_transcript_required"/>
+    </changeSet>
+
+    <changeSet author="tobiowolabi" id="add_transcript_link_to_job_posting_application">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="job_posting_applications" columnName="transcript_link"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="job_posting_applications">
+            <column name="transcript_link" type="TEXT" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

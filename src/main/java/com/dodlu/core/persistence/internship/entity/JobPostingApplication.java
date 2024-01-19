@@ -34,6 +34,7 @@ public class JobPostingApplication extends BaseEntity {
 
   private String resumeLink;
   private String coverLetterLink;
+  private String transcriptLink;
   private Double cgpa;
 
   @Enumerated(EnumType.STRING)
@@ -63,6 +64,7 @@ public class JobPostingApplication extends BaseEntity {
         .applicant(applicant.toModel())
         .resumeLink(resumeLink)
         .coverLetterLink(coverLetterLink)
+        .transcriptLink(transcriptLink)
         .cgpa(cgpa)
         .applicationStatus(applicationStatus)
         .updates(updates)

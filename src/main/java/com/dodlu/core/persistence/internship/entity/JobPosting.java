@@ -33,7 +33,7 @@ public class JobPosting extends BaseEntity {
   private Integer durationInMonths;
   private Integer numberOfOpenPositions;
   private LocalDateTime expirationDate;
-  private Boolean isCgpaRequired;
+  private Boolean isTranscriptRequired;
   private Boolean isResumeRequired;
   private Boolean isCoverLetterRequired;
 
@@ -66,7 +66,7 @@ public class JobPosting extends BaseEntity {
         .durationInMonths(durationInMonths)
         .numberOfOpenPositions(numberOfOpenPositions)
         .expirationDate(expirationDate)
-        .isCgpaRequired(true)
+        .isTranscriptRequired(isTranscriptRequired)
         .isResumeRequired(isResumeRequired)
         .isCoverLetterRequired(isCoverLetterRequired)
         .eligibleDepartments(eligibleDepartments)

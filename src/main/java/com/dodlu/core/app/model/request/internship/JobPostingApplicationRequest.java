@@ -19,5 +19,6 @@ public class JobPostingApplicationRequest {
   @URL(message = "invalid url format for resume link")
   private String coverLetterLink;
 
-  private Double cgpa;
+  @URL(message = "invalid url format for transcript link")
+  private String transcriptLink;
 }
