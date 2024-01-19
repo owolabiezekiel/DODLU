@@ -10,17 +10,22 @@ import static com.dodlu.core.domain.utils.CoordinatorProfileUtils.getCoordinator
 import static com.dodlu.core.domain.utils.DepartmentUtils.getDepartmentById;
 import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUsername;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
+import static com.dodlu.core.domain.utils.StudentProfileUtils.getStudentProfileByUsername;
 import static com.dodlu.core.domain.utils.UserUtils.checkForDuplicateEmail;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
+import com.dodlu.core.app.model.request.file.ImageDownloadRequest;
 import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
+import com.dodlu.core.domain.file.service.abstracts.StorageService;
 import com.dodlu.core.domain.user.enums.Level;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
 import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.user.model.SupervisorProfileModel;
+import com.dodlu.core.persistence.base.UserProfile;
 import com.dodlu.core.persistence.department.entity.Department;
 import com.dodlu.core.persistence.department.repository.DepartmentRepository;
 import com.dodlu.core.persistence.internship.entity.Logbook;
@@ -32,9 +37,11 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +56,7 @@ public class DefaultUserService {
   private final RoleRepository roleRepository;
   private final EmployerProfileRepository employerProfileRepository;
   private final LogbookRepository logbookRepository;
+  private final StorageService storageService;
   private final CoreExceptionService exceptionService;
 
   @Transactional
@@ -174,6 +182,29 @@ public class DefaultUserService {
         });
   }
 
+  @Transactional
+  public CompletableFuture<? extends UserProfile> updateDisplayPicture(
+      User user, MultipartFile file) {
+    return supplyAsync(
+        () -> {
+          switch (user.getType()) {
+            case STUDENT -> {
+              StudentProfile studentProfile =
+                  getStudentProfileByUsername(
+                      studentProfileRepository, exceptionService, user.getUsername());
+              return updateProfileImage(studentProfile, studentProfileRepository, file);
+            }
+            case EMPLOYER -> {
+              EmployerProfile employerProfile =
+                  getEmployerByUsername(
+                      employerProfileRepository, exceptionService, user.getUsername());
+              return updateProfileImage(employerProfile, employerProfileRepository, file);
+            }
+            default -> throw exceptionService.handleCreateBadRequest("Unknown user type");
+          }
+        });
+  }
+
   private User buildUser(String username, String email, String password, Role role) {
     return User.builder()
         .username(
@@ -216,5 +247,21 @@ public class DefaultUserService {
       case LEVEL_300 -> 3;
       case LEVEL_400 -> 6;
     };
+  }
+
+  private <T extends UserProfile, R extends JpaRepository<T, ?>> T updateProfileImage(
+      T userProfile, R repository, MultipartFile file) {
+    try {
+      if (!isNullOrBlank(userProfile.getProfileImageUrl())) {
+        ImageDownloadRequest request =
+            new ImageDownloadRequest().setImageUrl(userProfile.getProfileImageUrl());
+        storageService.deleteFile(request).join();
+      }
+      String newImageUrl = storageService.uploadImage(file).join();
+      userProfile.setProfileImageUrl(newImageUrl);
+      return repository.save(userProfile);
+    } catch (Exception e) {
+      throw exceptionService.handleCreateException(e.getMessage(), INTERNAL_SERVER_ERROR);
+    }
   }
 }

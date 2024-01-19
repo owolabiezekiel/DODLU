@@ -45,3 +45,14 @@ Authorization: {{coord_token}}
   "programme": "Undergraduate",
   "title": "Mr."
 }
+
+### Update user profile image
+POST {{host}}/user/profile-image
+Authorization: {{employer_token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="th1.jpeg"
+
+< /Users/tobilobaowolabi/Documents/pictures/th1.jpeg
+--WebAppBoundary

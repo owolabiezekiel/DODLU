@@ -1,6 +1,7 @@
 package com.dodlu.core.app.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateStudentRequest;
@@ -10,6 +11,7 @@ import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
 import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.user.model.SupervisorProfileModel;
 import com.dodlu.core.domain.user.service.concretes.DefaultUserService;
+import com.dodlu.core.persistence.base.UserProfile;
 import com.dodlu.core.persistence.user.entity.User;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -66,27 +69,12 @@ public class UserController {
     return new ResponseModel<>(studentProfileModel);
   }
 
-  //  @GetMapping
-  //  @Operation(description = "Get all departments")
-  //  @ApiResponses({
-  //    @ApiResponse(
-  //        code = 200,
-  //        message = "Success",
-  //        response = DepartmentResult.class,
-  //        responseContainer = "page")
-  //  })
-  //  public ResponseModel<DepartmentResult> getAllDepartments(@PageableDefault Pageable pageable) {
-  //    Page<DepartmentModel> departmentPage = departmentService.getAllDepartments(pageable).join();
-  //    DepartmentResult departmentResult = new DepartmentResult(departmentPage);
-  //    return new ResponseModel<>(departmentResult);
-  //  }
-  //
-  //  @GetMapping(value = "/{id}")
-  //  @Operation(description = "get single department")
-  //  @ApiResponses({@ApiResponse(code = 200, message = "Success", response =
-  // DepartmentModel.class)})
-  //  public ResponseModel<DepartmentModel> getDepartment(@PathVariable("id") String id) {
-  //    DepartmentModel department = departmentService.getDepartmentById(id).join();
-  //    return new ResponseModel<>(department);
-  //  }
+  @PostMapping(value = "/profile-image", consumes = MULTIPART_FORM_DATA_VALUE)
+  @Operation(description = "Update display picture")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserProfile.class)})
+  public ResponseModel<? extends UserProfile> updateDisplayPicture(
+      @AuthenticationPrincipal User user, @RequestParam("file") MultipartFile file) {
+    UserProfile userProfile = userService.updateDisplayPicture(user, file).join();
+    return new ResponseModel<>(userProfile);
+  }
 }
