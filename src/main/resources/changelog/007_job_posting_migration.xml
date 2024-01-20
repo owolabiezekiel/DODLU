@@ -110,4 +110,16 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="tobiowolabi" id="add_monthly_remuneration_to_job_posting">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="job_postings" columnName="monthly_remuneration"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="job_postings">
+            <column name="monthly_remuneration" type="DECIMAL" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -70,6 +70,7 @@ public class DefaultJobPostingService {
                   .isResumeRequired(request.getIsResumeRequired())
                   .isCoverLetterRequired(request.getIsCoverLetterRequired())
                   .eligibleDepartments(new ArrayList<>(request.getEligibleDepartments()))
+                  .monthlyRemuneration(request.getMonthlyRemuneration())
                   .employer(employer)
                   .build();
 

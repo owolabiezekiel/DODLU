@@ -3,6 +3,7 @@ package com.dodlu.core.app.model.request.internship;
 import com.dodlu.core.app.utils.validators.FutureDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -56,4 +57,8 @@ public class CreateJobPostingRequest {
 
   @Size(min = 1, message = "at least one eligible department is required")
   private Set<String> eligibleDepartments;
+
+  @NotNull(message = "monthlyRemuneration is required")
+  @PositiveOrZero(message = "monthlyRemuneration can not have a negative value")
+  private BigDecimal monthlyRemuneration;
 }

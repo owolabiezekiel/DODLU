@@ -5,6 +5,7 @@ import com.dodlu.core.domain.internship.model.JobPostingModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import com.dodlu.core.persistence.user.entity.EmployerProfile;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +37,7 @@ public class JobPosting extends BaseEntity {
   private Boolean isTranscriptRequired;
   private Boolean isResumeRequired;
   private Boolean isCoverLetterRequired;
+  private BigDecimal monthlyRemuneration;
 
   @Convert(converter = StringListConverter.class)
   private List<String> eligibleDepartments;
@@ -69,6 +71,7 @@ public class JobPosting extends BaseEntity {
         .isTranscriptRequired(isTranscriptRequired)
         .isResumeRequired(isResumeRequired)
         .isCoverLetterRequired(isCoverLetterRequired)
+        .monthlyRemuneration(monthlyRemuneration)
         .eligibleDepartments(eligibleDepartments)
         .employer(employer.toModel())
         .build();

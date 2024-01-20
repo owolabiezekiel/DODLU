@@ -1,6 +1,7 @@
 package com.dodlu.core.domain.internship.model;
 
 import com.dodlu.core.domain.user.model.EmployerProfileModel;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,6 @@ public class JobPostingModel {
   private Boolean isResumeRequired;
   private Boolean isCoverLetterRequired;
   private List<String> eligibleDepartments;
+  private BigDecimal monthlyRemuneration;
   private EmployerProfileModel employer;
 }
