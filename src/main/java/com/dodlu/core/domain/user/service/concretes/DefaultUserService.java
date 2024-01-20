@@ -4,6 +4,10 @@ import static com.dodlu.core.app.utils.Constants.*;
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.app.utils.UserUtilities.generateRandomPassword;
 import static com.dodlu.core.app.utils.UserUtilities.generateUsername;
+import static com.dodlu.core.domain.user.enums.Gender.*;
+import static com.dodlu.core.domain.user.enums.Level.*;
+import static com.dodlu.core.domain.user.enums.Programme.POSTGRADUATE;
+import static com.dodlu.core.domain.user.enums.Programme.UNDERGRADUATE;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.*;
 import static com.dodlu.core.domain.utils.CoordinatorProfileUtils.getCoordinatorByUsername;
@@ -12,7 +16,11 @@ import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUser
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
 import static com.dodlu.core.domain.utils.StudentProfileUtils.getStudentProfileByUsername;
 import static com.dodlu.core.domain.utils.UserUtils.checkForDuplicateEmail;
+import static com.dodlu.core.domain.utils.UserUtils.getUser;
+import static java.lang.String.format;
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
@@ -21,7 +29,9 @@ import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
 import com.dodlu.core.domain.file.service.abstracts.StorageService;
+import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Level;
+import com.dodlu.core.domain.user.enums.Programme;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
 import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.user.model.SupervisorProfileModel;
@@ -32,15 +42,22 @@ import com.dodlu.core.persistence.internship.entity.Logbook;
 import com.dodlu.core.persistence.internship.repository.LogbookRepository;
 import com.dodlu.core.persistence.user.entity.*;
 import com.dodlu.core.persistence.user.repository.*;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -183,6 +200,104 @@ public class DefaultUserService {
   }
 
   @Transactional
+  public CompletableFuture<Void> createStudents(User user, MultipartFile file) {
+    return runAsync(
+        () -> {
+          String filenameExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+          if (filenameExtension == null
+              || (!filenameExtension.equalsIgnoreCase("xlsx")
+                  && !filenameExtension.equalsIgnoreCase("xls"))) {
+            throw exceptionService.handleCreateBadRequest("Unsupported file format");
+          }
+
+          Role role = getRoleByName(roleRepository, exceptionService, STUDENT_ROLE_NAME_STRING);
+          CoordinatorProfile coordinator =
+              getCoordinatorByUsername(
+                  coordinatorProfileRepository, exceptionService, user.getUsername());
+
+          List<String> errorMessages = new ArrayList<>();
+
+          try {
+            XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            int lastRowNum = sheet.getLastRowNum();
+            Row row;
+
+            for (int i = 1; i <= lastRowNum; i++) {
+              row = sheet.getRow(i);
+              String matricNumber = row.getCell(0).getStringCellValue();
+              if (userRepository.existsByUsernameEqualsIgnoreCase(matricNumber)) {
+                User studentUser = getUser(userRepository, exceptionService, matricNumber);
+                if (studentUser.isDeleted()) {
+                  studentUser.setDeleted(false);
+
+                  StudentProfile studentProfile =
+                      getStudentProfileByUsername(
+                          studentProfileRepository, exceptionService, matricNumber);
+                  studentProfile.setDeleted(false);
+                  int level = (int) row.getCell(1).getNumericCellValue();
+                  studentProfile.setLevel(getLevelFromNumber(level));
+                  studentProfileRepository.save(studentProfile);
+
+                  Logbook logbook = buildLogbook(studentProfile);
+                  logbookRepository.save(logbook);
+                } else {
+                  errorMessages.add(
+                      format(
+                          "%s currently has an active profile. consider deactivating them first",
+                          matricNumber));
+                }
+              } else {
+                int level = (int) row.getCell(1).getNumericCellValue();
+                String firstName = row.getCell(2).getStringCellValue();
+                String lastName = row.getCell(3).getStringCellValue();
+                String email = row.getCell(4).getStringCellValue();
+                String phoneNumber = row.getCell(5).getStringCellValue();
+                String gender = row.getCell(6).getStringCellValue();
+                String programme = row.getCell(7).getStringCellValue();
+                String plainPassword = generateRandomPassword();
+
+                User student = buildUser(matricNumber, email, plainPassword, role);
+                student.setStatus(ACTIVE).setType(STUDENT);
+                userRepository.save(student);
+
+                StudentProfile studentProfile =
+                    StudentProfile.builder()
+                        .username(matricNumber)
+                        .email(email)
+                        .phoneNumber(phoneNumber)
+                        .firstName(firstName)
+                        .lastName(lastName)
+                        .gender(getGenderFromString(gender))
+                        .programme(getProgrammeFromString(programme))
+                        .level(getLevelFromNumber(level))
+                        .department(coordinator.getDepartment())
+                        .faculty(coordinator.getDepartment().getFaculty())
+                        .build();
+                log.info(
+                    "Will send email. Dear {} {} a student account has been created for you with username {} and password {}",
+                    studentProfile.getFirstName(),
+                    studentProfile.getLastName(),
+                    studentProfile.getUsername(),
+                    plainPassword);
+                studentProfile = studentProfileRepository.save(studentProfile);
+
+                Logbook logbook = buildLogbook(studentProfile);
+                logbookRepository.save(logbook);
+              }
+            }
+
+            if (errorMessages.size() > 0) {
+              throw exceptionService.handleCreateException(
+                  "Found some errors", CREATED, errorMessages);
+            }
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
+  }
+
+  @Transactional
   public CompletableFuture<? extends UserProfile> updateDisplayPicture(
       User user, MultipartFile file) {
     return supplyAsync(
@@ -247,6 +362,27 @@ public class DefaultUserService {
       case LEVEL_300 -> 3;
       case LEVEL_400 -> 6;
     };
+  }
+
+  private Level getLevelFromNumber(int level) {
+    return switch (level) {
+      case 200 -> LEVEL_200;
+      case 300 -> LEVEL_300;
+      case 400 -> LEVEL_400;
+      default -> throw exceptionService.handleCreateBadRequest("Unknown level");
+    };
+  }
+
+  private Gender getGenderFromString(String gender) {
+    return switch (gender.toLowerCase()) {
+      case "male" -> MALE;
+      case "female" -> FEMALE;
+      default -> OTHERS;
+    };
+  }
+
+  private Programme getProgrammeFromString(String programme) {
+    return programme.equalsIgnoreCase("postgraduate") ? POSTGRADUATE : UNDERGRADUATE;
   }
 
   private <T extends UserProfile, R extends JpaRepository<T, ?>> T updateProfileImage(

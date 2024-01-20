@@ -69,6 +69,15 @@ public class UserController {
     return new ResponseModel<>(studentProfileModel);
   }
 
+  @PostMapping(value = "/students", consumes = MULTIPART_FORM_DATA_VALUE)
+  @Operation(description = "Coordinator create students")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> createStudent(
+      @AuthenticationPrincipal User user, @RequestParam("file") MultipartFile file) {
+    userService.createStudents(user, file).join();
+    return new ResponseModel<>(null);
+  }
+
   @PostMapping(value = "/profile-image", consumes = MULTIPART_FORM_DATA_VALUE)
   @Operation(description = "Update display picture")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserProfile.class)})
