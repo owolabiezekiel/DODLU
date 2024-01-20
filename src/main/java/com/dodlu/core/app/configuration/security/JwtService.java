@@ -1,10 +1,10 @@
 package com.dodlu.core.app.configuration.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.dodlu.core.app.exceptions.CoreExceptionService;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,11 +64,19 @@ public class JwtService {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts.parserBuilder()
-        .setSigningKey(getSigningKey())
-        .build()
-        .parseClaimsJws(token)
-        .getBody();
+    try {
+      return Jwts.parserBuilder()
+          .setSigningKey(getSigningKey())
+          .build()
+          .parseClaimsJws(token)
+          .getBody();
+    } catch (ExpiredJwtException
+        | UnsupportedJwtException
+        | MalformedJwtException
+        | SignatureException
+        | IllegalArgumentException e) {
+      throw new CoreExceptionService().handleCreateUnAuthorized(e.getMessage());
+    }
   }
 
   private Key getSigningKey() {

@@ -109,7 +109,7 @@ public class DefaultAuthService implements AuthService {
                       () ->
                           exceptionService.handleCreateUnAuthorized(
                               "Invalid username/password combination"));
-          if(user.getStatus().equals(INACTIVE) || user.isDeleted()){
+          if (user.getStatus().equals(INACTIVE) || user.isDeleted()) {
             throw exceptionService.handleCreateUnAuthorized("Account inactive or disabled");
           }
           String token = jwtService.generateToken(user);
