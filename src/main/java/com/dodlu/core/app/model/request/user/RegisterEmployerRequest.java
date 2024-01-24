@@ -52,10 +52,10 @@ public class RegisterEmployerRequest {
   @Size(min = 3, message = "phoneNumber must be at least 11 characters")
   private String companyName;
 
-  @Size(min = 10, message = "vision must be at least 11 characters")
+  @Size(max = 1000, message = "vision must not be more than 1000 characters")
   private String vision;
 
-  @Size(min = 10, message = "mission must be at least 10 characters")
+  @Size(max = 10000, message = "mission must not be more than 10000 characters")
   private String mission;
 
   @NotNull(message = "industry is required")
