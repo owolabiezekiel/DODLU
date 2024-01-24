@@ -76,7 +76,7 @@ public class DefaultAuthService implements AuthService {
           Role role = getRoleByName(roleRepository, exceptionService, EMPLOYER_ROLE_NAME_STRING);
 
           User user =
-              buildUser(request.getUsername(), request.getEmail(), request.getPassword(), role);
+              buildUser(request.getEmail(), request.getEmail(), request.getPassword(), role);
           user.setStatus(ACTIVE).setType(EMPLOYER);
           user = userRepository.save(user);
 
@@ -154,7 +154,7 @@ public class DefaultAuthService implements AuthService {
 
   private void doEmployerValidations(RegisterEmployerRequest request) {
     checkForDuplicateEmail(request.getEmail());
-    checkForDuplicateUsername(request.getUsername());
+    checkForDuplicateUsername(request.getEmail());
   }
 
   private void checkForDuplicateEmail(String email) {
