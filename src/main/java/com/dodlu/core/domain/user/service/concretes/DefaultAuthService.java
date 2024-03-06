@@ -105,10 +105,14 @@ public class DefaultAuthService implements AuthService {
           User user =
               userRepository
                   .findByUsernameEqualsIgnoreCase(request.getUsername())
-                  .orElseThrow(
+                  .orElseGet(
                       () ->
-                          exceptionService.handleCreateUnAuthorized(
-                              "Invalid username/password combination"));
+                          userRepository
+                              .findByEmailEqualsIgnoreCase(request.getUsername())
+                              .orElseThrow(
+                                  () ->
+                                      exceptionService.handleCreateUnAuthorized(
+                                          "Invalid username/password combination")));
           if (user.getStatus().equals(INACTIVE) || user.isDeleted()) {
             throw exceptionService.handleCreateUnAuthorized("Account inactive or disabled");
           }

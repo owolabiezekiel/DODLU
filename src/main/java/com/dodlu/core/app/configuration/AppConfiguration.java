@@ -33,7 +33,11 @@ public class AppConfiguration {
     return username ->
         userRepository
             .findByUsernameEqualsIgnoreCase(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            .orElseGet(
+                () ->
+                    userRepository
+                        .findByEmailEqualsIgnoreCase(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found")));
   }
 
   @Bean

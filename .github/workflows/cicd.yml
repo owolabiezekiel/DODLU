@@ -64,21 +64,21 @@ jobs:
         run: |
           mvn clean test
 
-      - name: package for deployment
-        run: |
-          mvn package -DskipTests
-
-      - name: Login via Azure CLI
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: deploy to production with artifact
-        uses: azure/spring-cloud-deploy@v1
-        with:
-          azure-subscription: ${{ env.AZURE_SUBSCRIPTION }}
-          action: Deploy
-          service-name: backend
-          app-name: core
-          use-staging-deployment: false
-          package: ${{ env.ASC_PACKAGE_PATH }}/**/*.jar
+#      - name: package for deployment
+#        run: |
+#          mvn package -DskipTests
+#
+#      - name: Login via Azure CLI
+#        uses: azure/login@v1
+#        with:
+#          creds: ${{ secrets.AZURE_CREDENTIALS }}
+#
+#      - name: deploy to production with artifact
+#        uses: azure/spring-cloud-deploy@v1
+#        with:
+#          azure-subscription: ${{ env.AZURE_SUBSCRIPTION }}
+#          action: Deploy
+#          service-name: backend
+#          app-name: core
+#          use-staging-deployment: false
+#          package: ${{ env.ASC_PACKAGE_PATH }}/**/*.jar
