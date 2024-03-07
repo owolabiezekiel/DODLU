@@ -71,10 +71,11 @@ public class JobPostingController {
   }
 
   @PostMapping(value = "/{jobPostingId}/apply", consumes = APPLICATION_JSON_VALUE)
-  @Operation(description = "Apply to job posting")
+  @Operation(description = "Student apply to job posting")
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = JobPostingApplicationModel.class)
   })
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
   public ResponseModel<JobPostingApplicationModel> applyToJobPosting(
       @AuthenticationPrincipal User user,
       @Valid @RequestBody JobPostingApplicationRequest request,
@@ -85,7 +86,7 @@ public class JobPostingController {
   }
 
   @GetMapping(value = "/{jobPostingId}/applicants")
-  @Operation(description = "Get all job posting applicants")
+  @Operation(description = "Employer get all applicants to their job posting")
   @ApiResponses({
     @ApiResponse(
         code = 200,
@@ -93,6 +94,7 @@ public class JobPostingController {
         response = StudentProfileResult.class,
         responseContainer = "page")
   })
+  @PreAuthorize("hasAnyAuthority('EMPLOYER', 'ADMIN')")
   public ResponseModel<StudentProfileResult> getJobPostingApplicants(
       @AuthenticationPrincipal User user,
       @ModelAttribute PagingAndSortingParams paging,
@@ -105,10 +107,11 @@ public class JobPostingController {
   }
 
   @PostMapping(value = "/{applicationId}/approve")
-  @Operation(description = "Approve job posting application")
+  @Operation(description = "Employer approve job posting application")
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = JobPostingApplicationModel.class)
   })
+  @PreAuthorize("hasAnyAuthority('EMPLOYER')")
   public ResponseModel<JobPostingApplicationModel> approveJobPostingApplication(
       @AuthenticationPrincipal User user, @PathVariable("applicationId") String applicationId) {
     JobPostingApplicationModel jobPostingApplication =
@@ -117,7 +120,7 @@ public class JobPostingController {
   }
 
   @GetMapping(value = "/applications")
-  @Operation(description = "Get all job applications")
+  @Operation(description = "Get logged in student's job posting")
   @ApiResponses({
     @ApiResponse(
         code = 200,
@@ -125,6 +128,7 @@ public class JobPostingController {
         response = JobPostingApplicationResult.class,
         responseContainer = "page")
   })
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
   public ResponseModel<JobPostingApplicationResult> getJobPostingApplications(
       @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
     Pageable pageable = buildPageable(paging);
