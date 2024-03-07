@@ -9,10 +9,12 @@ import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.EMPLOYER;
 import static com.dodlu.core.domain.user.model.UserType.STUDENT;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.configuration.security.JwtService;
 import com.dodlu.core.app.exceptions.CoreExceptionService;
+import com.dodlu.core.app.model.request.user.ChangePasswordRequest;
 import com.dodlu.core.app.model.request.user.CreateUserRequest;
 import com.dodlu.core.app.model.request.user.RegisterEmployerRequest;
 import com.dodlu.core.app.model.request.user.UserLoginRequest;
@@ -118,6 +120,21 @@ public class DefaultAuthService implements AuthService {
           }
           String token = jwtService.generateToken(user);
           return LoginResponseModel.builder().user(user.toModel()).accessToken(token).build();
+        });
+  }
+
+  @Override
+  public CompletableFuture<Void> changePassword(User user, ChangePasswordRequest request) {
+    return runAsync(
+        () -> {
+          log.info("{}", user.getPassword());
+          if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw exceptionService.handleCreateBadRequest("Old password incorrect");
+          }
+
+          String newPasswordEncoded = passwordEncoder.encode(request.getNewPassword());
+          user.setPassword(newPasswordEncoded);
+          userRepository.save(user);
         });
   }
 
