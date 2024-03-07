@@ -11,9 +11,13 @@ spring:
       connection-timeout: 20000
       maximum-pool-size: 5
       connection-test-query: SELECT 1
-    url: jdbc:postgresql://${RDS_HOSTNAME:dpg-clcg9it4lnec73e2p1r0-a.ohio-postgres.render.com}:${RDS_PORT:5432}/${RDS_DB_NAME:dodlu_db}
-    username: ${RDS_USERNAME:dodlu_db_user}
-    password: ${RDS_PASSWORD:ACgUbtvy4AEdTxPqIQLtbqxVmjnUGOIS}
+    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:dodlu_db}
+    username: ${RDS_USERNAME:root}
+    password: ${RDS_PASSWORD:root}
+    host: ${RDS_HOSTNAME:localhost}
+    port: ${RDS_PORT:5432}
+    db-name: ${RDS_DB_NAME:dodlu_db}
+
 
   jpa:
     show-sql: true
@@ -93,5 +97,5 @@ email:
 
 dodlu:
   secrets:
-    jwt-secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+    jwt-secret: ${JWT_SECRET:somesecret}
     jwt-expiration: ${JWT_EXPIRATION:86400000}
