@@ -39,7 +39,7 @@ POST {{host}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "buypowerbabs",
+  "username": "owo.ezekiel1@gmail.com",
   "password": "password"
 }
 
@@ -58,7 +58,7 @@ Content-Type: application/json
 
 {
   "username": "205537",
-  "password": "Y80377MCPlZ3XrnVhuBdQOPFsRs7u9"
+  "password": "password"
 }
 
 ### student two login
@@ -95,5 +95,16 @@ Content-Type: application/json
 {
   "username": "a2a73",
   "password": "LrGPClJR6hDR0ha5S1cK20ELulpFtC"
+}
+
+### Change password
+POST {{host}}/auth/change-password
+Content-Type: application/json
+Authorization: {{student_token}}
+
+{
+  "oldPassword": "LrGPClJR6hDR0ha5S1cK20ELulpFtC",
+  "newPassword": "password",
+  "confirmNewPassword": "password"
 }
 
