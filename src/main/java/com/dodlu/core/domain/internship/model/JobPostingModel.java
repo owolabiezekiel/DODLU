@@ -1,6 +1,8 @@
 package com.dodlu.core.domain.internship.model;
 
+import com.dodlu.core.domain.internship.enums.Country;
 import com.dodlu.core.domain.internship.enums.InternshipLocation;
+import com.dodlu.core.domain.internship.enums.State;
 import com.dodlu.core.domain.user.model.EmployerProfileModel;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,5 +31,8 @@ public class JobPostingModel {
   private List<String> eligibleDepartments;
   private BigDecimal monthlyRemuneration;
   private InternshipLocation location;
+  private State state;
+  private Country country;
+  private String address;
   private EmployerProfileModel employer;
 }

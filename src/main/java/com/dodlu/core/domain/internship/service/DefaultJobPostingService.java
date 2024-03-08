@@ -72,6 +72,9 @@ public class DefaultJobPostingService {
                   .eligibleDepartments(new ArrayList<>(request.getEligibleDepartments()))
                   .monthlyRemuneration(request.getMonthlyRemuneration())
                   .location(request.getLocation())
+                  .state(request.getState())
+                  .country(request.getCountry())
+                  .address(request.getAddress())
                   .employer(employer)
                   .build();
 

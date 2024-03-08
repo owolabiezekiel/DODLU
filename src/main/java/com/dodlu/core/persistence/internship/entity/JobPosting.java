@@ -1,7 +1,9 @@
 package com.dodlu.core.persistence.internship.entity;
 
 import com.dodlu.core.app.utils.converters.StringListConverter;
+import com.dodlu.core.domain.internship.enums.Country;
 import com.dodlu.core.domain.internship.enums.InternshipLocation;
+import com.dodlu.core.domain.internship.enums.State;
 import com.dodlu.core.domain.internship.model.JobPostingModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import com.dodlu.core.persistence.user.entity.EmployerProfile;
@@ -49,6 +51,15 @@ public class JobPosting extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   private InternshipLocation location;
+
+  @Enumerated(EnumType.STRING)
+  private State state;
+
+  @Enumerated(EnumType.STRING)
+  private Country country;
+
+  @Column(nullable = false)
+  private String address;
 
   @Override
   public boolean equals(Object o) {

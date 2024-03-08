@@ -2,7 +2,9 @@ package com.dodlu.core.app.model.request.internship;
 
 import com.dodlu.core.app.utils.validators.FutureDateTime;
 import com.dodlu.core.app.utils.validators.ValidEnum;
+import com.dodlu.core.domain.internship.enums.Country;
 import com.dodlu.core.domain.internship.enums.InternshipLocation;
+import com.dodlu.core.domain.internship.enums.State;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
@@ -67,4 +69,17 @@ public class CreateJobPostingRequest {
   @NotNull(message = "Location is required")
   @ValidEnum(message = "Invalid location")
   private InternshipLocation location;
+
+  @NotNull(message = "State is required")
+  @ValidEnum(message = "Invalid state")
+  private State state;
+
+  @NotNull(message = "Country is required")
+  @ValidEnum(message = "Invalid country")
+  private Country country;
+
+  @NotNull(message = "Address is required")
+  @NotBlank(message = "Address cannot be blank")
+  @Size(min = 3, max = 250, message = "Address must be between 3 - 250 characters")
+  private String address;
 }

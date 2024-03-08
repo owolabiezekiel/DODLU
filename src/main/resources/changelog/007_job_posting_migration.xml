@@ -134,4 +134,24 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="tobiowolabi" id="add_address_state_location_to_job_posting">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="job_postings" columnName="state"/>
+                <columnExists tableName="job_postings" columnName="country"/>
+                <columnExists tableName="job_postings" columnName="address"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="job_postings">
+            <column name="state" type="VARCHAR(50)" defaultValue="LAGOS" />
+        </addColumn>
+        <addColumn tableName="job_postings">
+            <column name="country" type="VARCHAR(50)" defaultValue="NIGERIA"/>
+        </addColumn>
+        <addColumn tableName="job_postings">
+            <column name="address" type="VARCHAR(250)" defaultValue=""/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
