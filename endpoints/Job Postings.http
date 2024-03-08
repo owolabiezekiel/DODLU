@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: {{employer_token}}
 
 {
-  "title": "Ui/UX Design Intern",
+  "title": "Ui/UX Design Intern 3.0",
   "description": "A person that will help us design some things",
   "durationInMonths": 2,
   "numberOfOpenPositions": 1,
@@ -12,6 +12,8 @@ Authorization: {{employer_token}}
   "isCgpaRequired": false,
   "isResumeRequired": false,
   "isCoverLetterRequired": true,
+  "location": "HYBRID",
+  "monthlyRemuneration": 2000,
   "eligibleDepartments": ["Computer Science", "Information Management Science"]
 }
 

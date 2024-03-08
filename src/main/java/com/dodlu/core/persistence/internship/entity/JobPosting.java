@@ -1,6 +1,7 @@
 package com.dodlu.core.persistence.internship.entity;
 
 import com.dodlu.core.app.utils.converters.StringListConverter;
+import com.dodlu.core.domain.internship.enums.InternshipLocation;
 import com.dodlu.core.domain.internship.model.JobPostingModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import com.dodlu.core.persistence.user.entity.EmployerProfile;
@@ -46,6 +47,9 @@ public class JobPosting extends BaseEntity {
   @JoinColumn(name = "employer_id", referencedColumnName = "id")
   private EmployerProfile employer;
 
+  @Enumerated(EnumType.STRING)
+  private InternshipLocation location;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -73,6 +77,7 @@ public class JobPosting extends BaseEntity {
         .isCoverLetterRequired(isCoverLetterRequired)
         .monthlyRemuneration(monthlyRemuneration)
         .eligibleDepartments(eligibleDepartments)
+        .location(location)
         .employer(employer.toModel())
         .build();
   }

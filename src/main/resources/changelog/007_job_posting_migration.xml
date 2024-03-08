@@ -122,4 +122,16 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="tobiowolabi" id="add_location_to_job_posting">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="job_postings" columnName="location"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="job_postings">
+            <column name="location" type="VARCHAR(20)" defaultValue="REMOTE"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

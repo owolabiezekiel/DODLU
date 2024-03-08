@@ -1,6 +1,8 @@
 package com.dodlu.core.app.model.request.internship;
 
 import com.dodlu.core.app.utils.validators.FutureDateTime;
+import com.dodlu.core.app.utils.validators.ValidEnum;
+import com.dodlu.core.domain.internship.enums.InternshipLocation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
@@ -61,4 +63,8 @@ public class CreateJobPostingRequest {
   @NotNull(message = "monthlyRemuneration is required")
   @PositiveOrZero(message = "monthlyRemuneration can not have a negative value")
   private BigDecimal monthlyRemuneration;
+
+  @NotNull(message = "Location is required")
+  @ValidEnum(message = "Invalid location")
+  private InternshipLocation location;
 }
