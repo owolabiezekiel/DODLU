@@ -154,4 +154,16 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="tobiowolabi" id="add_industry_to_job_posting">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="job_postings" columnName="industry"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="job_postings">
+            <column name="industry" type="VARCHAR(150)" defaultValue="ENGINEERING" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

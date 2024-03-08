@@ -5,6 +5,7 @@ import com.dodlu.core.domain.internship.enums.Country;
 import com.dodlu.core.domain.internship.enums.InternshipLocation;
 import com.dodlu.core.domain.internship.enums.State;
 import com.dodlu.core.domain.internship.model.JobPostingModel;
+import com.dodlu.core.domain.user.enums.Industry;
 import com.dodlu.core.persistence.base.BaseEntity;
 import com.dodlu.core.persistence.user.entity.EmployerProfile;
 import jakarta.persistence.*;
@@ -48,6 +49,9 @@ public class JobPosting extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "employer_id", referencedColumnName = "id")
   private EmployerProfile employer;
+
+  @Enumerated(EnumType.STRING)
+  private Industry industry;
 
   @Enumerated(EnumType.STRING)
   private InternshipLocation location;

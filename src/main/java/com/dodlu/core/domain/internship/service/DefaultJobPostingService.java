@@ -71,6 +71,7 @@ public class DefaultJobPostingService {
                   .isCoverLetterRequired(request.getIsCoverLetterRequired())
                   .eligibleDepartments(new ArrayList<>(request.getEligibleDepartments()))
                   .monthlyRemuneration(request.getMonthlyRemuneration())
+                  .industry(employer.getCompany().getIndustry())
                   .location(request.getLocation())
                   .state(request.getState())
                   .country(request.getCountry())
