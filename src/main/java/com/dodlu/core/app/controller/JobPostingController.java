@@ -62,7 +62,7 @@ public class JobPostingController {
     return new ResponseModel<>(jobPostingResult);
   }
 
-  @GetMapping
+  @GetMapping(value = "/me")
   @Operation(description = "Get all employer job postings")
   @ApiResponses({
     @ApiResponse(
@@ -71,7 +71,7 @@ public class JobPostingController {
         response = JobPostingResult.class,
         responseContainer = "page")
   })
-  @PreAuthorize("hasAnyAuthority('STUDENT')")
+  @PreAuthorize("hasAnyAuthority('EMPLOYER')")
   public ResponseModel<JobPostingResult> getAllEmployerJobPostings(
       @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
     Pageable pageable = buildPageable(paging);
