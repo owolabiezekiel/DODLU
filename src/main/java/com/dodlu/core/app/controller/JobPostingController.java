@@ -4,6 +4,7 @@ import static com.dodlu.core.app.utils.MapperUtil.buildPageable;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.PagingAndSortingParams;
+import com.dodlu.core.app.model.filters.JobPostingFilter;
 import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
 import com.dodlu.core.app.model.request.internship.JobPostingApplicationRequest;
 import com.dodlu.core.app.model.response.JobPostingApplicationResult;
@@ -55,9 +56,10 @@ public class JobPostingController {
         responseContainer = "page")
   })
   public ResponseModel<JobPostingResult> getAllJobPostings(
-      @ModelAttribute PagingAndSortingParams paging) {
+      @ModelAttribute JobPostingFilter filter, @ModelAttribute PagingAndSortingParams paging) {
     Pageable pageable = buildPageable(paging);
-    Page<JobPostingModel> jobPostingPage = jobPostingService.getAllJobPostings(pageable).join();
+    Page<JobPostingModel> jobPostingPage =
+        jobPostingService.getAllJobPostings(pageable, filter).join();
     JobPostingResult jobPostingResult = new JobPostingResult(jobPostingPage);
     return new ResponseModel<>(jobPostingResult);
   }
