@@ -84,6 +84,21 @@ public class DefaultJobPostingService {
   }
 
   @Transactional
+  public CompletableFuture<Page<JobPostingModel>> getEmployerJobPostings(
+      User user, Pageable pageable) {
+
+    return supplyAsync(
+        () -> {
+          EmployerProfile employerProfile =
+              getEmployerByUsername(
+                  employerProfileRepository, exceptionService, user.getUsername());
+          return jobPostingRepository
+              .findByEmployer(employerProfile, pageable)
+              .map(JobPosting::toModel);
+        });
+  }
+
+  @Transactional
   public CompletableFuture<JobPostingModel> getJobPostingById(String jobPostingId) {
     return supplyAsync(() -> getJobPosting(jobPostingId).toModel());
   }

@@ -62,6 +62,25 @@ public class JobPostingController {
     return new ResponseModel<>(jobPostingResult);
   }
 
+  @GetMapping
+  @Operation(description = "Get all employer job postings")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = JobPostingResult.class,
+        responseContainer = "page")
+  })
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
+  public ResponseModel<JobPostingResult> getAllEmployerJobPostings(
+      @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
+    Pageable pageable = buildPageable(paging);
+    Page<JobPostingModel> jobPostingPage =
+        jobPostingService.getEmployerJobPostings(user, pageable).join();
+    JobPostingResult jobPostingResult = new JobPostingResult(jobPostingPage);
+    return new ResponseModel<>(jobPostingResult);
+  }
+
   @GetMapping(value = "/{id}")
   @Operation(description = "Get single job posting")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = JobPostingModel.class)})
