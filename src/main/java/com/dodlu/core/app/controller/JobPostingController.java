@@ -75,10 +75,12 @@ public class JobPostingController {
   })
   @PreAuthorize("hasAnyAuthority('EMPLOYER')")
   public ResponseModel<JobPostingResult> getAllEmployerJobPostings(
-      @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
+      @AuthenticationPrincipal User user,
+      @ModelAttribute PagingAndSortingParams paging,
+      @ModelAttribute JobPostingFilter filter) {
     Pageable pageable = buildPageable(paging);
     Page<JobPostingModel> jobPostingPage =
-        jobPostingService.getEmployerJobPostings(user, pageable).join();
+        jobPostingService.getEmployerJobPostings(user, pageable, filter).join();
     JobPostingResult jobPostingResult = new JobPostingResult(jobPostingPage);
     return new ResponseModel<>(jobPostingResult);
   }

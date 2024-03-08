@@ -93,7 +93,7 @@ public class DefaultJobPostingService {
 
   @Transactional
   public CompletableFuture<Page<JobPostingModel>> getEmployerJobPostings(
-      User user, Pageable pageable) {
+      User user, Pageable pageable, JobPostingFilter filter) {
 
     return supplyAsync(
         () -> {
@@ -101,7 +101,7 @@ public class DefaultJobPostingService {
               getEmployerByUsername(
                   employerProfileRepository, exceptionService, user.getUsername());
           return jobPostingRepository
-              .findByEmployer(employerProfile, pageable)
+              .findByEmployer(employerProfile, pageable, filter)
               .map(JobPosting::toModel);
         });
   }

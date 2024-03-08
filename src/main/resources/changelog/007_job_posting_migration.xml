@@ -162,7 +162,7 @@
         </preConditions>
 
         <addColumn tableName="job_postings">
-            <column name="industry" type="VARCHAR(150)" defaultValue="ENGINEERING" />
+            <column name="industry" type="VARCHAR(150)" defaultValue="Engineering" />
         </addColumn>
     </changeSet>
 

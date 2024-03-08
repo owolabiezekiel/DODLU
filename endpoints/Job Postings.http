@@ -19,7 +19,7 @@ Authorization: {{employer_token}}
 
 ### Get all Job Postings
 GET {{host}}/job-posting
-Authorization: {{token}}
+Authorization: {{employer_token}}
 
 ### Get Job Posting By Id
 GET {{host}}/job-posting/073332ca-2549-459e-b37e-309df367bb5f
