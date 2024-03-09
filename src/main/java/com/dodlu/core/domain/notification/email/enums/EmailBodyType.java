@@ -1,7 +1,9 @@
-package com.dodlu.core.domain.email.enums;
+package com.dodlu.core.domain.notification.email.enums;
 
 import java.util.stream.Stream;
+import lombok.Getter;
 
+@Getter
 public enum EmailBodyType {
   HTML("text/html"),
   TEXT("text/plain");
@@ -10,10 +12,6 @@ public enum EmailBodyType {
 
   EmailBodyType(String contentType) {
     this.contentType = contentType;
-  }
-
-  public String getContentType() {
-    return this.contentType;
   }
 
   public static EmailBodyType create(String value) {

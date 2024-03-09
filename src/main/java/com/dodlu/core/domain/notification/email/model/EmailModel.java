@@ -1,6 +1,6 @@
-package com.dodlu.core.domain.email.model;
+package com.dodlu.core.domain.notification.email.model;
 
-import com.dodlu.core.domain.email.enums.EmailBodyType;
+import com.dodlu.core.domain.notification.email.enums.EmailBodyType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.Map;

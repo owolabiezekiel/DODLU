@@ -1,12 +1,12 @@
-package com.dodlu.core.domain.email.service.concretes;
+package com.dodlu.core.domain.notification.email.service.concretes;
 
 import static com.dodlu.core.app.utils.Constants.DEFAULT_EMAIL_SENDER_NAME;
 import static com.dodlu.core.app.utils.StringUtilities.emptyIfNullStream;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
-import com.dodlu.core.domain.email.model.EmailModel;
-import com.dodlu.core.domain.email.service.abstracts.EmailService;
+import com.dodlu.core.domain.notification.email.model.EmailModel;
+import com.dodlu.core.domain.notification.email.service.abstracts.EmailService;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;

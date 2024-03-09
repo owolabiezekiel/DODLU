@@ -1,6 +1,7 @@
 package com.dodlu.core.domain.utils;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
+import com.dodlu.core.domain.user.model.UserType;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.UserRepository;
 import java.util.function.Supplier;
@@ -31,6 +32,21 @@ public class UserUtils {
       UserRepository userRepository, CoreExceptionService exceptionService, String email) {
     if (userRepository.existsByEmailEqualsIgnoreCase(email.strip())) {
       throw exceptionService.handleCreateBadRequest("A user with this email already exists");
+    }
+  }
+
+  public static String mapUserTypeToString(UserType userType) {
+    switch (userType) {
+      case STUDENT -> {
+        return "student";
+      }
+      case SUPERVISOR -> {
+        return "supervisor";
+      }
+      case COORDINATOR -> {
+        return "coordinator";
+      }
+      default -> throw new CoreExceptionService().handleCreateBadRequest("Unknown user type");
     }
   }
 }

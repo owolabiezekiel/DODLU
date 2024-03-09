@@ -89,6 +89,8 @@ cloud:
     bucket-name: ${S3_BUCKET_NAME:gameporte-test}
 
 email:
+  templates:
+    new-account-email-template: ${NEW_ACCOUNT_EMAIL_TEMPLATE:d-98aa1a25725a4b0980c11df10c325d4b}
   provider:
     name: ${EMAIL_PROVIDER:send-grid}
     sendgrid:

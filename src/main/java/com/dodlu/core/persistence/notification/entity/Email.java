@@ -1,6 +1,9 @@
-package com.dodlu.core.persistence.email.entity;
+package com.dodlu.core.persistence.notification.entity;
 
-import com.dodlu.core.domain.email.enums.EmailBodyType;
+import static com.dodlu.core.app.utils.StringUtilities.toStringFromSet;
+
+import com.dodlu.core.domain.notification.email.enums.EmailBodyType;
+import com.dodlu.core.domain.notification.email.model.EmailModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -36,4 +39,20 @@ public class Email extends BaseEntity {
   private LocalDateTime scheduledDate;
   private LocalDateTime sentTime;
   private boolean sent;
+
+  public Email toEntity(EmailModel model) {
+    return Email.builder()
+        .sender(model.getSender())
+        .body(model.getBody())
+        .subject(model.getSubject())
+        .bodyType(model.getBodyType())
+        .attachments(toStringFromSet(model.getAttachments()))
+        .recipients(toStringFromSet(model.getRecipients()))
+        .cc(toStringFromSet(model.getCc()))
+        .bcc(toStringFromSet(model.getBcc()))
+        .scheduledDate(model.getScheduledDate())
+        .sentTime(model.getSentTime())
+        .sent(model.isSent())
+        .build();
+  }
 }
