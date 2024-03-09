@@ -86,4 +86,13 @@ public class UserController {
     UserProfile userProfile = userService.updateDisplayPicture(user, file).join();
     return new ResponseModel<>(userProfile);
   }
+
+  @GetMapping(value = "/profile")
+  @Operation(description = "Get logged in user profile")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserProfile.class)})
+  public ResponseModel<? extends UserProfile> getCurrentUserProfile(
+      @AuthenticationPrincipal User user) {
+    UserProfile userProfile = userService.getCurrentUserProfile(user).join();
+    return new ResponseModel<>(userProfile);
+  }
 }

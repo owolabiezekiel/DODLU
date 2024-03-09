@@ -15,6 +15,7 @@ import static com.dodlu.core.domain.utils.DepartmentUtils.getDepartmentById;
 import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUsername;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
 import static com.dodlu.core.domain.utils.StudentProfileUtils.getStudentProfileByUsername;
+import static com.dodlu.core.domain.utils.SupervisorProfileUtils.getSupervisorProfileByUsername;
 import static com.dodlu.core.domain.utils.UserUtils.checkForDuplicateEmail;
 import static com.dodlu.core.domain.utils.UserUtils.getUser;
 import static java.lang.String.format;
@@ -287,7 +288,7 @@ public class DefaultUserService {
               }
             }
 
-            if (errorMessages.size() > 0) {
+            if (!errorMessages.isEmpty()) {
               throw exceptionService.handleCreateException(
                   "Found some errors", CREATED, errorMessages);
             }
@@ -314,6 +315,32 @@ public class DefaultUserService {
                   getEmployerByUsername(
                       employerProfileRepository, exceptionService, user.getUsername());
               return updateProfileImage(employerProfile, employerProfileRepository, file);
+            }
+            default -> throw exceptionService.handleCreateBadRequest("Unknown user type");
+          }
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<? extends UserProfile> getCurrentUserProfile(User user) {
+    return supplyAsync(
+        () -> {
+          switch (user.getType()) {
+            case STUDENT -> {
+              return getStudentProfileByUsername(
+                  studentProfileRepository, exceptionService, user.getUsername());
+            }
+            case EMPLOYER -> {
+              return getEmployerByUsername(
+                  employerProfileRepository, exceptionService, user.getUsername());
+            }
+            case SUPERVISOR -> {
+              return getSupervisorProfileByUsername(
+                  supervisorProfileRepository, exceptionService, user.getUsername());
+            }
+            case COORDINATOR -> {
+              return getCoordinatorByUsername(
+                  coordinatorProfileRepository, exceptionService, user.getUsername());
             }
             default -> throw exceptionService.handleCreateBadRequest("Unknown user type");
           }
