@@ -8,6 +8,7 @@ import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
+import com.dodlu.core.domain.user.model.GeneralProfileModel;
 import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.user.model.SupervisorProfileModel;
 import com.dodlu.core.domain.user.service.concretes.DefaultUserService;
@@ -90,9 +91,9 @@ public class UserController {
   @GetMapping(value = "/profile")
   @Operation(description = "Get logged in user profile")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserProfile.class)})
-  public ResponseModel<? extends UserProfile> getCurrentUserProfile(
+  public ResponseModel<GeneralProfileModel> getCurrentUserProfile(
       @AuthenticationPrincipal User user) {
-    UserProfile userProfile = userService.getCurrentUserProfile(user).join();
+    GeneralProfileModel userProfile = userService.getCurrentUserProfile(user).join();
     return new ResponseModel<>(userProfile);
   }
 }

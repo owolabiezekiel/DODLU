@@ -2,6 +2,7 @@ package com.dodlu.core.persistence.user.entity;
 
 import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
+import com.dodlu.core.domain.user.model.GeneralProfileModel;
 import com.dodlu.core.persistence.base.UserProfile;
 import com.dodlu.core.persistence.department.entity.Department;
 import jakarta.persistence.*;
@@ -49,6 +50,21 @@ public class CoordinatorProfile extends UserProfile {
 
   public CoordinatorProfileModel toModel() {
     return CoordinatorProfileModel.builder()
+        .id(id)
+        .email(getEmail())
+        .username(getUsername())
+        .phoneNumber(getPhoneNumber())
+        .firstName(getFirstName())
+        .lastName(getLastName())
+        .gender(gender)
+        .profileImageUrl(getProfileImageUrl())
+        .title(title)
+        .department(department.toModel())
+        .build();
+  }
+
+  public GeneralProfileModel toGeneralProfileModel() {
+    return GeneralProfileModel.builder()
         .id(id)
         .email(getEmail())
         .username(getUsername())

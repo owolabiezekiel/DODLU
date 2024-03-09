@@ -34,6 +34,7 @@ import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Level;
 import com.dodlu.core.domain.user.enums.Programme;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
+import com.dodlu.core.domain.user.model.GeneralProfileModel;
 import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.domain.user.model.SupervisorProfileModel;
 import com.dodlu.core.persistence.base.UserProfile;
@@ -320,25 +321,29 @@ public class DefaultUserService {
   }
 
   @Transactional
-  public CompletableFuture<? extends UserProfile> getCurrentUserProfile(User user) {
+  public CompletableFuture<GeneralProfileModel> getCurrentUserProfile(User user) {
     return supplyAsync(
         () -> {
           switch (user.getType()) {
             case STUDENT -> {
               return getStudentProfileByUsername(
-                  studentProfileRepository, exceptionService, user.getUsername());
+                      studentProfileRepository, exceptionService, user.getUsername())
+                  .toGeneralProfileModel();
             }
             case EMPLOYER -> {
               return getEmployerByUsername(
-                  employerProfileRepository, exceptionService, user.getUsername());
+                      employerProfileRepository, exceptionService, user.getUsername())
+                  .toGeneralProfileModel();
             }
             case SUPERVISOR -> {
               return getSupervisorProfileByUsername(
-                  supervisorProfileRepository, exceptionService, user.getUsername());
+                      supervisorProfileRepository, exceptionService, user.getUsername())
+                  .toGeneralProfileModel();
             }
             case COORDINATOR -> {
               return getCoordinatorByUsername(
-                  coordinatorProfileRepository, exceptionService, user.getUsername());
+                      coordinatorProfileRepository, exceptionService, user.getUsername())
+                  .toGeneralProfileModel();
             }
             default -> throw exceptionService.handleCreateBadRequest("Unknown user type");
           }

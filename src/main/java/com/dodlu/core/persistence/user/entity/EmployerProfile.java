@@ -1,6 +1,7 @@
 package com.dodlu.core.persistence.user.entity;
 
 import com.dodlu.core.domain.user.model.EmployerProfileModel;
+import com.dodlu.core.domain.user.model.GeneralProfileModel;
 import com.dodlu.core.persistence.base.UserProfile;
 import com.dodlu.core.persistence.company.entity.Company;
 import jakarta.persistence.*;
@@ -43,6 +44,19 @@ public class EmployerProfile extends UserProfile {
 
   public EmployerProfileModel toModel() {
     return EmployerProfileModel.builder()
+        .id(id)
+        .email(getEmail())
+        .username(getUsername())
+        .phoneNumber(getPhoneNumber())
+        .firstName(getFirstName())
+        .lastName(getLastName())
+        .profileImageUrl(getProfileImageUrl())
+        .company(company.toModel())
+        .build();
+  }
+
+  public GeneralProfileModel toGeneralProfileModel() {
+    return GeneralProfileModel.builder()
         .id(id)
         .email(getEmail())
         .username(getUsername())

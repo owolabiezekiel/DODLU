@@ -70,4 +70,20 @@ public class StudentProfile extends UserProfile {
         .department(department.toModel())
         .build();
   }
+
+  public GeneralProfileModel toGeneralProfileModel() {
+    return GeneralProfileModel.builder()
+        .id(id)
+        .email(getEmail())
+        .username(getUsername())
+        .phoneNumber(getPhoneNumber())
+        .firstName(getFirstName())
+        .lastName(getLastName())
+        .gender(gender)
+        .profileImageUrl(getProfileImageUrl())
+        .programme(programme)
+        .level(level)
+        .department(department.toModel())
+        .build();
+  }
 }
