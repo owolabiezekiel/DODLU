@@ -61,3 +61,7 @@ Content-Disposition: form-data; name="file"; filename="th1.jpeg"
 ### Get Logged in UserProfile
 GET {{host}}/user/profile
 Authorization: {{student_token}}
+
+### Get Logged in UserProfile
+GET {{host}}/user/sample-email
+Authorization: {{student_token}}

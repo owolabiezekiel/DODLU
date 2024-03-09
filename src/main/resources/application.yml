@@ -2,6 +2,11 @@ server:
   port: ${SERVER_PORT:9001}
 
 spring:
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: 03f9dfcb82e813
+    password: 6fdf17306be0d5
   mvc:
     format:
       date: yyyy-MM-dd
@@ -17,7 +22,6 @@ spring:
     host: ${RDS_HOSTNAME:localhost}
     port: ${RDS_PORT:5432}
     db-name: ${RDS_DB_NAME:dodlu_db}
-
 
   jpa:
     show-sql: true
@@ -36,6 +40,8 @@ spring:
     multipart:
       max-file-size: ${MAX_UPLOAD_SIZE:10MB}
       max-request-size: ${MAX_REQUEST_SIZE:10MB}
+
+
 management:
   auditevents:
     enabled: true
@@ -96,6 +102,14 @@ email:
     sendgrid:
       api-key: ${SENDGRID_API_KEY:some-api-key}
       base-url: ${SENDGRID_BASE_URL:some-base-url}
+    mailtrap:
+      host: ${MAILTRAP_HOST:smtp.mailtrap.io}
+      port: ${MAILTRAP_PORT:2525}
+      username: ${MAILTRAP_USERNAME:03f9dfcb82e813}
+      password: ${MAILTRAP_PASSWORD:6fdf17306be0d5}
+      template-path: ${MAILTRAP_TEMPLATE_PATH:classpath:/templates}
+      ssl: no
+      tls: yes
 
 dodlu:
   secrets:

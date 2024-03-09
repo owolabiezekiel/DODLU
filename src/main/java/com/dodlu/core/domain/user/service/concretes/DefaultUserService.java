@@ -16,8 +16,7 @@ import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUser
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
 import static com.dodlu.core.domain.utils.StudentProfileUtils.getStudentProfileByUsername;
 import static com.dodlu.core.domain.utils.SupervisorProfileUtils.getSupervisorProfileByUsername;
-import static com.dodlu.core.domain.utils.UserUtils.checkForDuplicateEmail;
-import static com.dodlu.core.domain.utils.UserUtils.getUser;
+import static com.dodlu.core.domain.utils.UserUtils.*;
 import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -30,6 +29,7 @@ import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
 import com.dodlu.core.domain.file.service.abstracts.StorageService;
+import com.dodlu.core.domain.notification.email.service.concretes.JmsEmailService;
 import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Level;
 import com.dodlu.core.domain.user.enums.Programme;
@@ -46,9 +46,7 @@ import com.dodlu.core.persistence.user.entity.*;
 import com.dodlu.core.persistence.user.repository.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +74,7 @@ public class DefaultUserService {
   private final EmployerProfileRepository employerProfileRepository;
   private final LogbookRepository logbookRepository;
   private final StorageService storageService;
+  private final JmsEmailService emailService;
   private final CoreExceptionService exceptionService;
 
   @Transactional
@@ -347,6 +346,19 @@ public class DefaultUserService {
             }
             default -> throw exceptionService.handleCreateBadRequest("Unknown user type");
           }
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Void> sendSampleEmail() {
+    return runAsync(
+        () -> {
+          Map<String, Object> emailData = new HashMap<>();
+          emailData.put("username", "Samps");
+          emailData.put("password", "Samps2.0");
+          emailData.put("userType", mapUserTypeToString(STUDENT));
+
+          emailService.sendNewAccountEmail(emailData);
         });
   }
 

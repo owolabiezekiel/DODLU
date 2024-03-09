@@ -90,10 +90,20 @@ public class UserController {
 
   @GetMapping(value = "/profile")
   @Operation(description = "Get logged in user profile")
-  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserProfile.class)})
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = GeneralProfileModel.class)
+  })
   public ResponseModel<GeneralProfileModel> getCurrentUserProfile(
       @AuthenticationPrincipal User user) {
     GeneralProfileModel userProfile = userService.getCurrentUserProfile(user).join();
     return new ResponseModel<>(userProfile);
+  }
+
+  @GetMapping(value = "/sample-email")
+  @Operation(description = "Get logged in user profile")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> sendSampleEmail(@AuthenticationPrincipal User user) {
+    userService.sendSampleEmail();
+    return new ResponseModel<>(null);
   }
 }
