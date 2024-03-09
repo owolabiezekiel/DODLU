@@ -56,3 +56,8 @@ Content-Disposition: form-data; name="file"; filename="th1.jpeg"
 
 < /Users/tobilobaowolabi/Documents/pictures/th1.jpeg
 --WebAppBoundary
+
+
+### Get Logged in UserProfile
+GET {{host}}/user/profile
+Authorization: {{student_token}}

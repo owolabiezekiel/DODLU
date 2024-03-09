@@ -1,7 +1,6 @@
 package com.dodlu.core.domain.user.model;
 
 import com.dodlu.core.domain.department.model.DepartmentModel;
-import com.dodlu.core.domain.faculty.model.FacultyModel;
 import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Level;
 import com.dodlu.core.domain.user.enums.Programme;
@@ -28,9 +27,6 @@ public class StudentProfileModel {
   private String profileImageUrl;
   private Programme programme;
   private Level level;
-
-  @JsonIncludeProperties({"name", "id"})
-  private FacultyModel faculty;
 
   @JsonIncludeProperties({"name", "id"})
   private DepartmentModel department;

@@ -6,7 +6,6 @@ import com.dodlu.core.domain.user.enums.Programme;
 import com.dodlu.core.domain.user.model.*;
 import com.dodlu.core.persistence.base.UserProfile;
 import com.dodlu.core.persistence.department.entity.Department;
-import com.dodlu.core.persistence.faculty.entity.Faculty;
 import jakarta.persistence.*;
 import java.util.Objects;
 import lombok.Getter;
@@ -39,10 +38,6 @@ public class StudentProfile extends UserProfile {
   private Double cgpa;
 
   @ManyToOne
-  @JoinColumn(name = "faculty_id", referencedColumnName = "id")
-  private Faculty faculty;
-
-  @ManyToOne
   @JoinColumn(name = "department_id", referencedColumnName = "id")
   private Department department;
 
@@ -72,7 +67,6 @@ public class StudentProfile extends UserProfile {
         .profileImageUrl(getProfileImageUrl())
         .programme(programme)
         .level(level)
-        .faculty(faculty.toModel())
         .department(department.toModel())
         .build();
   }

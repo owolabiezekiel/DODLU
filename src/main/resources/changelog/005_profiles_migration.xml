@@ -188,4 +188,12 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="tobiowolabi" id="remove_faculty_from_student_profile">
+        <preConditions onFail="MARK_RAN">
+                <columnExists tableName="student_profiles" columnName="faculty_id"/>
+        </preConditions>
+
+        <dropColumn tableName="student_profiles" columnName="faculty_id"/>
+    </changeSet>
+
 </databaseChangeLog>

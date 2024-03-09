@@ -183,7 +183,6 @@ public class DefaultUserService {
                   .programme(request.getProgramme())
                   .level(request.getLevel())
                   .department(coordinator.getDepartment())
-                  .faculty(coordinator.getDepartment().getFaculty())
                   .build();
           log.info(
               "Will send email. Dear {} {} a student account has been created for you with username {} and password {}",
@@ -273,7 +272,6 @@ public class DefaultUserService {
                         .programme(getProgrammeFromString(programme))
                         .level(getLevelFromNumber(level))
                         .department(coordinator.getDepartment())
-                        .faculty(coordinator.getDepartment().getFaculty())
                         .build();
                 log.info(
                     "Will send email. Dear {} {} a student account has been created for you with username {} and password {}",

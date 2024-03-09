@@ -1,5 +1,6 @@
 package com.dodlu.core.persistence.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -24,10 +25,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class BaseEntity implements Serializable {
   @Id @UuidGenerator() protected String id;
 
-  @CreationTimestamp LocalDateTime createdAt;
-  @UpdateTimestamp LocalDateTime updatedAt;
-  @CreatedBy String createdBy;
-  @LastModifiedBy String UpdatedBy;
+  @JsonIgnore @CreationTimestamp LocalDateTime createdAt;
+  @JsonIgnore @UpdateTimestamp LocalDateTime updatedAt;
+  @JsonIgnore @CreatedBy String createdBy;
+  @JsonIgnore @LastModifiedBy String UpdatedBy;
   protected boolean isDeleted;
 
   @Override

@@ -9,6 +9,7 @@ import com.dodlu.core.domain.user.model.RoleModel;
 import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.domain.user.model.UserType;
 import com.dodlu.core.persistence.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -54,7 +55,7 @@ public class User extends BaseEntity implements UserDetails {
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   private Set<Role> roles;
 
-  @ToString.Exclude private String password;
+  @JsonIgnore @ToString.Exclude private String password;
   private LocalDateTime lastLoginDate;
 
   @Transient private List<GrantedAuthority> authorities;
