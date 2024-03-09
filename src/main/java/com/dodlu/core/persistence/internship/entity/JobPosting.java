@@ -93,6 +93,9 @@ public class JobPosting extends BaseEntity {
         .monthlyRemuneration(monthlyRemuneration)
         .eligibleDepartments(eligibleDepartments)
         .location(location)
+        .state(state)
+        .country(country)
+        .address(address)
         .employer(employer.toModel())
         .build();
   }
