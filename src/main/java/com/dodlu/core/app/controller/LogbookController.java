@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,7 @@ public class LogbookController {
   @GetMapping()
   @Operation(description = "Get student logbook")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = LogbookModel.class)})
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
   public ResponseModel<LogbookModel> getLogbook(@AuthenticationPrincipal User user) {
     LogbookModel logbookModel = logbookService.getLogbook(user).join();
     return new ResponseModel<>(logbookModel);
@@ -47,6 +49,7 @@ public class LogbookController {
         response = LogbookEntryResult.class,
         responseContainer = "page")
   })
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
   public ResponseModel<LogbookEntryResult> getLogbookEntries(
       @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
     Pageable pageable = buildPageable(paging);
@@ -59,6 +62,7 @@ public class LogbookController {
   @PostMapping(value = "/entries", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Fill logbook for today")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = LogbookEntryModel.class)})
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
   public ResponseModel<LogbookEntryModel> insertLogbookEntry(
       @AuthenticationPrincipal User user, @Valid @RequestBody InsertLogbookEntryRequest request) {
     LogbookEntryModel entry = logbookService.insertLogbookEntry(user, request).join();

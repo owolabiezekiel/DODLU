@@ -341,8 +341,9 @@ public class DefaultUserService {
   @Transactional
   public CompletableFuture<Void> sendSampleEmail() {
     return runAsync(
-        () -> emailService.sendNewAccountEmail(
-            "owo.ezekiel@gmail.com", "some-pass", "some-username", STUDENT));
+        () ->
+            emailService.sendNewAccountEmail(
+                "owo.ezekiel@gmail.com", "some-pass", "some-username", STUDENT));
   }
 
   private User buildUser(String username, String email, String password, Role role) {
