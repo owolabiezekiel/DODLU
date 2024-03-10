@@ -40,10 +40,10 @@ public class Email extends BaseEntity {
   private LocalDateTime sentTime;
   private boolean sent;
 
-  public Email toEntity(EmailModel model) {
+  public static Email toEntity(EmailModel model) {
     return Email.builder()
         .sender(model.getSender())
-        .body(model.getBody())
+        .body(model.getTemplateId())
         .subject(model.getSubject())
         .bodyType(model.getBodyType())
         .attachments(toStringFromSet(model.getAttachments()))

@@ -1,7 +1,6 @@
 package com.dodlu.core.app.configuration;
 
 import lombok.Data;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +9,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 
-@ConditionalOnProperty(prefix = "email.provider", name = "name", havingValue = "mail-trap")
 @Configuration
 @ConfigurationProperties(prefix = "email.provider.mailtrap")
 @Data

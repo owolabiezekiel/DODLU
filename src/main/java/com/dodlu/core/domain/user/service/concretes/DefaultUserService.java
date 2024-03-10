@@ -105,13 +105,11 @@ public class DefaultUserService {
                   .title(request.getTitle())
                   .employer(employer)
                   .build();
-          log.info(
-              "Will send email. Dear {} {} a supervisor account has been created for you with username {} and password {}",
-              supervisorProfile.getFirstName(),
-              supervisorProfile.getLastName(),
-              supervisorProfile.getUsername(),
-              plainPassword);
-          return supervisorProfileRepository.save(supervisorProfile).toModel();
+
+          supervisorProfile = supervisorProfileRepository.save(supervisorProfile);
+          emailService.sendNewAccountEmail(
+              supervisor.getEmail(), plainPassword, supervisor.getUsername(), SUPERVISOR);
+          return supervisorProfile.toModel();
         });
   }
 
@@ -145,13 +143,11 @@ public class DefaultUserService {
                   .title(request.getTitle())
                   .department(department)
                   .build();
-          log.info(
-              "Will send email. Dear {} {} a coordinator account has been created for you with username {} and password {}",
-              coordinatorProfile.getFirstName(),
-              coordinatorProfile.getLastName(),
-              coordinatorProfile.getUsername(),
-              plainPassword);
-          return coordinatorProfileRepository.save(coordinatorProfile).toModel();
+
+          coordinatorProfile = coordinatorProfileRepository.save(coordinatorProfile);
+          emailService.sendNewAccountEmail(
+              coordinator.getEmail(), plainPassword, coordinator.getUsername(), COORDINATOR);
+          return coordinatorProfile.toModel();
         });
   }
 
@@ -184,17 +180,14 @@ public class DefaultUserService {
                   .level(request.getLevel())
                   .department(coordinator.getDepartment())
                   .build();
-          log.info(
-              "Will send email. Dear {} {} a student account has been created for you with username {} and password {}",
-              studentProfile.getFirstName(),
-              studentProfile.getLastName(),
-              studentProfile.getUsername(),
-              plainPassword);
+
           studentProfile = studentProfileRepository.save(studentProfile);
 
           Logbook logbook = buildLogbook(studentProfile);
           logbookRepository.save(logbook);
 
+          emailService.sendNewAccountEmail(
+              student.getEmail(), plainPassword, student.getUsername(), STUDENT);
           return studentProfile.toModel();
         });
   }
@@ -273,16 +266,12 @@ public class DefaultUserService {
                         .level(getLevelFromNumber(level))
                         .department(coordinator.getDepartment())
                         .build();
-                log.info(
-                    "Will send email. Dear {} {} a student account has been created for you with username {} and password {}",
-                    studentProfile.getFirstName(),
-                    studentProfile.getLastName(),
-                    studentProfile.getUsername(),
-                    plainPassword);
                 studentProfile = studentProfileRepository.save(studentProfile);
 
                 Logbook logbook = buildLogbook(studentProfile);
                 logbookRepository.save(logbook);
+                emailService.sendNewAccountEmail(
+                    student.getEmail(), plainPassword, student.getUsername(), STUDENT);
               }
             }
 
@@ -352,14 +341,8 @@ public class DefaultUserService {
   @Transactional
   public CompletableFuture<Void> sendSampleEmail() {
     return runAsync(
-        () -> {
-          Map<String, Object> emailData = new HashMap<>();
-          emailData.put("username", "Samps");
-          emailData.put("password", "Samps2.0");
-          emailData.put("userType", mapUserTypeToString(STUDENT));
-
-          emailService.sendNewAccountEmail(emailData);
-        });
+        () -> emailService.sendNewAccountEmail(
+            "owo.ezekiel@gmail.com", "some-pass", "some-username", STUDENT));
   }
 
   private User buildUser(String username, String email, String password, Role role) {

@@ -1,13 +1,20 @@
 package com.dodlu.core.domain.notification.email.service.concretes;
 
-import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static com.dodlu.core.domain.utils.UserUtils.mapUserTypeToString;
+import static java.util.concurrent.CompletableFuture.runAsync;
 
+import com.dodlu.core.domain.notification.email.enums.EmailBodyType;
 import com.dodlu.core.domain.notification.email.model.EmailModel;
+import com.dodlu.core.domain.user.model.UserType;
+import com.dodlu.core.persistence.notification.entity.Email;
+import com.dodlu.core.persistence.notification.repository.EmailRepository;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.io.File;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -25,30 +32,64 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 public class JmsEmailService {
   private final Configuration freemarkerConfig;
   private final JavaMailSender mailSender;
+  private final EmailRepository emailRepository;
+  private final String senderEmail = "welcome@itrams.com";
 
-  public CompletableFuture<EmailModel> sendNewAccountEmail(Map<String, Object> emailData) {
+  public CompletableFuture<Void> send(EmailModel emailModel) {
     log.info("using java message sender to send email");
-    return supplyAsync(
+    Map<String, Object> emailData = emailModel.getTemplateData();
+    return runAsync(
         () -> {
           MimeMessage mimeMessage = mailSender.createMimeMessage();
           try {
-            Template t = freemarkerConfig.getTemplate("new-account.ftl");
+            Template t = freemarkerConfig.getTemplate(emailModel.getTemplateId());
             String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, emailData);
 
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-            mimeMessageHelper.setFrom("business.tobiloba@gmail.com");
-            mimeMessageHelper.setTo("owo.ezekiel@gmail.com");
-            mimeMessageHelper.setSubject("Welcome on board");
+            mimeMessageHelper.setFrom(senderEmail);
+            mimeMessageHelper.setTo(emailModel.getRecipients().toArray(new String[0]));
+            mimeMessageHelper.setSubject(emailModel.getSubject());
             mimeMessageHelper.setText(html, true);
 
-            refineCheck(mimeMessageHelper, null, null, null);
+            refineCheck(
+                mimeMessageHelper,
+                emailModel.getCc(),
+                emailModel.getBcc(),
+                emailModel.getAttachments());
+
+            Email email = Email.toEntity(emailModel);
+            email.setSender(senderEmail);
+            email.setSentTime(LocalDateTime.now());
+            email.setBodyType(EmailBodyType.HTML);
+            email = emailRepository.save(email);
 
             mailSender.send(mimeMessage);
+            log.info("Finished sending email, now setting saved to true");
+            email.setSent(true);
+            emailRepository.save(email);
           } catch (Exception e) {
             log.error(e.getMessage());
           }
-          return null;
         });
+  }
+
+  public void sendNewAccountEmail(
+      String email, String password, String username, UserType userType) {
+    log.info("Sending new account for type: {}", mapUserTypeToString(userType));
+    Map<String, Object> emailData = new HashMap<>();
+    emailData.put("username", username);
+    emailData.put("password", password);
+    emailData.put("userType", mapUserTypeToString(userType));
+
+    EmailModel emailModel =
+        EmailModel.builder()
+            .templateData(emailData)
+            .templateId("new-account.ftl")
+            .recipients(Set.of(email))
+            .subject("Welcome on board")
+            .build();
+
+    send(emailModel);
   }
 
   public void refineCheck(

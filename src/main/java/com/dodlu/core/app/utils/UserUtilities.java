@@ -1,29 +1,21 @@
 package com.dodlu.core.app.utils;
 
-import java.security.MessageDigest;
 import java.util.Random;
-import javax.xml.bind.DatatypeConverter;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class UserUtilities {
-  private static final Long MIN_NUMBER = 40L;
-  private static final Long MAX_NUMBER = 100L;
+  private static final Long MIN_NUMBER = 10L;
+  private static final Long MAX_NUMBER = 1000L;
   private static final String CHARACTERS =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   private static final int DEFAULT_PASSWORD_LENGTH = 30;
 
   @SneakyThrows
   public static String generateUsername(String email) {
-    var messageDigest = MessageDigest.getInstance("MD5");
-
-    messageDigest.update(email.getBytes());
-    byte[] digest = messageDigest.digest();
-
-    String emailHash = DatatypeConverter.printHexBinary(digest).toLowerCase();
-
-    return emailHash.substring(0, 7).strip() + randomDigit();
+    String firstPart = email.split("@")[0];
+    return firstPart + randomDigit();
   }
 
   private static Long randomDigit() {
