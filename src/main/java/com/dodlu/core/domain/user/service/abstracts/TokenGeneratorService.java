@@ -4,4 +4,5 @@ import java.util.function.Consumer;
 
 public interface TokenGeneratorService {
     String generateToken(String username, Consumer<String> deleteTokenIfExists);
+    void cleanUpToken();
 }

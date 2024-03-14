@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -32,6 +33,13 @@ public class DefaultTokenGeneratorService implements TokenGeneratorService {
         validateUserExists(username);
         deleteTokenIfExists.accept(username);
         return generateToken();
+    }
+
+    @Override
+    public void cleanUpToken() {
+        Instant now = Instant.now();
+        var expiredTokens = tokenRepository.findAllByTimeToLiveIsBefore(now).get();
+        tokenRepository.deleteAll(expiredTokens);
     }
 
     private String generateToken(){
