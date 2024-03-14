@@ -1,0 +1,30 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet author="tobiowolabi" id="student_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="student_documents"/>
+            </not>
+        </preConditions>
+        <createTable tableName="student_documents">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="student_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resume_url" type="TEXT"/>
+            <column name="cover_letter_url" type="TEXT"/>
+            <column name="transcript_url" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+
+
+
+</databaseChangeLog>

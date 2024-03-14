@@ -65,3 +65,7 @@ Authorization: {{employer_token}}
 ### Send sample email
 GET {{host}}/user/sample-email
 Authorization: {{student_token}}
+
+### Student get Documents
+GET {{host}}/user/student/documents
+Authorization: {{student_token}}

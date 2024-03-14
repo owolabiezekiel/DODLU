@@ -7,6 +7,7 @@ import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
+import com.dodlu.core.domain.internship.model.StudentDocumentModel;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
 import com.dodlu.core.domain.user.model.GeneralProfileModel;
 import com.dodlu.core.domain.user.model.StudentProfileModel;
@@ -99,11 +100,21 @@ public class UserController {
     return new ResponseModel<>(userProfile);
   }
 
-  @GetMapping(value = "/sample-email")
-  @Operation(description = "Get logged in user profile")
+  //  @GetMapping(value = "/sample-email")
+  //  @Operation(description = "Get logged in user profile")
+  //  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  //  public ResponseModel<Void> sendSampleEmail(@AuthenticationPrincipal User user) {
+  //    userService.sendSampleEmail();
+  //    return new ResponseModel<>(null);
+  //  }
+
+  @GetMapping(value = "/student/documents")
+  @Operation(description = "Student get their list of uploaded documents")
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
-  public ResponseModel<Void> sendSampleEmail(@AuthenticationPrincipal User user) {
-    userService.sendSampleEmail();
-    return new ResponseModel<>(null);
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
+  public ResponseModel<StudentDocumentModel> getStudentDocuments(
+      @AuthenticationPrincipal User user) {
+    StudentDocumentModel documentModel = userService.getStudentDocuments(user).join();
+    return new ResponseModel<>(documentModel);
   }
 }

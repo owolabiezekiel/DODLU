@@ -29,6 +29,7 @@ import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
 import com.dodlu.core.domain.file.service.abstracts.StorageService;
+import com.dodlu.core.domain.internship.model.StudentDocumentModel;
 import com.dodlu.core.domain.notification.email.service.concretes.JmsEmailService;
 import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Level;
@@ -41,7 +42,9 @@ import com.dodlu.core.persistence.base.UserProfile;
 import com.dodlu.core.persistence.department.entity.Department;
 import com.dodlu.core.persistence.department.repository.DepartmentRepository;
 import com.dodlu.core.persistence.internship.entity.Logbook;
+import com.dodlu.core.persistence.internship.entity.StudentDocuments;
 import com.dodlu.core.persistence.internship.repository.LogbookRepository;
+import com.dodlu.core.persistence.internship.repository.StudentDocumentRepository;
 import com.dodlu.core.persistence.user.entity.*;
 import com.dodlu.core.persistence.user.repository.*;
 import java.io.IOException;
@@ -68,6 +71,7 @@ public class DefaultUserService {
   private final DepartmentRepository departmentRepository;
   private final SupervisorProfileRepository supervisorProfileRepository;
   private final CoordinatorProfileRepository coordinatorProfileRepository;
+  private final StudentDocumentRepository studentDocumentRepository;
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final RoleRepository roleRepository;
@@ -338,12 +342,30 @@ public class DefaultUserService {
         });
   }
 
+  //  @Transactional
+  //  public CompletableFuture<Void> sendSampleEmail() {
+  //    return runAsync(
+  //        () ->
+  //            emailService.sendNewAccountEmail(
+  //                "owo.ezekiel@gmail.com", "some-pass", "some-username", STUDENT));
+  //  }
+
   @Transactional
-  public CompletableFuture<Void> sendSampleEmail() {
-    return runAsync(
-        () ->
-            emailService.sendNewAccountEmail(
-                "owo.ezekiel@gmail.com", "some-pass", "some-username", STUDENT));
+  public CompletableFuture<StudentDocumentModel> getStudentDocuments(User user) {
+    return supplyAsync(
+        () -> {
+          StudentProfile studentProfile =
+              getStudentProfileByUsername(
+                  studentProfileRepository, exceptionService, user.getUsername());
+
+          StudentDocuments studentDocuments =
+              studentDocumentRepository.findByStudent(studentProfile).orElse(null);
+          if (studentDocuments == null) {
+            studentDocuments = StudentDocuments.builder().student(studentProfile).build();
+            studentDocuments = studentDocumentRepository.save(studentDocuments);
+          }
+          return studentDocuments.toModel();
+        });
   }
 
   private User buildUser(String username, String email, String password, Role role) {
