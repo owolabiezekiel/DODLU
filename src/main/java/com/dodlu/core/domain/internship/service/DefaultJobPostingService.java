@@ -209,21 +209,28 @@ public class DefaultJobPostingService {
           JobPostingApplication jobPostingApplication = getJobPostingApplication(jobApplicationId);
           JobPosting jobPosting = jobPostingApplication.getJobPosting();
 
-          if (!jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_EMPLOYER)) {
-            throw exceptionService.handleCreateBadRequest(
-                "Employer has not approved your application yet, please try later");
-          }
           if (!user.getUsername()
               .equalsIgnoreCase(jobPostingApplication.getApplicant().getUsername())) {
             throw exceptionService.handleCreateBadRequest("Unauthorized");
           }
-
-          jobPostingApplication.setStudentHasAccepted(true);
-          jobPostingApplication.setApplicationStatus(ACCEPTED_BY_STUDENT);
-
-          Placement placement = buildPlacement(jobPostingApplication, jobPosting);
-          placementRepository.save(placement);
-          return jobPostApplicationRepository.save(jobPostingApplication).toModel();
+          if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_EMPLOYER)) {
+            jobPostingApplication.setStudentHasAccepted(true);
+            jobPostingApplication.setApplicationStatus(ACCEPTED_BY_STUDENT);
+            Placement placement = buildPlacement(jobPostingApplication, jobPosting);
+            placementRepository.save(placement);
+            return jobPostApplicationRepository.save(jobPostingApplication).toModel();
+          } else if (jobPostingApplication.getApplicationStatus().equals(REJECTED_BY_EMPLOYER)) {
+            throw exceptionService.handleCreateBadRequest("Employer has rejected this application");
+          } else if (jobPostingApplication.getApplicationStatus().equals(REJECTED_BY_STUDENT)) {
+            throw exceptionService.handleCreateBadRequest(
+                "You have previously rejected this offer. You cannot accept anymore");
+          } else if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_STUDENT)) {
+            throw exceptionService.handleCreateBadRequest(
+                "You have previously accepted this offer");
+          } else {
+            throw exceptionService.handleCreateBadRequest(
+                "Employer has not approved your application yet, please try later");
+          }
         });
   }
 
@@ -233,19 +240,26 @@ public class DefaultJobPostingService {
     return supplyAsync(
         () -> {
           JobPostingApplication jobPostingApplication = getJobPostingApplication(jobApplicationId);
-
-          if (!jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_EMPLOYER)) {
-            throw exceptionService.handleCreateBadRequest(
-                "Employer has not approved your application yet, please try later");
-          }
           if (!user.getUsername()
               .equalsIgnoreCase(jobPostingApplication.getApplicant().getUsername())) {
             throw exceptionService.handleCreateBadRequest("Unauthorized");
           }
-
-          jobPostingApplication.setStudentHasAccepted(false);
-          jobPostingApplication.setApplicationStatus(REJECTED_BY_STUDENT);
-          return jobPostApplicationRepository.save(jobPostingApplication).toModel();
+          if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_EMPLOYER)) {
+            jobPostingApplication.setStudentHasAccepted(false);
+            jobPostingApplication.setApplicationStatus(REJECTED_BY_STUDENT);
+            return jobPostApplicationRepository.save(jobPostingApplication).toModel();
+          } else if (jobPostingApplication.getApplicationStatus().equals(REJECTED_BY_EMPLOYER)) {
+            throw exceptionService.handleCreateBadRequest("Employer has rejected this application");
+          } else if (jobPostingApplication.getApplicationStatus().equals(REJECTED_BY_STUDENT)) {
+            throw exceptionService.handleCreateBadRequest(
+                "You have previously rejected this offer");
+          } else if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_STUDENT)) {
+            throw exceptionService.handleCreateBadRequest(
+                "You have previously accepted this offer. You cannot reject anymore");
+          } else {
+            throw exceptionService.handleCreateBadRequest(
+                "Employer has not approved your application yet, please try later");
+          }
         });
   }
 

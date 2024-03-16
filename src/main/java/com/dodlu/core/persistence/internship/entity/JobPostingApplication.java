@@ -70,6 +70,7 @@ public class JobPostingApplication extends BaseEntity {
         .applicationStatus(applicationStatus)
         .updates(updates)
         .rejectReason(rejectReason)
+        .studentHasAccepted(studentHasAccepted)
         .build();
   }
 }
