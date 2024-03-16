@@ -1,8 +1,7 @@
 package com.dodlu.core.domain.internship.service;
 
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
-import static com.dodlu.core.domain.internship.enums.ApplicationStatus.ACCEPTED;
-import static com.dodlu.core.domain.internship.enums.ApplicationStatus.PENDING;
+import static com.dodlu.core.domain.internship.enums.ApplicationStatus.*;
 import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUsername;
 import static com.dodlu.core.domain.utils.JobPostingUtils.checkForDuplicateJobTitle;
 import static com.dodlu.core.domain.utils.StudentProfileUtils.getStudentProfileByUsername;
@@ -180,7 +179,7 @@ public class DefaultJobPostingService {
   }
 
   @Transactional
-  public CompletableFuture<JobPostingApplicationModel> approveJobPostingApplication(
+  public CompletableFuture<JobPostingApplicationModel> employerApproveJobPostingApplication(
       User user, String jobApplicationId) {
     return supplyAsync(
         () -> {
@@ -191,15 +190,61 @@ public class DefaultJobPostingService {
 
           doApproveJobValidations(jobPostingApplication, employerProfile);
 
-          JobPosting jobPosting = getJobPosting(jobPostingApplication.getJobPosting().getId());
+          JobPosting jobPosting = jobPostingApplication.getJobPosting();
           int numberOfOpenPositions = jobPosting.getNumberOfOpenPositions();
           jobPosting.setNumberOfOpenPositions(numberOfOpenPositions - 1);
-          jobPostingApplication.setApplicationStatus(ACCEPTED);
-
-          Placement placement = buildPlacement(jobPostingApplication, jobPosting);
+          jobPostingApplication.setApplicationStatus(ACCEPTED_BY_EMPLOYER);
+          jobPostingApplication.setStudentHasAccepted(false);
 
           jobPostingRepository.save(jobPosting);
+          return jobPostApplicationRepository.save(jobPostingApplication).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<JobPostingApplicationModel> studentAcceptJobPostingOffer(
+      User user, String jobApplicationId) {
+    return supplyAsync(
+        () -> {
+          JobPostingApplication jobPostingApplication = getJobPostingApplication(jobApplicationId);
+          JobPosting jobPosting = jobPostingApplication.getJobPosting();
+
+          if (!jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_EMPLOYER)) {
+            throw exceptionService.handleCreateBadRequest(
+                "Employer has not approved your application yet, please try later");
+          }
+          if (!user.getUsername()
+              .equalsIgnoreCase(jobPostingApplication.getApplicant().getUsername())) {
+            throw exceptionService.handleCreateBadRequest("Unauthorized");
+          }
+
+          jobPostingApplication.setStudentHasAccepted(true);
+          jobPostingApplication.setApplicationStatus(ACCEPTED_BY_STUDENT);
+
+          Placement placement = buildPlacement(jobPostingApplication, jobPosting);
           placementRepository.save(placement);
+          return jobPostApplicationRepository.save(jobPostingApplication).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<JobPostingApplicationModel> studentRejectJobPostingOffer(
+      User user, String jobApplicationId) {
+    return supplyAsync(
+        () -> {
+          JobPostingApplication jobPostingApplication = getJobPostingApplication(jobApplicationId);
+
+          if (!jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_EMPLOYER)) {
+            throw exceptionService.handleCreateBadRequest(
+                "Employer has not approved your application yet, please try later");
+          }
+          if (!user.getUsername()
+              .equalsIgnoreCase(jobPostingApplication.getApplicant().getUsername())) {
+            throw exceptionService.handleCreateBadRequest("Unauthorized");
+          }
+
+          jobPostingApplication.setStudentHasAccepted(false);
+          jobPostingApplication.setApplicationStatus(REJECTED_BY_STUDENT);
           return jobPostApplicationRepository.save(jobPostingApplication).toModel();
         });
   }
@@ -252,7 +297,7 @@ public class DefaultJobPostingService {
       throw exceptionService.handleCreateUnAuthorized(
           "Only the job poster can approve this application");
     }
-    if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED)) {
+    if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_EMPLOYER)) {
       throw (exceptionService.handleCreateBadRequest("Application has already been approved"));
     }
   }

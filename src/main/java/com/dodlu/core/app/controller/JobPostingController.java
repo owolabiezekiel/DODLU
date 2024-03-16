@@ -129,16 +129,42 @@ public class JobPostingController {
     return new ResponseModel<>(applicantsResult);
   }
 
-  @PostMapping(value = "/{applicationId}/approve")
+  @PostMapping(value = "/{applicationId}/employer_approve")
   @Operation(description = "Employer approve job posting application")
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = JobPostingApplicationModel.class)
   })
   @PreAuthorize("hasAnyAuthority('EMPLOYER')")
-  public ResponseModel<JobPostingApplicationModel> approveJobPostingApplication(
+  public ResponseModel<JobPostingApplicationModel> employerApproveJobPostingApplication(
       @AuthenticationPrincipal User user, @PathVariable("applicationId") String applicationId) {
     JobPostingApplicationModel jobPostingApplication =
-        jobPostingService.approveJobPostingApplication(user, applicationId).join();
+        jobPostingService.employerApproveJobPostingApplication(user, applicationId).join();
+    return new ResponseModel<>(jobPostingApplication);
+  }
+
+  @PostMapping(value = "/{applicationId}/student_accept")
+  @Operation(description = "Student accept job posting application offer")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = JobPostingApplicationModel.class)
+  })
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
+  public ResponseModel<JobPostingApplicationModel> studentAcceptJobPostingOffer(
+      @AuthenticationPrincipal User user, @PathVariable("applicationId") String applicationId) {
+    JobPostingApplicationModel jobPostingApplication =
+        jobPostingService.studentAcceptJobPostingOffer(user, applicationId).join();
+    return new ResponseModel<>(jobPostingApplication);
+  }
+
+  @PostMapping(value = "/{applicationId}/student_reject")
+  @Operation(description = "Student accept job posting application offer")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = JobPostingApplicationModel.class)
+  })
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
+  public ResponseModel<JobPostingApplicationModel> studentRejectJobPostingOffer(
+      @AuthenticationPrincipal User user, @PathVariable("applicationId") String applicationId) {
+    JobPostingApplicationModel jobPostingApplication =
+        jobPostingService.studentRejectJobPostingOffer(user, applicationId).join();
     return new ResponseModel<>(jobPostingApplication);
   }
 

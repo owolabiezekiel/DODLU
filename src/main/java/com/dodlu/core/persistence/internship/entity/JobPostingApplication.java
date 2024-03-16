@@ -42,6 +42,7 @@ public class JobPostingApplication extends BaseEntity {
 
   private String updates;
   private String rejectReason;
+  private boolean studentHasAccepted;
 
   @Override
   public boolean equals(Object o) {

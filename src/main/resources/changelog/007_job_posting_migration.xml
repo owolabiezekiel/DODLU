@@ -166,4 +166,16 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="tobiowolabi" id="add_has_student_accepted_to_job_posting_application">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="job_posting_applications" columnName="student_has_accepted"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="job_posting_applications">
+            <column name="student_has_accepted" type="BOOLEAN" defaultValue="false" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

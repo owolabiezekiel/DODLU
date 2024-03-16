@@ -24,4 +24,5 @@ public class JobPostingApplicationModel {
   private ApplicationStatus applicationStatus;
   private String updates;
   private String rejectReason;
+  private boolean studentHasAccepted;
 }

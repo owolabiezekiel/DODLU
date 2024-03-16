@@ -8,8 +8,10 @@ import java.util.stream.Stream;
 public enum ApplicationStatus {
   PENDING,
   REVIEW,
-  ACCEPTED,
-  REJECTED;
+  ACCEPTED_BY_EMPLOYER,
+  ACCEPTED_BY_STUDENT,
+  REJECTED_BY_EMPLOYER,
+  REJECTED_BY_STUDENT;
 
   @JsonCreator
   public static ApplicationStatus create(String value) {
