@@ -313,6 +313,72 @@ public class DefaultUserService {
   }
 
   @Transactional
+  public CompletableFuture<StudentDocumentModel> studentUpdateResume(
+      User user, MultipartFile file) {
+    return supplyAsync(
+        () -> {
+          StudentProfile studentProfile =
+              getStudentProfileByUsername(
+                  studentProfileRepository, exceptionService, user.getUsername());
+
+          StudentDocuments studentDocuments = getStudentDocuments(studentProfile);
+
+          if (!isNullOrBlank(studentDocuments.getResumeUrl())) {
+            ImageDownloadRequest request =
+                new ImageDownloadRequest().setImageUrl(studentDocuments.getResumeUrl());
+            storageService.deleteFile(request);
+          }
+          String newResumeUrl = storageService.uploadImage(file).join();
+          studentDocuments.setResumeUrl(newResumeUrl);
+          return studentDocumentRepository.save(studentDocuments).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<StudentDocumentModel> studentUpdateCoverLetter(
+      User user, MultipartFile file) {
+    return supplyAsync(
+        () -> {
+          StudentProfile studentProfile =
+              getStudentProfileByUsername(
+                  studentProfileRepository, exceptionService, user.getUsername());
+
+          StudentDocuments studentDocuments = getStudentDocuments(studentProfile);
+
+          if (!isNullOrBlank(studentDocuments.getCoverLetterUrl())) {
+            ImageDownloadRequest request =
+                new ImageDownloadRequest().setImageUrl(studentDocuments.getCoverLetterUrl());
+            storageService.deleteFile(request);
+          }
+          String newCoverLetterUrl = storageService.uploadImage(file).join();
+          studentDocuments.setCoverLetterUrl(newCoverLetterUrl);
+          return studentDocumentRepository.save(studentDocuments).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<StudentDocumentModel> studentUpdateTranscript(
+      User user, MultipartFile file) {
+    return supplyAsync(
+        () -> {
+          StudentProfile studentProfile =
+              getStudentProfileByUsername(
+                  studentProfileRepository, exceptionService, user.getUsername());
+
+          StudentDocuments studentDocuments = getStudentDocuments(studentProfile);
+
+          if (!isNullOrBlank(studentDocuments.getTranscriptUrl())) {
+            ImageDownloadRequest request =
+                new ImageDownloadRequest().setImageUrl(studentDocuments.getTranscriptUrl());
+            storageService.deleteFile(request);
+          }
+          String newTranscriptUrl = storageService.uploadImage(file).join();
+          studentDocuments.setTranscriptUrl(newTranscriptUrl);
+          return studentDocumentRepository.save(studentDocuments).toModel();
+        });
+  }
+
+  @Transactional
   public CompletableFuture<GeneralProfileModel> getCurrentUserProfile(User user) {
     return supplyAsync(
         () -> {
@@ -358,13 +424,7 @@ public class DefaultUserService {
               getStudentProfileByUsername(
                   studentProfileRepository, exceptionService, user.getUsername());
 
-          StudentDocuments studentDocuments =
-              studentDocumentRepository.findByStudent(studentProfile).orElse(null);
-          if (studentDocuments == null) {
-            studentDocuments = StudentDocuments.builder().student(studentProfile).build();
-            studentDocuments = studentDocumentRepository.save(studentDocuments);
-          }
-          return studentDocuments.toModel();
+          return getStudentDocuments(studentProfile).toModel();
         });
   }
 
@@ -447,5 +507,15 @@ public class DefaultUserService {
     } catch (Exception e) {
       throw exceptionService.handleCreateException(e.getMessage(), INTERNAL_SERVER_ERROR);
     }
+  }
+
+  private StudentDocuments getStudentDocuments(StudentProfile studentProfile) {
+    StudentDocuments studentDocuments =
+        studentDocumentRepository.findByStudent(studentProfile).orElse(null);
+    if (studentDocuments == null) {
+      studentDocuments = StudentDocuments.builder().student(studentProfile).build();
+      studentDocuments = studentDocumentRepository.save(studentDocuments);
+    }
+    return studentDocuments;
   }
 }

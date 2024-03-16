@@ -117,4 +117,31 @@ public class UserController {
     StudentDocumentModel documentModel = userService.getStudentDocuments(user).join();
     return new ResponseModel<>(documentModel);
   }
+
+  @PostMapping(value = "student/update_resume", consumes = MULTIPART_FORM_DATA_VALUE)
+  @Operation(description = "Student update resume")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserProfile.class)})
+  public ResponseModel<StudentDocumentModel> updateResume(
+      @AuthenticationPrincipal User user, @RequestParam("file") MultipartFile file) {
+    StudentDocumentModel studentDocument = userService.studentUpdateResume(user, file).join();
+    return new ResponseModel<>(studentDocument);
+  }
+
+  @PostMapping(value = "/student/update_cover_letter", consumes = MULTIPART_FORM_DATA_VALUE)
+  @Operation(description = "Student update cover letter")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserProfile.class)})
+  public ResponseModel<StudentDocumentModel> studentUpdateCoverLetter(
+      @AuthenticationPrincipal User user, @RequestParam("file") MultipartFile file) {
+    StudentDocumentModel studentDocument = userService.studentUpdateCoverLetter(user, file).join();
+    return new ResponseModel<>(studentDocument);
+  }
+
+  @PostMapping(value = "student/update_transcript", consumes = MULTIPART_FORM_DATA_VALUE)
+  @Operation(description = "Student update transcript")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserProfile.class)})
+  public ResponseModel<StudentDocumentModel> studentUpdateTranscript(
+      @AuthenticationPrincipal User user, @RequestParam("file") MultipartFile file) {
+    StudentDocumentModel studentDocument = userService.studentUpdateTranscript(user, file).join();
+    return new ResponseModel<>(studentDocument);
+  }
 }
