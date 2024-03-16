@@ -4,6 +4,7 @@ import static com.dodlu.core.app.utils.MapperUtil.buildPageable;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.PagingAndSortingParams;
+import com.dodlu.core.app.model.filters.JobPostingApplicationFilter;
 import com.dodlu.core.app.model.filters.JobPostingFilter;
 import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
 import com.dodlu.core.app.model.request.internship.JobPostingApplicationRequest;
@@ -169,7 +170,7 @@ public class JobPostingController {
   }
 
   @GetMapping(value = "/applications")
-  @Operation(description = "Get logged in student's job posting")
+  @Operation(description = "Get logged in student's job posting applications")
   @ApiResponses({
     @ApiResponse(
         code = 200,
@@ -179,10 +180,12 @@ public class JobPostingController {
   })
   @PreAuthorize("hasAnyAuthority('STUDENT')")
   public ResponseModel<JobPostingApplicationResult> getJobPostingApplications(
-      @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
+      @AuthenticationPrincipal User user,
+      @ModelAttribute PagingAndSortingParams paging,
+      @ModelAttribute JobPostingApplicationFilter filter) {
     Pageable pageable = buildPageable(paging);
     Page<JobPostingApplicationModel> jobPostingApplicationPage =
-        jobPostingService.getUserJobApplications(user, pageable).join();
+        jobPostingService.getUserJobApplications(user, pageable, filter).join();
     JobPostingApplicationResult jobPostingApplicationResult =
         new JobPostingApplicationResult(jobPostingApplicationPage);
     return new ResponseModel<>(jobPostingApplicationResult);

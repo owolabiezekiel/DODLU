@@ -8,6 +8,7 @@ import static com.dodlu.core.domain.utils.StudentProfileUtils.getStudentProfileB
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
+import com.dodlu.core.app.model.filters.JobPostingApplicationFilter;
 import com.dodlu.core.app.model.filters.JobPostingFilter;
 import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
 import com.dodlu.core.app.model.request.internship.JobPostingApplicationRequest;
@@ -137,14 +138,14 @@ public class DefaultJobPostingService {
 
   @Transactional
   public CompletableFuture<Page<JobPostingApplicationModel>> getUserJobApplications(
-      User user, Pageable pageable) {
+      User user, Pageable pageable, JobPostingApplicationFilter filter) {
     return supplyAsync(
         () -> {
           StudentProfile studentProfile =
               getStudentProfileByUsername(
                   studentProfileRepository, exceptionService, user.getUsername());
           return jobPostApplicationRepository
-              .findJobPostingApplicationsByApplicantId(pageable, studentProfile.getId())
+              .findJobPostingApplicationsByApplicantId(pageable, studentProfile.getId(), filter)
               .map(JobPostingApplication::toModel);
         });
   }
