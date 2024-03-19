@@ -205,7 +205,7 @@ public class DefaultAuthService implements AuthService {
 
     private Instant generateTimeToLive(){
         Instant instant = Instant.now();
-        return instant.plus(Duration.ofHours(24));
+        return instant.plus(Duration.ofSeconds(30));
     }
 
     private void deleteOldResetPasswordTokenIfExists(String username) {
