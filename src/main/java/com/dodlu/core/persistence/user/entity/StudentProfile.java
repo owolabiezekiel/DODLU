@@ -68,6 +68,7 @@ public class StudentProfile extends UserProfile {
         .programme(programme)
         .level(level)
         .department(department.toModel())
+        .cgpa(cgpa)
         .build();
   }
 
@@ -83,6 +84,7 @@ public class StudentProfile extends UserProfile {
         .profileImageUrl(getProfileImageUrl())
         .programme(programme)
         .level(level)
+        .cgpa(cgpa)
         .department(department.toModel())
         .build();
   }

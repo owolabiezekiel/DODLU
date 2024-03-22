@@ -27,6 +27,7 @@ public class GeneralProfileModel {
   private CompanyModel company;
   private Gender gender;
   private String title;
+  private Double cgpa;
 
   @JsonIncludeProperties({"name", "id"})
   private DepartmentModel department;

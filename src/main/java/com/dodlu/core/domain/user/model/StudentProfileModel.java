@@ -27,6 +27,7 @@ public class StudentProfileModel {
   private String profileImageUrl;
   private Programme programme;
   private Level level;
+  private Double cgpa;
 
   @JsonIncludeProperties({"name", "id"})
   private DepartmentModel department;
