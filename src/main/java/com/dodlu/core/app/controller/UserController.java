@@ -6,6 +6,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
+import com.dodlu.core.app.model.request.user.UpdateStudentProfileRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.internship.model.StudentDocumentModel;
 import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
@@ -97,6 +98,17 @@ public class UserController {
   public ResponseModel<GeneralProfileModel> getCurrentUserProfile(
       @AuthenticationPrincipal User user) {
     GeneralProfileModel userProfile = userService.getCurrentUserProfile(user).join();
+    return new ResponseModel<>(userProfile);
+  }
+
+  @PutMapping(value = "/profile_update/student")
+  @Operation(description = "Student update user profile")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = StudentProfileModel.class)
+  })
+  public ResponseModel<StudentProfileModel> updateStudentProfile(
+      @AuthenticationPrincipal User user, UpdateStudentProfileRequest request) {
+    StudentProfileModel userProfile = userService.updateStudentProfile(user, request).join();
     return new ResponseModel<>(userProfile);
   }
 

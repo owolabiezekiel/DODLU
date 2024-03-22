@@ -28,6 +28,7 @@ import com.dodlu.core.app.model.request.file.ImageDownloadRequest;
 import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
 import com.dodlu.core.app.model.request.user.CreateStudentRequest;
 import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
+import com.dodlu.core.app.model.request.user.UpdateStudentProfileRequest;
 import com.dodlu.core.domain.file.service.abstracts.StorageService;
 import com.dodlu.core.domain.internship.model.StudentDocumentModel;
 import com.dodlu.core.domain.notification.email.service.concretes.JmsEmailService;
@@ -428,6 +429,20 @@ public class DefaultUserService {
                   studentProfileRepository, exceptionService, user.getUsername());
 
           return getStudentDocuments(studentProfile).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<StudentProfileModel> updateStudentProfile(
+      User user, UpdateStudentProfileRequest request) {
+    return supplyAsync(
+        () -> {
+          StudentProfile studentProfile =
+              getStudentProfileByUsername(
+                  studentProfileRepository, exceptionService, user.getUsername());
+
+          studentProfile.setPhoneNumber(request.getPhoneNumber());
+          return studentProfileRepository.save(studentProfile).toModel();
         });
   }
 
