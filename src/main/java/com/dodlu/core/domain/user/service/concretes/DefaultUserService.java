@@ -183,6 +183,7 @@ public class DefaultUserService {
                   .programme(request.getProgramme())
                   .level(request.getLevel())
                   .department(coordinator.getDepartment())
+                  .cgpa(request.getCgpa())
                   .build();
 
           studentProfile = studentProfileRepository.save(studentProfile);
@@ -252,6 +253,7 @@ public class DefaultUserService {
                 String phoneNumber = row.getCell(5).getStringCellValue();
                 String gender = row.getCell(6).getStringCellValue();
                 String programme = row.getCell(7).getStringCellValue();
+                Double cgpa = row.getCell(8).getNumericCellValue();
                 String plainPassword = generateRandomPassword();
 
                 User student = buildUser(matricNumber, email, plainPassword, role);
@@ -269,6 +271,7 @@ public class DefaultUserService {
                         .programme(getProgrammeFromString(programme))
                         .level(getLevelFromNumber(level))
                         .department(coordinator.getDepartment())
+                        .cgpa(cgpa)
                         .build();
                 studentProfile = studentProfileRepository.save(studentProfile);
 

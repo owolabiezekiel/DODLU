@@ -4,10 +4,7 @@ import com.dodlu.core.app.utils.validators.ValidEnum;
 import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Level;
 import com.dodlu.core.domain.user.enums.Programme;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,4 +38,7 @@ public class CreateStudentRequest extends CreateProfileRequest {
   @NotNull(message = "level is required")
   @ValidEnum(message = "level programme")
   private Level level;
+
+  @PositiveOrZero(message = "cgpa cannot be negative")
+  private Double cgpa;
 }
