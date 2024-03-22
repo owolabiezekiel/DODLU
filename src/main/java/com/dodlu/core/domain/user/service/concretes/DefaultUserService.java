@@ -441,7 +441,13 @@ public class DefaultUserService {
               getStudentProfileByUsername(
                   studentProfileRepository, exceptionService, user.getUsername());
 
-          studentProfile.setPhoneNumber(request.getPhoneNumber());
+          if (!isNullOrBlank(request.getPhoneNumber()))
+            studentProfile.setPhoneNumber(request.getPhoneNumber());
+          if (!isNullOrBlank(request.getEmail())) {
+            studentProfile.setEmail(request.getEmail());
+            user.setEmail(request.getEmail());
+            userRepository.save(user);
+          }
           return studentProfileRepository.save(studentProfile).toModel();
         });
   }
