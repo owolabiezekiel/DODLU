@@ -106,8 +106,9 @@ public class UserController {
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = StudentProfileModel.class)
   })
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
   public ResponseModel<StudentProfileModel> updateStudentProfile(
-      @AuthenticationPrincipal User user, UpdateStudentProfileRequest request) {
+      @AuthenticationPrincipal User user, @Valid @RequestBody UpdateStudentProfileRequest request) {
     StudentProfileModel userProfile = userService.updateStudentProfile(user, request).join();
     return new ResponseModel<>(userProfile);
   }

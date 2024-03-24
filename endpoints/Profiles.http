@@ -69,3 +69,12 @@ Authorization: {{student_token}}
 ### Student get Documents
 GET {{host}}/user/student/documents
 Authorization: {{student_token}}
+
+### Student get Documents
+PUT {{host}}/user/profile_update/student
+Content-Type: application/json
+Authorization: {{student_token}}
+
+{
+  "phoneNumber": "08033445566"
+}
