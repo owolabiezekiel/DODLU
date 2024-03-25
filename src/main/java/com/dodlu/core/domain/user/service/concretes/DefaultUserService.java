@@ -332,7 +332,7 @@ public class DefaultUserService {
                 new ImageDownloadRequest().setImageUrl(studentDocuments.getResumeUrl());
             storageService.deleteFile(request);
           }
-          String newResumeUrl = storageService.uploadImage(file).join();
+          String newResumeUrl = storageService.uploadDocument(file).join();
           studentDocuments.setResumeUrl(newResumeUrl);
           return studentDocumentRepository.save(studentDocuments).toModel();
         });
@@ -354,7 +354,7 @@ public class DefaultUserService {
                 new ImageDownloadRequest().setImageUrl(studentDocuments.getCoverLetterUrl());
             storageService.deleteFile(request);
           }
-          String newCoverLetterUrl = storageService.uploadImage(file).join();
+          String newCoverLetterUrl = storageService.uploadDocument(file).join();
           studentDocuments.setCoverLetterUrl(newCoverLetterUrl);
           return studentDocumentRepository.save(studentDocuments).toModel();
         });
@@ -376,7 +376,7 @@ public class DefaultUserService {
                 new ImageDownloadRequest().setImageUrl(studentDocuments.getTranscriptUrl());
             storageService.deleteFile(request);
           }
-          String newTranscriptUrl = storageService.uploadImage(file).join();
+          String newTranscriptUrl = storageService.uploadDocument(file).join();
           studentDocuments.setTranscriptUrl(newTranscriptUrl);
           return studentDocumentRepository.save(studentDocuments).toModel();
         });
