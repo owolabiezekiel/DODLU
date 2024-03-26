@@ -7,7 +7,6 @@ import com.dodlu.core.app.model.PagingAndSortingParams;
 import com.dodlu.core.app.model.filters.JobPostingApplicationFilter;
 import com.dodlu.core.app.model.filters.JobPostingFilter;
 import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
-import com.dodlu.core.app.model.request.internship.JobPostingApplicationRequest;
 import com.dodlu.core.app.model.response.JobPostingApplicationResult;
 import com.dodlu.core.app.model.response.JobPostingResult;
 import com.dodlu.core.app.model.response.ResponseModel;
@@ -101,11 +100,9 @@ public class JobPostingController {
   })
   @PreAuthorize("hasAnyAuthority('STUDENT')")
   public ResponseModel<JobPostingApplicationModel> applyToJobPosting(
-      @AuthenticationPrincipal User user,
-      @Valid @RequestBody JobPostingApplicationRequest request,
-      @PathVariable("jobPostingId") String jobPostingId) {
+      @AuthenticationPrincipal User user, @PathVariable("jobPostingId") String jobPostingId) {
     JobPostingApplicationModel jobPostingApplication =
-        jobPostingService.applyToJobPosting(user, request, jobPostingId).join();
+        jobPostingService.applyToJobPosting(user, jobPostingId).join();
     return new ResponseModel<>(jobPostingApplication);
   }
 

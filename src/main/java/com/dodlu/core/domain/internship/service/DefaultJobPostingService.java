@@ -11,7 +11,6 @@ import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.filters.JobPostingApplicationFilter;
 import com.dodlu.core.app.model.filters.JobPostingFilter;
 import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
-import com.dodlu.core.app.model.request.internship.JobPostingApplicationRequest;
 import com.dodlu.core.domain.internship.model.JobPostingApplicationModel;
 import com.dodlu.core.domain.internship.model.JobPostingModel;
 import com.dodlu.core.domain.user.model.StudentProfileModel;
@@ -19,9 +18,11 @@ import com.dodlu.core.domain.utils.JobPostingUtils;
 import com.dodlu.core.persistence.internship.entity.JobPosting;
 import com.dodlu.core.persistence.internship.entity.JobPostingApplication;
 import com.dodlu.core.persistence.internship.entity.Placement;
+import com.dodlu.core.persistence.internship.entity.StudentDocuments;
 import com.dodlu.core.persistence.internship.repository.JobPostingApplicationRepository;
 import com.dodlu.core.persistence.internship.repository.JobPostingRepository;
 import com.dodlu.core.persistence.internship.repository.PlacementRepository;
+import com.dodlu.core.persistence.internship.repository.StudentDocumentRepository;
 import com.dodlu.core.persistence.user.entity.EmployerProfile;
 import com.dodlu.core.persistence.user.entity.StudentProfile;
 import com.dodlu.core.persistence.user.entity.User;
@@ -45,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultJobPostingService {
   private final EmployerProfileRepository employerProfileRepository;
   private final StudentProfileRepository studentProfileRepository;
+  private final StudentDocumentRepository studentDocumentRepository;
   private final JobPostingRepository jobPostingRepository;
   private final PlacementRepository placementRepository;
   private final JobPostingApplicationRepository jobPostApplicationRepository;
@@ -113,7 +115,7 @@ public class DefaultJobPostingService {
 
   @Transactional
   public CompletableFuture<JobPostingApplicationModel> applyToJobPosting(
-      User user, JobPostingApplicationRequest request, String jobPostingId) {
+      User user, String jobPostingId) {
     return supplyAsync(
         () -> {
           JobPosting jobPosting = getJobPosting(jobPostingId);
@@ -121,17 +123,28 @@ public class DefaultJobPostingService {
           StudentProfile applicant =
               getStudentProfileByUsername(
                   studentProfileRepository, exceptionService, user.getUsername());
-          doJobApplicationValidations(request, jobPosting, applicant);
 
+          StudentDocuments studentDocuments =
+              studentDocumentRepository
+                  .findByStudent(applicant)
+                  .orElse(StudentDocuments.builder().build());
+          doJobApplicationValidations(studentDocuments, jobPosting, applicant);
           JobPostingApplication application =
               JobPostingApplication.builder()
                   .jobPosting(jobPosting)
                   .applicant(applicant)
-                  .resumeLink(request.getResumeLink())
-                  .coverLetterLink(request.getCoverLetterLink())
-                  .transcriptLink(request.getTranscriptLink())
                   .applicationStatus(PENDING)
                   .build();
+
+          if (jobPosting.getIsResumeRequired()) {
+            application.setResumeLink(studentDocuments.getResumeUrl());
+          }
+          if (jobPosting.getIsCoverLetterRequired()) {
+            application.setCoverLetterLink(studentDocuments.getCoverLetterUrl());
+          }
+          if (jobPosting.getIsTranscriptRequired()) {
+            application.setTranscriptLink(studentDocuments.getTranscriptUrl());
+          }
           return jobPostApplicationRepository.save(application).toModel();
         });
   }
@@ -278,7 +291,7 @@ public class DefaultJobPostingService {
   }
 
   private void doJobApplicationValidations(
-      JobPostingApplicationRequest request, JobPosting jobPosting, StudentProfile applicant) {
+      StudentDocuments studentDocuments, JobPosting jobPosting, StudentProfile applicant) {
     if (jobPostApplicationRepository.existsByJobPostingIdAndApplicantId(
         jobPosting.getId(), applicant.getId())) {
       throw exceptionService.handleCreateBadRequest("You have already applied to this job");
@@ -288,17 +301,21 @@ public class DefaultJobPostingService {
       throw exceptionService.handleCreateBadRequest("This job does not have any open position");
     }
 
-    if (jobPosting.getIsTranscriptRequired() && request.getTranscriptLink() == null) {
-      throw exceptionService.handleCreateBadRequest("Transcript is required to apply to this job");
-    }
-
-    if (jobPosting.getIsResumeRequired() && isNullOrBlank(request.getResumeLink())) {
-      throw exceptionService.handleCreateBadRequest("Resume/CV is required to apply to this job");
-    }
-
-    if (jobPosting.getIsCoverLetterRequired() && isNullOrBlank(request.getCoverLetterLink())) {
+    if (jobPosting.getIsResumeRequired() && !isNullOrBlank(studentDocuments.getResumeUrl())) {
       throw exceptionService.handleCreateBadRequest(
-          "Cover Letter is required to apply to this job");
+          "Resume is required for this job. Please upload resume in profile settings");
+    }
+
+    if (jobPosting.getIsCoverLetterRequired()
+        && !isNullOrBlank(studentDocuments.getCoverLetterUrl())) {
+      throw exceptionService.handleCreateBadRequest(
+          "Cover letter is required for this job. Please upload resume in profile settings");
+    }
+
+    if (jobPosting.getIsTranscriptRequired()
+        && !isNullOrBlank(studentDocuments.getTranscriptUrl())) {
+      throw exceptionService.handleCreateBadRequest(
+          "Transcript is required for this job. Please upload resume in profile settings");
     }
   }
 

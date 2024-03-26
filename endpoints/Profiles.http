@@ -76,5 +76,5 @@ Content-Type: application/json
 Authorization: {{student_token}}
 
 {
-  "phoneNumber": "08033445566"
+  "phoneNumber": "0803344556"
 }
