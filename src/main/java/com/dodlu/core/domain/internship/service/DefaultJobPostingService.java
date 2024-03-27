@@ -315,19 +315,19 @@ public class DefaultJobPostingService {
       throw exceptionService.handleCreateBadRequest("This job does not have any open position");
     }
 
-    if (jobPosting.getIsResumeRequired() && !isNullOrBlank(studentDocuments.getResumeUrl())) {
+    if (jobPosting.getIsResumeRequired() && isNullOrBlank(studentDocuments.getResumeUrl())) {
       throw exceptionService.handleCreateBadRequest(
           "Resume is required for this job. Please upload resume in profile settings");
     }
 
     if (jobPosting.getIsCoverLetterRequired()
-        && !isNullOrBlank(studentDocuments.getCoverLetterUrl())) {
+        && isNullOrBlank(studentDocuments.getCoverLetterUrl())) {
       throw exceptionService.handleCreateBadRequest(
           "Cover letter is required for this job. Please upload resume in profile settings");
     }
 
     if (jobPosting.getIsTranscriptRequired()
-        && !isNullOrBlank(studentDocuments.getTranscriptUrl())) {
+        && isNullOrBlank(studentDocuments.getTranscriptUrl())) {
       throw exceptionService.handleCreateBadRequest(
           "Transcript is required for this job. Please upload resume in profile settings");
     }
