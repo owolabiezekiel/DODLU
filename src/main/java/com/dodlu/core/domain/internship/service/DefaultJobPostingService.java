@@ -324,6 +324,12 @@ public class DefaultJobPostingService {
         });
   }
 
+  @Transactional
+  public CompletableFuture<JobPostingApplicationModel> getJobPostingApplicationById(
+      String jobPostingApplicationId) {
+    return supplyAsync(() -> getJobPostingApplication(jobPostingApplicationId).toModel());
+  }
+
   private JobPosting getJobPosting(String id) {
     return JobPostingUtils.getJobPostingById(
         jobPostingRepository,

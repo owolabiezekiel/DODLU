@@ -211,4 +211,16 @@ public class JobPostingController {
         new JobPostingApplicationResult(jobPostingApplicationPage);
     return new ResponseModel<>(jobPostingApplicationResult);
   }
+
+  @GetMapping(value = "/application/{id}")
+  @Operation(description = "Get single job posting application")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = JobPostingApplicationModel.class)
+  })
+  public ResponseModel<JobPostingApplicationModel> getJobPostingApplication(
+      @PathVariable("id") String id) {
+    JobPostingApplicationModel jobPostingApplication =
+        jobPostingService.getJobPostingApplicationById(id).join();
+    return new ResponseModel<>(jobPostingApplication);
+  }
 }
