@@ -143,8 +143,21 @@ public class DefaultJobPostingService {
   }
 
   @Transactional
-  public CompletableFuture<JobPostingModel> getJobPostingById(String jobPostingId) {
-    return supplyAsync(() -> getJobPosting(jobPostingId).toModel());
+  public CompletableFuture<JobPostingModel> getJobPostingById(User user, String jobPostingId) {
+    return supplyAsync(
+        () -> {
+          JobPostingModel jobPostingModel = getJobPosting(jobPostingId).toModel();
+          if (user.getType().equals(UserType.STUDENT)) {
+            StudentProfile studentProfile =
+                getStudentProfileByUsername(
+                    studentProfileRepository, exceptionService, user.getUsername());
+            if (jobPostApplicationRepository.existsByJobPostingIdAndApplicantId(
+                jobPostingModel.getId(), studentProfile.getId())) {
+              jobPostingModel.setCurrentStudentApplied(true);
+            }
+          }
+          return jobPostingModel;
+        });
   }
 
   @Transactional

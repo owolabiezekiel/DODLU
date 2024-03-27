@@ -111,8 +111,9 @@ public class JobPostingController {
   @GetMapping(value = "/{id}")
   @Operation(description = "Get single job posting")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = JobPostingModel.class)})
-  public ResponseModel<JobPostingModel> getJobPosting(@PathVariable("id") String id) {
-    JobPostingModel jobPosting = jobPostingService.getJobPostingById(id).join();
+  public ResponseModel<JobPostingModel> getJobPosting(
+      @AuthenticationPrincipal User user, @PathVariable("id") String id) {
+    JobPostingModel jobPosting = jobPostingService.getJobPostingById(user, id).join();
     return new ResponseModel<>(jobPosting);
   }
 
