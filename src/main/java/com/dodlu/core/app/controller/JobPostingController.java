@@ -56,10 +56,12 @@ public class JobPostingController {
         responseContainer = "page")
   })
   public ResponseModel<JobPostingResult> getAllJobPostings(
-      @ModelAttribute JobPostingFilter filter, @ModelAttribute PagingAndSortingParams paging) {
+      @AuthenticationPrincipal User user,
+      @ModelAttribute JobPostingFilter filter,
+      @ModelAttribute PagingAndSortingParams paging) {
     Pageable pageable = buildPageable(paging);
     Page<JobPostingModel> jobPostingPage =
-        jobPostingService.getAllJobPostings(pageable, filter).join();
+        jobPostingService.getAllJobPostings(user, pageable, filter).join();
     JobPostingResult jobPostingResult = new JobPostingResult(jobPostingPage);
     return new ResponseModel<>(jobPostingResult);
   }

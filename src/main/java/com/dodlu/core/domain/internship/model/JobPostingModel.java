@@ -37,5 +37,5 @@ public class JobPostingModel {
   private Country country;
   private String address;
   private EmployerProfileModel employer;
-  private Boolean currentStudentApplied;
+  private boolean currentStudentApplied;
 }

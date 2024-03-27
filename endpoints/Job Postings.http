@@ -19,7 +19,7 @@ Authorization: {{employer_token}}
 
 ### Get all Job Postings
 GET {{host}}/job-posting
-Authorization: {{employer_token}}
+Authorization: {{student_token}}
 
 ### Get all Job Postings with student filter
 GET {{host}}/job-posting/student-filter

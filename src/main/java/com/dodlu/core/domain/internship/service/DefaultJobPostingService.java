@@ -14,6 +14,7 @@ import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
 import com.dodlu.core.domain.internship.model.JobPostingApplicationModel;
 import com.dodlu.core.domain.internship.model.JobPostingModel;
 import com.dodlu.core.domain.user.model.StudentProfileModel;
+import com.dodlu.core.domain.user.model.UserType;
 import com.dodlu.core.domain.utils.JobPostingUtils;
 import com.dodlu.core.persistence.internship.entity.JobPosting;
 import com.dodlu.core.persistence.internship.entity.JobPostingApplication;
@@ -88,9 +89,28 @@ public class DefaultJobPostingService {
 
   @Transactional
   public CompletableFuture<Page<JobPostingModel>> getAllJobPostings(
-      Pageable pageable, JobPostingFilter filter) {
+      User user, Pageable pageable, JobPostingFilter filter) {
     return supplyAsync(
-        () -> jobPostingRepository.findAll(pageable, filter).map(JobPosting::toModel));
+        () -> {
+          if (user.getType().equals(UserType.STUDENT)) {
+            StudentProfile studentProfile =
+                getStudentProfileByUsername(
+                    studentProfileRepository, exceptionService, user.getUsername());
+            return jobPostingRepository
+                .findAll(pageable, filter)
+                .map(
+                    (jobPosting) -> {
+                      JobPostingModel jobPostingModel = jobPosting.toModel();
+                      if (jobPostApplicationRepository.existsByJobPostingIdAndApplicantId(
+                          jobPostingModel.getId(), studentProfile.getId())) {
+                        jobPostingModel.setCurrentStudentApplied(true);
+                      }
+                      return jobPostingModel;
+                    });
+          } else {
+            return jobPostingRepository.findAll(pageable, filter).map(JobPosting::toModel);
+          }
+        });
   }
 
   @Transactional
