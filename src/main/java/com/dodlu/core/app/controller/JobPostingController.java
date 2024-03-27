@@ -64,6 +64,27 @@ public class JobPostingController {
     return new ResponseModel<>(jobPostingResult);
   }
 
+  @GetMapping(value = "/student-filter")
+  @Operation(description = "Get all job postings filter out ones applied to")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = JobPostingResult.class,
+        responseContainer = "page")
+  })
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
+  public ResponseModel<JobPostingResult> getAllJobPostingsForStudents(
+      @AuthenticationPrincipal User user,
+      @ModelAttribute JobPostingFilter filter,
+      @ModelAttribute PagingAndSortingParams paging) {
+    Pageable pageable = buildPageable(paging);
+    Page<JobPostingModel> jobPostingPage =
+        jobPostingService.getAllJobPostingsForStudents(user, pageable, filter).join();
+    JobPostingResult jobPostingResult = new JobPostingResult(jobPostingPage);
+    return new ResponseModel<>(jobPostingResult);
+  }
+
   @GetMapping(value = "/me")
   @Operation(description = "Get all employer job postings")
   @ApiResponses({

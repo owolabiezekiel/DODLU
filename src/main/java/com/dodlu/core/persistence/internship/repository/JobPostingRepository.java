@@ -1,11 +1,14 @@
 package com.dodlu.core.persistence.internship.repository;
 
 import static com.dodlu.core.persistence.internship.entity.QJobPosting.jobPosting;
+import static com.dodlu.core.persistence.internship.entity.QJobPostingApplication.jobPostingApplication;
 
 import com.dodlu.core.app.model.filters.JobPostingFilter;
 import com.dodlu.core.persistence.internship.entity.JobPosting;
 import com.dodlu.core.persistence.user.entity.EmployerProfile;
+import com.dodlu.core.persistence.user.entity.StudentProfile;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,6 +39,37 @@ public interface JobPostingRepository
   }
 
   default Page<JobPosting> findAll(Pageable pageable, JobPostingFilter filter) {
+    BooleanExpression predicate = findAllJobsExpressions(filter);
+
+    if (predicate == null) {
+      return findAll(pageable);
+    } else {
+      return findAll(predicate, pageable);
+    }
+  }
+
+  default Page<JobPosting> findAllForStudent(
+      Pageable pageable, JobPostingFilter filter, StudentProfile studentProfile) {
+    BooleanExpression predicate = findAllJobsExpressions(filter);
+
+    BooleanExpression notAppliedExpression =
+        jobPostingApplication.applicant.id.eq(studentProfile.getId());
+    predicate =
+        (predicate != null
+            ? predicate.and(
+                jobPosting.notIn(
+                    JPAExpressions.select(jobPostingApplication.jobPosting)
+                        .from(jobPostingApplication)
+                        .where(notAppliedExpression)))
+            : jobPosting.notIn(
+                JPAExpressions.select(jobPostingApplication.jobPosting)
+                    .from(jobPostingApplication)
+                    .where(notAppliedExpression)));
+
+    return findAll(predicate, pageable);
+  }
+
+  private BooleanExpression findAllJobsExpressions(JobPostingFilter filter) {
     BooleanExpression predicate = null;
 
     if (filter.getIndustry() != null) {
@@ -59,11 +93,6 @@ public interface JobPostingRepository
               ? predicate.and(jobPosting.country.eq(filter.getCountry()))
               : jobPosting.country.eq(filter.getCountry());
     }
-
-    if (predicate == null) {
-      return findAll(pageable);
-    } else {
-      return findAll(predicate, pageable);
-    }
+    return predicate;
   }
 }

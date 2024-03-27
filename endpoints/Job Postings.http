@@ -21,6 +21,10 @@ Authorization: {{employer_token}}
 GET {{host}}/job-posting
 Authorization: {{employer_token}}
 
+### Get all Job Postings with student filter
+GET {{host}}/job-posting/student-filter
+Authorization: {{student2_token}}
+
 ### Get Job Posting By Id
 GET {{host}}/job-posting/073332ca-2549-459e-b37e-309df367bb5f
 Authorization: {{token}}

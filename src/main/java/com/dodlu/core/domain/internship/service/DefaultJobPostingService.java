@@ -94,6 +94,20 @@ public class DefaultJobPostingService {
   }
 
   @Transactional
+  public CompletableFuture<Page<JobPostingModel>> getAllJobPostingsForStudents(
+      User user, Pageable pageable, JobPostingFilter filter) {
+    return supplyAsync(
+        () -> {
+          StudentProfile studentProfile =
+              getStudentProfileByUsername(
+                  studentProfileRepository, exceptionService, user.getUsername());
+          return jobPostingRepository
+              .findAllForStudent(pageable, filter, studentProfile)
+              .map(JobPosting::toModel);
+        });
+  }
+
+  @Transactional
   public CompletableFuture<Page<JobPostingModel>> getEmployerJobPostings(
       User user, Pageable pageable, JobPostingFilter filter) {
 
