@@ -40,6 +40,15 @@ public class LogbookController {
     return new ResponseModel<>(logbookModel);
   }
 
+  @PostMapping(value = "/start")
+  @Operation(description = "Set start day on logbook")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = LogbookModel.class)})
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
+  public ResponseModel<LogbookModel> setLogbookStartDate(@AuthenticationPrincipal User user) {
+    LogbookModel logbook = logbookService.setLogbookStartDate(user).join();
+    return new ResponseModel<>(logbook);
+  }
+
   @GetMapping("/entries")
   @Operation(description = "Get logbook contents")
   @ApiResponses({

@@ -105,4 +105,18 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="add_start_date_to_logbook" author="tobilobaowolabi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="logbooks" columnName="start_date"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="logbooks">
+            <column name="start_date" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -4,6 +4,7 @@ import com.dodlu.core.domain.internship.model.LogbookModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import com.dodlu.core.persistence.user.entity.StudentProfile;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class Logbook extends BaseEntity {
   private Boolean active;
   private Integer supervisorGrade;
   private Integer itccGrade;
+  private LocalDate startDate;
 
   @Override
   public boolean equals(Object o) {
@@ -57,6 +59,7 @@ public class Logbook extends BaseEntity {
         .active(active)
         .supervisorGrade(supervisorGrade)
         .itccGrade(itccGrade)
+        .startDate(startDate)
         .build();
   }
 }

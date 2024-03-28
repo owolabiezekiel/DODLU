@@ -16,12 +16,14 @@ import com.dodlu.core.persistence.internship.repository.PlacementRepository;
 import com.dodlu.core.persistence.user.entity.StudentProfile;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.StudentProfileRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,6 +102,28 @@ public class LogbookService {
               .setComment("");
 
           return logbookEntryRepository.save(logbookEntry).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<LogbookModel> setLogbookStartDate(@AuthenticationPrincipal User user) {
+    return supplyAsync(
+        () -> {
+          StudentProfile studentProfile =
+              getStudentProfileByUsername(
+                  studentProfileRepository, exceptionService, user.getUsername());
+          assertStudentHasPlacement(placementRepository, exceptionService, studentProfile.getId());
+
+          Logbook logbook =
+              logbookRepository
+                  .findByStudentIdAndActiveIsTrue(studentProfile.getId())
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateBadRequest("No Logbook found for student"));
+
+          LocalDate today = LocalDate.now();
+          logbook.setStartDate(today);
+          return logbookRepository.save(logbook).toModel();
         });
   }
 }

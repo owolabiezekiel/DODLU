@@ -1,6 +1,7 @@
 package com.dodlu.core.domain.internship.model;
 
 import com.dodlu.core.domain.user.model.StudentProfileModel;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,4 +22,5 @@ public class LogbookModel {
   private boolean active;
   private Integer supervisorGrade;
   private Integer itccGrade;
+  private LocalDate startDate;
 }
