@@ -29,6 +29,11 @@ Authorization: {{student2_token}}
 GET {{host}}/job-posting/073332ca-2549-459e-b37e-309df367bb5f
 Authorization: {{token}}
 
+### Get Job Postings for employer
+GET {{host}}/job-posting/me
+Authorization: {{employer_token}}
+
+
 ### Apply to job posting
 POST {{host}}/job-posting/073332ca-2549-459e-b37e-309df367bb5f/apply
 Content-Type: application/json

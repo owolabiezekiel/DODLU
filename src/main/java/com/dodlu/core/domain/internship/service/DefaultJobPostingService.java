@@ -138,7 +138,11 @@ public class DefaultJobPostingService {
                   employerProfileRepository, exceptionService, user.getUsername());
           return jobPostingRepository
               .findByEmployer(employerProfile, pageable, filter)
-              .map(JobPosting::toModel);
+              .map(
+                  (jp) -> {
+                    long count = jobPostApplicationRepository.countByJobPostingId(jp.getId());
+                    return jp.toModel().setNumberOfApplicants(count);
+                  });
         });
   }
 

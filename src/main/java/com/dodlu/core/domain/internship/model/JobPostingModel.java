@@ -38,4 +38,5 @@ public class JobPostingModel {
   private String address;
   private EmployerProfileModel employer;
   private boolean currentStudentApplied;
+  private long numberOfApplicants;
 }

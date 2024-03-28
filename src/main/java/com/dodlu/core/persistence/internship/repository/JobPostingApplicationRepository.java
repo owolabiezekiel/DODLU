@@ -26,6 +26,8 @@ public interface JobPostingApplicationRepository
     return findAll(predicate, pageable);
   }
 
+  long countByJobPostingId(String jobPostingId);
+
   Page<JobPostingApplication> findJobPostingApplicationByJobPostingId(
       Pageable pageable, String jobPostingId);
 }
