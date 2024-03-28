@@ -16,8 +16,14 @@ import com.dodlu.core.persistence.internship.repository.PlacementRepository;
 import com.dodlu.core.persistence.user.entity.StudentProfile;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.StudentProfileRepository;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -123,7 +129,57 @@ public class LogbookService {
 
           LocalDate today = LocalDate.now();
           logbook.setStartDate(today);
-          return logbookRepository.save(logbook).toModel();
+          if (logbook.getCapacityInWeeks() == null || logbook.getCapacityInWeeks() <= 0) {
+            int capacityInWeeks =
+                logbook.getCapacityInMonths() < 6
+                    ? (logbook.getCapacityInMonths() * 4) + 2
+                    : (logbook.getCapacityInMonths() * 4) + 4;
+            logbook.setCapacityInWeeks(capacityInWeeks);
+          }
+
+          logbook = logbookRepository.save(logbook);
+          int numberOfWeeks = logbook.getCapacityInWeeks();
+          LocalDate startMonday;
+          if (today.getDayOfWeek().equals(DayOfWeek.SATURDAY)
+              || today.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+            startMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+          } else {
+            startMonday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+          }
+
+          List<LogbookEntry> generatedLogbookEntries = new ArrayList<>();
+
+          for (int i = 0; i < numberOfWeeks; i++) {
+            LocalDate currentStartWeek = startMonday.plusWeeks(i);
+            List<LogbookEntry> currentWeekEntry =
+                createLogbookEntryForWholeWeek(logbook, currentStartWeek, i + 1);
+            generatedLogbookEntries.addAll(currentWeekEntry);
+          }
+
+          logbookEntryRepository.saveAll(generatedLogbookEntries);
+
+          return logbook.toModel();
         });
+  }
+
+  private List<LogbookEntry> createLogbookEntryForWholeWeek(
+      Logbook logbook, LocalDate startMonday, int weekNumber) {
+    List<LogbookEntry> currentWeekEntry = new ArrayList<>();
+    for (int i = 0; i < 6; i++) {
+      LocalDate currentDay = startMonday.plusDays(i);
+      LogbookEntry logbookEntry =
+          LogbookEntry.builder()
+              .logbook(logbook)
+              .description(null)
+              .approved(false)
+              .weekNumber(weekNumber)
+              .dayOfWeek(currentDay.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH))
+              .dateTime(currentDay.atStartOfDay())
+              .comment("")
+              .build();
+
+      currentWeekEntry.add(logbookEntry);
+    }
+    return currentWeekEntry;
   }
 }

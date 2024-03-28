@@ -19,4 +19,6 @@ public class LogbookEntryModel {
   private LocalDateTime dateTime;
   private boolean approved;
   private String comment;
+  private String dayOfWeek;
+  private int weekNumber;
 }

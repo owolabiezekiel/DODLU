@@ -30,6 +30,7 @@ public class Logbook extends BaseEntity {
   private StudentProfile student;
 
   private Integer capacityInMonths;
+  private Integer capacityInWeeks;
   private LocalDateTime validUntil;
   private Boolean active;
   private Integer supervisorGrade;
@@ -56,6 +57,7 @@ public class Logbook extends BaseEntity {
         .student(student.toModel())
         .validUntil(validUntil)
         .capacityInMonths(capacityInMonths)
+        .capacityInWeeks(capacityInWeeks)
         .active(active)
         .supervisorGrade(supervisorGrade)
         .itccGrade(itccGrade)

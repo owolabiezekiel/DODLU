@@ -471,9 +471,14 @@ public class DefaultUserService {
     return Logbook.builder()
         .student(studentProfile)
         .capacityInMonths(logbookCapacity)
+        .capacityInWeeks(calculateLogbookWeekCapacity(logbookCapacity))
         .active(true)
         .validUntil(validUntil)
         .build();
+  }
+
+  private Integer calculateLogbookWeekCapacity(int capacityInMonth) {
+    return capacityInMonth < 6 ? (capacityInMonth * 4) + 2 : (capacityInMonth * 4) + 4;
   }
 
   private void doSuperVisorValidation(CreateSupervisorRequest request) {

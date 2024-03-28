@@ -29,6 +29,8 @@ public class LogbookEntry extends BaseEntity {
 
   private String description;
   private LocalDateTime dateTime;
+  private String dayOfWeek;
+  private int weekNumber;
   private Boolean approved;
   private String comment;
 
@@ -54,6 +56,8 @@ public class LogbookEntry extends BaseEntity {
         .dateTime(dateTime)
         .approved(approved)
         .comment(comment)
+        .dayOfWeek(dayOfWeek)
+        .weekNumber(weekNumber)
         .build();
   }
 }

@@ -18,6 +18,7 @@ public class LogbookModel {
   private String id;
   private StudentProfileModel student;
   private int capacityInMonths;
+  private int capacityInWeeks;
   private LocalDateTime validUntil;
   private boolean active;
   private Integer supervisorGrade;

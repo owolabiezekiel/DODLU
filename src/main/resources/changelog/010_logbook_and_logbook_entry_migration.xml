@@ -119,4 +119,36 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="add_capacity_in_weeks_to_logbook" author="tobilobaowolabi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="logbooks" columnName="capacity_in_weeks"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="logbooks">
+            <column name="capacity_in_weeks" type="INTEGER" defaultValue="0">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add_week_and_day_to_logbook_entry" author="tobilobaowolabi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="logbook_entries" columnName="week_number"/>
+                <columnExists tableName="logbook_entries" columnName="day_of_week"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="logbook_entries">
+            <column name="week_number" type="INTEGER" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="day_of_week" type="VARCHAR(10)" defaultValue="Monday">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
