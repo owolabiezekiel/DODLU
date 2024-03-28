@@ -127,6 +127,11 @@ public class LogbookService {
                       () ->
                           exceptionService.handleCreateBadRequest("No Logbook found for student"));
 
+          if (logbook.getStartDate() != null) {
+            throw exceptionService.handleCreateBadRequest(
+                "Start date for this logbook has already been set");
+          }
+
           LocalDate today = LocalDate.now();
           logbook.setStartDate(today);
           if (logbook.getCapacityInWeeks() == null || logbook.getCapacityInWeeks() <= 0) {
@@ -138,25 +143,29 @@ public class LogbookService {
           }
 
           logbook = logbookRepository.save(logbook);
-          int numberOfWeeks = logbook.getCapacityInWeeks();
-          LocalDate startMonday;
-          if (today.getDayOfWeek().equals(DayOfWeek.SATURDAY)
-              || today.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-            startMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+
+          if (!logbookEntryRepository.existsByLogbookId(logbook.getId())) {
+            int numberOfWeeks = logbook.getCapacityInWeeks();
+            LocalDate startMonday;
+            if (today.getDayOfWeek().equals(DayOfWeek.SATURDAY)
+                || today.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+              startMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+            } else {
+              startMonday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            }
+
+            List<LogbookEntry> generatedLogbookEntries = new ArrayList<>();
+
+            for (int i = 0; i < numberOfWeeks; i++) {
+              LocalDate currentStartWeek = startMonday.plusWeeks(i);
+              List<LogbookEntry> currentWeekEntry =
+                  createLogbookEntryForWholeWeek(logbook, currentStartWeek, i + 1);
+              generatedLogbookEntries.addAll(currentWeekEntry);
+            }
+            logbookEntryRepository.saveAll(generatedLogbookEntries);
           } else {
-            startMonday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            log.info("Found existing logbook entries. Will not generate new logbook entries");
           }
-
-          List<LogbookEntry> generatedLogbookEntries = new ArrayList<>();
-
-          for (int i = 0; i < numberOfWeeks; i++) {
-            LocalDate currentStartWeek = startMonday.plusWeeks(i);
-            List<LogbookEntry> currentWeekEntry =
-                createLogbookEntryForWholeWeek(logbook, currentStartWeek, i + 1);
-            generatedLogbookEntries.addAll(currentWeekEntry);
-          }
-
-          logbookEntryRepository.saveAll(generatedLogbookEntries);
 
           return logbook.toModel();
         });

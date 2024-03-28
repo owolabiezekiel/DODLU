@@ -19,4 +19,6 @@ public interface LogbookEntryRepository extends JpaRepository<LogbookEntry, Stri
       "SELECT e from LogbookEntry e WHERE e.logbook = :logbook AND FUNCTION('DATE', e.dateTime) = :dateTime")
   Optional<LogbookEntry> findByLogbookAndDate(
       @Param("logbook") Logbook logbook, @Param("dateTime") LocalDateTime dateTime);
+
+  boolean existsByLogbookId(String logbookId);
 }
