@@ -10,11 +10,9 @@ import com.dodlu.core.app.model.request.internship.CreateJobPostingRequest;
 import com.dodlu.core.app.model.response.JobPostingApplicationResult;
 import com.dodlu.core.app.model.response.JobPostingResult;
 import com.dodlu.core.app.model.response.ResponseModel;
-import com.dodlu.core.app.model.response.StudentProfileResult;
 import com.dodlu.core.domain.internship.model.JobPostingApplicationModel;
 import com.dodlu.core.domain.internship.model.JobPostingModel;
 import com.dodlu.core.domain.internship.service.DefaultJobPostingService;
-import com.dodlu.core.domain.user.model.StudentProfileModel;
 import com.dodlu.core.persistence.user.entity.User;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -136,18 +134,18 @@ public class JobPostingController {
     @ApiResponse(
         code = 200,
         message = "Success",
-        response = StudentProfileResult.class,
+        response = JobPostingApplicationResult.class,
         responseContainer = "page")
   })
   @PreAuthorize("hasAnyAuthority('EMPLOYER', 'ADMIN')")
-  public ResponseModel<StudentProfileResult> getJobPostingApplicants(
+  public ResponseModel<JobPostingApplicationResult> getJobPostingApplicants(
       @AuthenticationPrincipal User user,
       @ModelAttribute PagingAndSortingParams paging,
       @PathVariable("jobPostingId") String jobPostingId) {
     Pageable pageable = buildPageable(paging);
-    Page<StudentProfileModel> applicantsPage =
+    Page<JobPostingApplicationModel> applicantsPage =
         jobPostingService.getJobPostingApplicants(user, pageable, jobPostingId).join();
-    StudentProfileResult applicantsResult = new StudentProfileResult(applicantsPage);
+    JobPostingApplicationResult applicantsResult = new JobPostingApplicationResult(applicantsPage);
     return new ResponseModel<>(applicantsResult);
   }
 
