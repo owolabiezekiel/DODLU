@@ -141,10 +141,11 @@ public class JobPostingController {
   public ResponseModel<JobPostingApplicationResult> getJobPostingApplicants(
       @AuthenticationPrincipal User user,
       @ModelAttribute PagingAndSortingParams paging,
+      @ModelAttribute JobPostingApplicationFilter filter,
       @PathVariable("jobPostingId") String jobPostingId) {
     Pageable pageable = buildPageable(paging);
     Page<JobPostingApplicationModel> applicantsPage =
-        jobPostingService.getJobPostingApplicants(user, pageable, jobPostingId).join();
+        jobPostingService.getJobPostingApplicants(user, pageable, filter, jobPostingId).join();
     JobPostingApplicationResult applicantsResult = new JobPostingApplicationResult(applicantsPage);
     return new ResponseModel<>(applicantsResult);
   }
