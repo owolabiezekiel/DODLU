@@ -35,4 +35,5 @@
     <include file="changelog/010_logbook_and_logbook_entry_migration.xml"/>
     <include file="changelog/011_email_migration.xml"/>
     <include file="changelog/012_student_document_migration.xml"/>
+    <include file="/changelog/013_tokens_migration.xml"/>
 </databaseChangeLog>

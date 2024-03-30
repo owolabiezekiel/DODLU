@@ -1,9 +1,6 @@
 package com.dodlu.core.domain.user.service.abstracts;
 
-import com.dodlu.core.app.model.request.user.ChangePasswordRequest;
-import com.dodlu.core.app.model.request.user.CreateUserRequest;
-import com.dodlu.core.app.model.request.user.RegisterEmployerRequest;
-import com.dodlu.core.app.model.request.user.UserLoginRequest;
+import com.dodlu.core.app.model.request.user.*;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
 import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.persistence.user.entity.User;
@@ -17,4 +14,6 @@ public interface AuthService {
   CompletableFuture<LoginResponseModel> userLogin(UserLoginRequest request);
 
   CompletableFuture<Void> changePassword(User user, ChangePasswordRequest request);
+  CompletableFuture<UserModel> initiatePasswordReset(EmailModel emailModel);
+  CompletableFuture<UserModel> resetPassword(ForgetPasswordRequest request );
 }
