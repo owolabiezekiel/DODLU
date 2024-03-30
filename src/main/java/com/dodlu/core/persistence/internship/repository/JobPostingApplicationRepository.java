@@ -30,7 +30,7 @@ public interface JobPostingApplicationRepository
 
   default Page<JobPostingApplication> findJobPostingApplicationByJobPostingId(
       Pageable pageable, JobPostingApplicationFilter filter, String jobPostingId) {
-    BooleanExpression predicate = jobPostingApplication.id.eq(jobPostingId);
+    BooleanExpression predicate = jobPostingApplication.jobPosting.id.eq(jobPostingId);
     if (filter.getStatus() != null) {
       predicate = predicate.and(jobPostingApplication.applicationStatus.eq(filter.getStatus()));
     }
