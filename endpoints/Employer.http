@@ -1,0 +1,3 @@
+### Get all employer supervisors
+GET {{host}}/employer/supervisors
+Authorization: {{employer_token}}
