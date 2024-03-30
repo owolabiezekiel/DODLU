@@ -1,10 +1,8 @@
 package com.dodlu.core.persistence.internship.repository;
 
-import static com.dodlu.core.domain.internship.enums.ApplicationStatus.PENDING;
 import static com.dodlu.core.persistence.internship.entity.QJobPostingApplication.jobPostingApplication;
 
 import com.dodlu.core.app.model.filters.JobPostingApplicationFilter;
-import com.dodlu.core.domain.internship.enums.ApplicationStatus;
 import com.dodlu.core.persistence.internship.entity.JobPostingApplication;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.data.domain.Page;
@@ -32,10 +30,10 @@ public interface JobPostingApplicationRepository
 
   default Page<JobPostingApplication> findJobPostingApplicationByJobPostingId(
       Pageable pageable, JobPostingApplicationFilter filter, String jobPostingId) {
-    ApplicationStatus status = filter.getStatus() == null ? PENDING : filter.getStatus();
-
     BooleanExpression predicate = jobPostingApplication.id.eq(jobPostingId);
-    predicate = predicate.and(jobPostingApplication.applicationStatus.eq(status));
+    if (filter.getStatus() != null) {
+      predicate = predicate.and(jobPostingApplication.applicationStatus.eq(filter.getStatus()));
+    }
 
     return findAll(predicate, pageable);
   }
