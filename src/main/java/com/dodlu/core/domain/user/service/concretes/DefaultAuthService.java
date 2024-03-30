@@ -33,7 +33,6 @@ import com.dodlu.core.persistence.user.repository.RoleRepository;
 import com.dodlu.core.persistence.user.repository.TokenRepository;
 import com.dodlu.core.persistence.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
@@ -147,75 +146,72 @@ public class DefaultAuthService implements AuthService {
         });
   }
 
-    @Override
-    public CompletableFuture<UserModel> initiatePasswordReset(EmailModel emailModel) {
-        return supplyAsync(
-                () -> {
-                    User user =
-                            userRepository
-                                    .findByEmailEqualsIgnoreCase(emailModel.getEmail())
-                                    .orElseThrow(() -> exceptionService.handleCreateBadRequest("User %s not found",
-                                            emailModel.getEmail()));
+  @Override
+  public CompletableFuture<UserModel> initiatePasswordReset(EmailModel emailModel) {
+    return supplyAsync(
+        () -> {
+          User user =
+              userRepository
+                  .findByEmailEqualsIgnoreCase(emailModel.getEmail())
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateBadRequest(
+                              "User %s not found", emailModel.getEmail()));
 
-                    String token = createResetPasswordTokenForUser(user.getUsername());
-                    emailService.sendResetPasswordTokenEmail(user.getEmail(), user.getUsername(), token);
-                    return user.toModel();
-                }
-        );
+          String token = createResetPasswordTokenForUser(user.getUsername());
+          emailService.sendResetPasswordTokenEmail(user.getEmail(), user.getUsername(), token);
+          return user.toModel();
+        });
+  }
+
+  @Override
+  public CompletableFuture<UserModel> resetPassword(ForgetPasswordRequest request) {
+    return supplyAsync(
+        () -> {
+          Token resetPasswordToken =
+              tokenRepository
+                  .findByToken(request.getToken())
+                  .orElseThrow(() -> exceptionService.handleCreateBadRequest("invalid token"));
+          String username = resetPasswordToken.getUsername();
+          User user =
+              userRepository
+                  .findByUsernameEqualsIgnoreCase(username)
+                  .orElseThrow(
+                      () -> exceptionService.handleCreateBadRequest("User %s not found", username));
+          String hashedPassword = passwordEncoder.encode(request.getNewPassword());
+          user.setPassword(hashedPassword);
+
+          tokenRepository.deleteById(resetPasswordToken.getId());
+          return userRepository.save(user).toModel();
+        });
+  }
+
+  private String createResetPasswordTokenForUser(String username) {
+    var token =
+        tokenGeneratorService.generateToken(username, this::deleteOldResetPasswordTokenIfExists);
+    Token resetPasswordToken = new Token();
+    resetPasswordToken.setTokenType(TokenType.ResetPassword);
+    resetPasswordToken.setUsername(username);
+    resetPasswordToken.setToken(token);
+    resetPasswordToken.setTimeToLive(generateTimeToLive());
+
+    tokenRepository.save(resetPasswordToken);
+    return token;
+  }
+
+  private Instant generateTimeToLive() {
+    Instant instant = Instant.now();
+    return instant.plus(Duration.ofMinutes(30));
+  }
+
+  private void deleteOldResetPasswordTokenIfExists(String username) {
+    Optional<Token> token = tokenRepository.findByUsername(username);
+    if (token.isPresent() && token.get().getTokenType() == TokenType.ResetPassword) {
+      tokenRepository.delete(token.get());
     }
+  }
 
-
-
-    @Override
-    public CompletableFuture<UserModel> resetPassword(ForgetPasswordRequest request) {
-        return supplyAsync(
-                () -> {
-                    Token resetPasswordToken =
-                            tokenRepository
-                                    .findByToken(request.getToken())
-                                    .orElseThrow(() -> exceptionService.handleCreateBadRequest("invalid token"));
-                    String username = resetPasswordToken.getUsername();
-                            User user =
-                                    userRepository
-                                            .findByUsernameEqualsIgnoreCase(username)
-                                            .orElseThrow(() -> exceptionService.handleCreateBadRequest("User %s not found",
-                                                    username));
-                            String hashedPassword = passwordEncoder.encode(request.getNewPassword());
-                            user.setPassword(hashedPassword);
-
-                            tokenRepository.deleteById(resetPasswordToken.getId());
-                            return userRepository.save(user).toModel();
-                }
-        );
-
-    }
-
-    private String createResetPasswordTokenForUser(String username) {
-        var token =
-                tokenGeneratorService.generateToken(username, this::deleteOldResetPasswordTokenIfExists);
-        Token resetPasswordToken = new Token();
-        resetPasswordToken.setTokenType(TokenType.ResetPassword);
-        resetPasswordToken.setUsername(username);
-        resetPasswordToken.setToken(token);
-        resetPasswordToken.setTimeToLive(generateTimeToLive());
-
-        tokenRepository.save(resetPasswordToken);
-        return token;
-    }
-
-    private Instant generateTimeToLive(){
-        Instant instant = Instant.now();
-        return instant.plus(Duration.ofSeconds(30));
-    }
-
-    private void deleteOldResetPasswordTokenIfExists(String username) {
-      Optional<Token> token = tokenRepository.findByUsername(username);
-      if(token.isPresent()&& token.get().getTokenType() == TokenType.ResetPassword) {
-          tokenRepository.delete(token.get());
-      }
-    }
-
-    private User buildUser(String username, String email, String password, Role role) {
+  private User buildUser(String username, String email, String password, Role role) {
     return User.builder()
         .username(
             isNullOrBlank(username)
@@ -266,5 +262,4 @@ public class DefaultAuthService implements AuthService {
       throw exceptionService.handleCreateBadRequest("This username is already taken");
     }
   }
-
 }

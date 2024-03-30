@@ -8,7 +8,6 @@ import com.dodlu.core.domain.notification.email.model.EmailModel;
 import com.dodlu.core.domain.user.model.UserType;
 import com.dodlu.core.persistence.notification.entity.Email;
 import com.dodlu.core.persistence.notification.repository.EmailRepository;
-import com.dodlu.core.persistence.user.entity.User;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import jakarta.mail.MessagingException;
@@ -92,7 +91,8 @@ public class JmsEmailService {
 
     send(emailModel);
   }
-  public void sendResetPasswordTokenEmail(String email, String username,String token){
+
+  public void sendResetPasswordTokenEmail(String email, String username, String token) {
     String resetLink = "";
     log.info("Sending reset password token for {}", email);
     Map<String, Object> emailData = new HashMap<>();
@@ -101,15 +101,14 @@ public class JmsEmailService {
     emailData.put("resetLink", resetLink);
 
     EmailModel emailModel =
-            EmailModel.builder()
-                    .templateData(emailData)
-                    .templateId("reset-password.ftl")
-                    .recipients(Set.of(email))
-                    .subject("Reset Password")
-                    .build();
+        EmailModel.builder()
+            .templateData(emailData)
+            .templateId("reset-password.ftl")
+            .recipients(Set.of(email))
+            .subject("Reset Password")
+            .build();
 
     send(emailModel);
-
   }
 
   public void refineCheck(

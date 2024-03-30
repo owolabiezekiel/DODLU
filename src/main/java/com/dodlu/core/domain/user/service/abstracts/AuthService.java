@@ -14,6 +14,8 @@ public interface AuthService {
   CompletableFuture<LoginResponseModel> userLogin(UserLoginRequest request);
 
   CompletableFuture<Void> changePassword(User user, ChangePasswordRequest request);
+
   CompletableFuture<UserModel> initiatePasswordReset(EmailModel emailModel);
-  CompletableFuture<UserModel> resetPassword(ForgetPasswordRequest request );
+
+  CompletableFuture<UserModel> resetPassword(ForgetPasswordRequest request);
 }
