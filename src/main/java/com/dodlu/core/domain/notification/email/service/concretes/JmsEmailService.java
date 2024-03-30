@@ -92,25 +92,6 @@ public class JmsEmailService {
     send(emailModel);
   }
 
-  public void sendResetPasswordTokenEmail(String email, String username, String token) {
-    String resetLink = "";
-    log.info("Sending reset password token for {}", email);
-    Map<String, Object> emailData = new HashMap<>();
-    emailData.put("username", username);
-    emailData.put("resetToken", token);
-    emailData.put("resetLink", resetLink);
-
-    EmailModel emailModel =
-        EmailModel.builder()
-            .templateData(emailData)
-            .templateId("reset-password.ftl")
-            .recipients(Set.of(email))
-            .subject("Reset Password")
-            .build();
-
-    send(emailModel);
-  }
-
   public void refineCheck(
       MimeMessageHelper mimeMessageHelper,
       Set<String> cc,
