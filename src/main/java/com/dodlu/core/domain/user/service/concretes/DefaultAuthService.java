@@ -14,29 +14,23 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.configuration.security.JwtService;
 import com.dodlu.core.app.exceptions.CoreExceptionService;
-import com.dodlu.core.app.model.request.user.*;
+import com.dodlu.core.app.model.request.user.ChangePasswordRequest;
+import com.dodlu.core.app.model.request.user.CreateUserRequest;
+import com.dodlu.core.app.model.request.user.RegisterEmployerRequest;
+import com.dodlu.core.app.model.request.user.UserLoginRequest;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
-import com.dodlu.core.domain.notification.email.service.concretes.JmsEmailService;
 import com.dodlu.core.domain.user.enums.Industry;
-import com.dodlu.core.domain.user.enums.TokenType;
 import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.domain.user.service.abstracts.AuthService;
-import com.dodlu.core.domain.user.service.abstracts.TokenGeneratorService;
 import com.dodlu.core.persistence.company.entity.Company;
 import com.dodlu.core.persistence.company.repository.CompanyRepository;
 import com.dodlu.core.persistence.user.entity.EmployerProfile;
 import com.dodlu.core.persistence.user.entity.Role;
-import com.dodlu.core.persistence.user.entity.Token;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.EmployerProfileRepository;
 import com.dodlu.core.persistence.user.repository.RoleRepository;
-import com.dodlu.core.persistence.user.repository.TokenRepository;
 import com.dodlu.core.persistence.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
@@ -57,9 +51,6 @@ public class DefaultAuthService implements AuthService {
   private final CompanyRepository companyRepository;
   private final AuthenticationManager authenticationManager;
   private final JwtService jwtService;
-  private final TokenGeneratorService tokenGeneratorService;
-  private final TokenRepository tokenRepository;
-  private final JmsEmailService emailService;
   private final CoreExceptionService exceptionService;
 
   @Override
@@ -147,75 +138,7 @@ public class DefaultAuthService implements AuthService {
         });
   }
 
-    @Override
-    public CompletableFuture<UserModel> initiatePasswordReset(EmailModel emailModel) {
-        return supplyAsync(
-                () -> {
-                    User user =
-                            userRepository
-                                    .findByEmailEqualsIgnoreCase(emailModel.getEmail())
-                                    .orElseThrow(() -> exceptionService.handleCreateBadRequest("User %s not found",
-                                            emailModel.getEmail()));
-
-                    String token = createResetPasswordTokenForUser(user.getUsername());
-                    emailService.sendResetPasswordTokenEmail(user.getEmail(), user.getUsername(), token);
-                    return user.toModel();
-                }
-        );
-    }
-
-
-
-    @Override
-    public CompletableFuture<UserModel> resetPassword(ForgetPasswordRequest request) {
-        return supplyAsync(
-                () -> {
-                    Token resetPasswordToken =
-                            tokenRepository
-                                    .findByToken(request.getToken())
-                                    .orElseThrow(() -> exceptionService.handleCreateBadRequest("invalid token"));
-                    String username = resetPasswordToken.getUsername();
-                            User user =
-                                    userRepository
-                                            .findByUsernameEqualsIgnoreCase(username)
-                                            .orElseThrow(() -> exceptionService.handleCreateBadRequest("User %s not found",
-                                                    username));
-                            String hashedPassword = passwordEncoder.encode(request.getNewPassword());
-                            user.setPassword(hashedPassword);
-
-                            tokenRepository.deleteById(resetPasswordToken.getId());
-                            return userRepository.save(user).toModel();
-                }
-        );
-
-    }
-
-    private String createResetPasswordTokenForUser(String username) {
-        var token =
-                tokenGeneratorService.generateToken(username, this::deleteOldResetPasswordTokenIfExists);
-        Token resetPasswordToken = new Token();
-        resetPasswordToken.setTokenType(TokenType.ResetPassword);
-        resetPasswordToken.setUsername(username);
-        resetPasswordToken.setToken(token);
-        resetPasswordToken.setTimeToLive(generateTimeToLive());
-
-        tokenRepository.save(resetPasswordToken);
-        return token;
-    }
-
-    private Instant generateTimeToLive(){
-        Instant instant = Instant.now();
-        return instant.plus(Duration.ofSeconds(30));
-    }
-
-    private void deleteOldResetPasswordTokenIfExists(String username) {
-      Optional<Token> token = tokenRepository.findByUsername(username);
-      if(token.isPresent()&& token.get().getTokenType() == TokenType.ResetPassword) {
-          tokenRepository.delete(token.get());
-      }
-    }
-
-    private User buildUser(String username, String email, String password, Role role) {
+  private User buildUser(String username, String email, String password, Role role) {
     return User.builder()
         .username(
             isNullOrBlank(username)
@@ -266,5 +189,4 @@ public class DefaultAuthService implements AuthService {
       throw exceptionService.handleCreateBadRequest("This username is already taken");
     }
   }
-
 }
