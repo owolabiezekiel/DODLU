@@ -256,6 +256,29 @@ public class DefaultJobPostingService {
   }
 
   @Transactional
+  public CompletableFuture<JobPostingApplicationModel> employerRejectJobPostingApplication(
+      User user, String jobApplicationId) {
+    return supplyAsync(
+        () -> {
+          EmployerProfile employerProfile =
+              getEmployerByUsername(
+                  employerProfileRepository, exceptionService, user.getUsername());
+          JobPostingApplication jobPostingApplication = getJobPostingApplication(jobApplicationId);
+
+          validateEmployerRejectJobApplication(jobPostingApplication, employerProfile);
+
+          if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_STUDENT)) {
+            throw exceptionService.handleCreateBadRequest(
+                "You can no longer reject this application because applicant has accepted it");
+          } else {
+            jobPostingApplication.setApplicationStatus(REJECTED_BY_EMPLOYER);
+            jobPostingApplication.setStudentHasAccepted(false);
+            return jobPostApplicationRepository.save(jobPostingApplication).toModel();
+          }
+        });
+  }
+
+  @Transactional
   public CompletableFuture<JobPostingApplicationModel> studentAcceptJobPostingOffer(
       User user, String jobApplicationId) {
     return supplyAsync(
@@ -377,6 +400,21 @@ public class DefaultJobPostingService {
     }
     if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_EMPLOYER)) {
       throw (exceptionService.handleCreateBadRequest("Application has already been approved"));
+    }
+  }
+
+  private void validateEmployerRejectJobApplication(
+      JobPostingApplication jobPostingApplication, EmployerProfile employerProfile) {
+    if (!jobPostingApplication
+        .getJobPosting()
+        .getEmployer()
+        .getId()
+        .equals(employerProfile.getId())) {
+      throw exceptionService.handleCreateUnAuthorized(
+          "Only the job poster can approve this application");
+    }
+    if (jobPostingApplication.getApplicationStatus().equals(REJECTED_BY_EMPLOYER)) {
+      throw (exceptionService.handleCreateBadRequest("Application has already been rejected"));
     }
   }
 

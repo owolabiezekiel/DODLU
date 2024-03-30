@@ -162,6 +162,19 @@ public class JobPostingController {
     return new ResponseModel<>(jobPostingApplication);
   }
 
+  @PostMapping(value = "/{applicationId}/employer_reject")
+  @Operation(description = "Employer reject job posting application")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = JobPostingApplicationModel.class)
+  })
+  @PreAuthorize("hasAnyAuthority('EMPLOYER')")
+  public ResponseModel<JobPostingApplicationModel> employerRejectJobPostingApplication(
+      @AuthenticationPrincipal User user, @PathVariable("applicationId") String applicationId) {
+    JobPostingApplicationModel jobPostingApplication =
+        jobPostingService.employerRejectJobPostingApplication(user, applicationId).join();
+    return new ResponseModel<>(jobPostingApplication);
+  }
+
   @PostMapping(value = "/{applicationId}/student_accept")
   @Operation(description = "Student accept job posting application offer")
   @ApiResponses({
