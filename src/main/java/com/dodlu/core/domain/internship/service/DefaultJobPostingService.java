@@ -291,6 +291,13 @@ public class DefaultJobPostingService {
             throw exceptionService.handleCreateBadRequest("Unauthorized");
           }
           if (jobPostingApplication.getApplicationStatus().equals(ACCEPTED_BY_EMPLOYER)) {
+            StudentProfile studentProfile =
+                getStudentProfileByUsername(
+                    studentProfileRepository, exceptionService, user.getUsername());
+            if (placementRepository.existsByStudentIdAndActive(studentProfile.getId(), true)) {
+              throw exceptionService.handleCreateBadRequest(
+                  "You have already secured a placement, you cannot accept this offer");
+            }
             jobPostingApplication.setStudentHasAccepted(true);
             jobPostingApplication.setApplicationStatus(ACCEPTED_BY_STUDENT);
             Placement placement = buildPlacement(jobPostingApplication, jobPosting);
