@@ -8,7 +8,40 @@ import java.util.stream.Stream;
 public enum State {
   LAGOS,
   ABIA,
-  ADAMAWA;
+  ADAMAWA,
+  AKWA_IBOM,
+  ANAMBRA,
+  BAUCHI,
+  BAYELSA,
+  BENUE,
+  BORNO,
+  CROSS_RIVER,
+  DELTA,
+  EDO,
+  EKITI,
+  ENUGU,
+  GOMBE,
+
+  IMO,
+  JIGAWA,
+  KADUNA,
+  KATSINA,
+  KANO,
+  KEBBI,
+  KOGI,
+  KWARA,
+  NIGER,
+  OGUN,
+  ONDO,
+  OSUN,
+  OYO,
+  PLATEAU,
+  RIVERS,
+  SOKOTO,
+  TARABA,
+  YOBE,
+  ZAMFARA,
+  FCT;
 
   @JsonCreator
   public static State create(String value) {
