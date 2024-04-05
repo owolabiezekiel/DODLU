@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.stream.Stream;
 
 public enum State {
-  LAGOS,
   ABIA,
   ADAMAWA,
   AKWA_IBOM,
@@ -20,16 +19,17 @@ public enum State {
   EDO,
   EKITI,
   ENUGU,
+  FCT,
   GOMBE,
-
   IMO,
   JIGAWA,
   KADUNA,
-  KATSINA,
   KANO,
+  KATSINA,
   KEBBI,
   KOGI,
   KWARA,
+  LAGOS,
   NIGER,
   OGUN,
   ONDO,
@@ -40,8 +40,7 @@ public enum State {
   SOKOTO,
   TARABA,
   YOBE,
-  ZAMFARA,
-  FCT;
+  ZAMFARA;
 
   @JsonCreator
   public static State create(String value) {
