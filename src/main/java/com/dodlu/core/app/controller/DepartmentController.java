@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -29,7 +30,8 @@ public class DepartmentController {
   @PostMapping(consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Create department")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = DepartmentModel.class)})
-  public ResponseModel<DepartmentModel> createFaculty(
+  @PreAuthorize("hasAnyAuthority('ADMIN')")
+  public ResponseModel<DepartmentModel> createDepartment(
       @Valid @RequestBody CreateDepartmentRequest request) {
     DepartmentModel department = departmentService.createDepartment(request).join();
     return new ResponseModel<>(department);
@@ -44,6 +46,7 @@ public class DepartmentController {
         response = DepartmentResult.class,
         responseContainer = "page")
   })
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'EMPLOYER', 'SUPERVISOR', 'COORDINATOR')")
   public ResponseModel<DepartmentResult> getAllDepartments(@PageableDefault Pageable pageable) {
     Page<DepartmentModel> departmentPage = departmentService.getAllDepartments(pageable).join();
     DepartmentResult departmentResult = new DepartmentResult(departmentPage);
