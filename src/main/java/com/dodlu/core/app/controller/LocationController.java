@@ -3,8 +3,10 @@ package com.dodlu.core.app.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.request.location.CreateCountryRequest;
+import com.dodlu.core.app.model.request.location.CreateStateRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.location.model.CountryModel;
+import com.dodlu.core.domain.location.model.StateModel;
 import com.dodlu.core.domain.location.service.DefaultLocationService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -31,6 +33,15 @@ public class LocationController {
       @Valid @RequestBody CreateCountryRequest request) {
     CountryModel country = locationService.createCountry(request).join();
     return new ResponseModel<>(country);
+  }
+
+  @PostMapping(value = "/state", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Admin create state")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = StateModel.class)})
+  @PreAuthorize("hasAnyAuthority('ADMIN')")
+  public ResponseModel<StateModel> createState(@Valid @RequestBody CreateStateRequest request) {
+    StateModel state = locationService.createState(request).join();
+    return new ResponseModel<>(state);
   }
 
   //  @GetMapping

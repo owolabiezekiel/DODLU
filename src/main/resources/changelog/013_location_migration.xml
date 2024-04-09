@@ -72,12 +72,6 @@
         </insert>
     </changeSet>
 
-<!--    <changeSet author="tobiowolabi" id="retrieve_country_id">-->
-<!--        <sql>-->
-<!--            CREATE TABLE tmp_country_id AS SELECT id FROM countries WHERE name = 'Nigeria';-->
-<!--        </sql>-->
-<!--    </changeSet>-->
-
     <changeSet author="tobiowolabi" id="create_default_states" context="state-insertion">
         <insert tableName="states">
             <column name="name" value="Abia"/>
@@ -369,10 +363,12 @@
         </insert>
     </changeSet>
 
-<!--    <changeSet author="tobiowolabi" id="cleanup_temporary_table">-->
-<!--        <sql>-->
-<!--            DROP TABLE tmp_country_id;-->
-<!--        </sql>-->
-<!--    </changeSet>-->
+    <changeSet id="remove_unique_constraint_on_state_name" author="your_name">
+        <dropUniqueConstraint
+                tableName="states"
+                uniqueColumns="name"
+                constraintName="states_name_key"
+        />
+    </changeSet>
 
 </databaseChangeLog>

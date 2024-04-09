@@ -8,6 +8,16 @@ Authorization: {{employer_token}}
   "iso3Code": "SUA"
 }
 
+### Create State
+POST {{host}}/location/state
+Content-Type: application/json
+Authorization: {{employer_token}}
+
+{
+  "name": "Kassala",
+  "countryId": "55d6f7cb-b44d-41a3-8527-4a8ab85b6329"
+}
+
 ### Get all faculties
 GET {{host}}/faculty
 Authorization: {{token}}

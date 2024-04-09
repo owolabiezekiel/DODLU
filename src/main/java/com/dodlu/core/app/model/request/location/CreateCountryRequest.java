@@ -16,10 +16,13 @@ import lombok.experimental.Accessors;
 @Builder
 public class CreateCountryRequest {
   @NotBlank(message = "name is required")
+  @Pattern(
+      regexp = "^[a-zA-Z]+$",
+      message = " country name must contain only alphabetic characters")
   private String name;
 
   @NotBlank(message = "iso3Code is required")
   @Size(min = 3, max = 3, message = "length of iso3 code must be 3")
-  @Pattern(regexp = "^[a-zA-Z]+$", message = "ISO3 code must contain only alphabetic characters")
+  @Pattern(regexp = "^[a-zA-Z]+$", message = "iso3 code must contain only alphabetic characters")
   private String iso3Code;
 }
