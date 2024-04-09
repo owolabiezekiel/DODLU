@@ -1,0 +1,378 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="tobiowolabi" id="country_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="countries"/>
+            </not>
+        </preConditions>
+        <createTable tableName="countries">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="iso3code" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet author="tobiowolabi" id="state_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="states"/>
+            </not>
+        </preConditions>
+        <createTable tableName="states">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="country_id" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet author="tobiowolabi" id="create_default_country">
+        <insert tableName="countries">
+            <column name="name" value="Nigeria"/>
+            <column name="iso3code" value="NGN"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
+<!--    <changeSet author="tobiowolabi" id="retrieve_country_id">-->
+<!--        <sql>-->
+<!--            CREATE TABLE tmp_country_id AS SELECT id FROM countries WHERE name = 'Nigeria';-->
+<!--        </sql>-->
+<!--    </changeSet>-->
+
+    <changeSet author="tobiowolabi" id="create_default_states" context="state-insertion">
+        <insert tableName="states">
+            <column name="name" value="Abia"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Adamawa"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Akwa-Ibom"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Anambra"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Bauchi"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Bayelsa"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Benue"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Borno"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Cross-River"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Delta"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Ebonyi"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Edo"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Ekiti"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Enugu"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Gombe"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Imo"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Jigawa"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Kaduna"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Katsina"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Kano"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Kebbi"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Kogi"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Kwara"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Lagos"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Niger"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Ogun"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Ondo"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Osun"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Oyo"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Plataeu"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Rivers"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Sokoto"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Taraba"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Yobe"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="Zamfara"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="states">
+            <column name="name" value="FCT"/>
+            <column name="country_id" valueComputed="(SELECT id FROM countries where name = 'Nigeria')"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
+<!--    <changeSet author="tobiowolabi" id="cleanup_temporary_table">-->
+<!--        <sql>-->
+<!--            DROP TABLE tmp_country_id;-->
+<!--        </sql>-->
+<!--    </changeSet>-->
+
+</databaseChangeLog>
