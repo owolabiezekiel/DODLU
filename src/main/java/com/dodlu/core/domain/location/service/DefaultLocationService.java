@@ -60,6 +60,21 @@ public class DefaultLocationService {
             countryRepository.findAll().stream().map(Country::toModel).collect(Collectors.toSet()));
   }
 
+  @Transactional
+  public CompletableFuture<Set<StateModel>> getAllStatesForCountry(String countryId) {
+    return supplyAsync(
+        () ->
+            stateRepository.findAllByCountryId(countryId).stream()
+                .map(State::toModel)
+                .collect(Collectors.toSet()));
+  }
+
+  @Transactional
+  public CompletableFuture<Set<StateModel>> getAllStates() {
+    return supplyAsync(
+        () -> stateRepository.findAll().stream().map(State::toModel).collect(Collectors.toSet()));
+  }
+
   private Country getCountry(String countryId) {
     return getCountryById(countryRepository, exceptionService, countryId);
   }

@@ -59,6 +59,37 @@ public class LocationController {
     Set<CountryModel> countries = locationService.getAllCountries().join();
     return new ResponseModel<>(countries);
   }
+
+  @GetMapping(value = "/states/{countryId}")
+  @Operation(description = "Get all states by country id")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = StateModel.class,
+        responseContainer = "set")
+  })
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'EMPLOYER', 'SUPERVISOR', 'COORDINATOR')")
+  public ResponseModel<Set<StateModel>> getAllStatesForCountry(
+      @PathVariable("countryId") String countryId) {
+    Set<StateModel> states = locationService.getAllStatesForCountry(countryId).join();
+    return new ResponseModel<>(states);
+  }
+
+  @GetMapping(value = "/states}")
+  @Operation(description = "Get all states")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = StateModel.class,
+        responseContainer = "set")
+  })
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'EMPLOYER', 'SUPERVISOR', 'COORDINATOR')")
+  public ResponseModel<Set<StateModel>> getAllStates() {
+    Set<StateModel> states = locationService.getAllStates().join();
+    return new ResponseModel<>(states);
+  }
   //
   //  @GetMapping(value = "/{id}")
   //  @Operation(description = "get single department")
