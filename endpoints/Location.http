@@ -1,0 +1,35 @@
+### Create Country
+POST {{host}}/location/country
+Content-Type: application/json
+Authorization: {{employer_token}}
+
+{
+  "name": "Sudanese",
+  "iso3Code": "SUA"
+}
+
+### Get all faculties
+GET {{host}}/faculty
+Authorization: {{token}}
+
+### Get single faculty
+GET {{host}}/faculty/d7dcc83c-62a2-40e9-8e1b-44ec8b0e9f6b
+Authorization: {{token}}
+
+### Create Department
+POST {{host}}/department
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "name": "Geography",
+  "facultyId": "d7dcc83c-62a2-40e9-8e1b-44ec8b0e9f6b"
+}
+
+### Get all departments
+GET {{host}}/department
+Authorization: {{token}}
+
+### Get single department
+GET {{host}}/department/da7f571d-6bb0-4d0f-b239-59fbc7900829
+Authorization: {{token}}
