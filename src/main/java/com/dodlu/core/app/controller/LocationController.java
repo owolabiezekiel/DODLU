@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,21 +45,20 @@ public class LocationController {
     return new ResponseModel<>(state);
   }
 
-  //  @GetMapping
-  //  @Operation(description = "Get all departments")
-  //  @ApiResponses({
-  //    @ApiResponse(
-  //        code = 200,
-  //        message = "Success",
-  //        response = DepartmentResult.class,
-  //        responseContainer = "page")
-  //  })
-  //  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'EMPLOYER', 'SUPERVISOR', 'COORDINATOR')")
-  //  public ResponseModel<DepartmentResult> getAllDepartments(@PageableDefault Pageable pageable) {
-  //    Page<DepartmentModel> departmentPage = departmentService.getAllDepartments(pageable).join();
-  //    DepartmentResult departmentResult = new DepartmentResult(departmentPage);
-  //    return new ResponseModel<>(departmentResult);
-  //  }
+  @GetMapping(value = "/country")
+  @Operation(description = "Get all countries")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = CountryModel.class,
+        responseContainer = "set")
+  })
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'EMPLOYER', 'SUPERVISOR', 'COORDINATOR')")
+  public ResponseModel<Set<CountryModel>> getAllCountries() {
+    Set<CountryModel> countries = locationService.getAllCountries().join();
+    return new ResponseModel<>(countries);
+  }
   //
   //  @GetMapping(value = "/{id}")
   //  @Operation(description = "get single department")

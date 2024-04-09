@@ -12,7 +12,9 @@ import com.dodlu.core.persistence.location.entity.Country;
 import com.dodlu.core.persistence.location.entity.State;
 import com.dodlu.core.persistence.location.repository.CountryRepository;
 import com.dodlu.core.persistence.location.repository.StateRepository;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,13 @@ public class DefaultLocationService {
           State state = State.builder().name(request.getName()).country(country).build();
           return stateRepository.save(state).toModel();
         });
+  }
+
+  @Transactional
+  public CompletableFuture<Set<CountryModel>> getAllCountries() {
+    return supplyAsync(
+        () ->
+            countryRepository.findAll().stream().map(Country::toModel).collect(Collectors.toSet()));
   }
 
   private Country getCountry(String countryId) {

@@ -18,9 +18,9 @@ Authorization: {{employer_token}}
   "countryId": "55d6f7cb-b44d-41a3-8527-4a8ab85b6329"
 }
 
-### Get all faculties
-GET {{host}}/faculty
-Authorization: {{token}}
+### Get all countries
+GET {{host}}/location/country
+Authorization: {{employer_token}}
 
 ### Get single faculty
 GET {{host}}/faculty/d7dcc83c-62a2-40e9-8e1b-44ec8b0e9f6b
