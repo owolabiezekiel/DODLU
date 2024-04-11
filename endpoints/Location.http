@@ -22,6 +22,14 @@ Authorization: {{employer_token}}
 GET {{host}}/location/country
 Authorization: {{employer_token}}
 
+### Get all states for country
+GET {{host}}/location/states/79ede848-a9e0-4257-a10a-df0082ba50a3
+Authorization: {{employer_token}}
+
+### Get all states
+GET {{host}}/location/states
+Authorization: {{employer_token}}
+
 ### Get single faculty
 GET {{host}}/faculty/d7dcc83c-62a2-40e9-8e1b-44ec8b0e9f6b
 Authorization: {{token}}

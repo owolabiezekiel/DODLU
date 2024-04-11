@@ -76,7 +76,7 @@ public class LocationController {
     return new ResponseModel<>(states);
   }
 
-  @GetMapping(value = "/states}")
+  @GetMapping(value = "/states")
   @Operation(description = "Get all states")
   @ApiResponses({
     @ApiResponse(
