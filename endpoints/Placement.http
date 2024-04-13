@@ -19,3 +19,7 @@ Authorization: {{student_token}}
 ### Get Supervisor Students
 GET {{host}}/placement/supervisor/students
 Authorization: {{supervisor_token}}
+
+### Get EMployer Interns
+GET {{host}}/placement/employer/interns
+Authorization: {{employer_token}}

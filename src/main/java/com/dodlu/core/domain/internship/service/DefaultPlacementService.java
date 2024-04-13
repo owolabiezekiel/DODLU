@@ -129,6 +129,23 @@ public class DefaultPlacementService {
         });
   }
 
+  @Transactional
+  public CompletableFuture<Page<StudentProfileModel>> getInterns(User user, Pageable pageable) {
+    return supplyAsync(
+        () -> {
+          EmployerProfile employer =
+              getEmployerByUsername(
+                  employerProfileRepository, exceptionService, user.getUsername());
+
+          Page<Placement> pagedContent =
+              placementRepository.findAllByCompanyId(employer.getCompany().getId(), pageable);
+          List<StudentProfileModel> studentProfiles =
+              pagedContent.stream().map(placement -> placement.getStudent().toModel()).toList();
+          return new PageImpl<>(
+              studentProfiles, pagedContent.getPageable(), pagedContent.getTotalElements());
+        });
+  }
+
   private void checkNoSupervisorAssigned(
       AssignSupervisorRequest request, EmployerProfile employer) {
     if (studentSupervisorRepository.existsByCompanyIdAndStudentIdAndActive(

@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,6 +78,24 @@ public class PlacementController {
     Pageable pageable = buildPageable(paging);
     Page<StudentProfileModel> studentsPage =
         placementService.getSupervisorStudents(user, pageable).join();
+    StudentProfileResult studentsResult = new StudentProfileResult(studentsPage);
+    return new ResponseModel<>(studentsResult);
+  }
+
+  @GetMapping("/employer/interns")
+  @Operation(description = "Get all employer interns")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = StudentProfileResult.class,
+        responseContainer = "page")
+  })
+  @PreAuthorize("hasAnyAuthority('EMPLOYER')")
+  public ResponseModel<StudentProfileResult> getInterns(
+      @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
+    Pageable pageable = buildPageable(paging);
+    Page<StudentProfileModel> studentsPage = placementService.getInterns(user, pageable).join();
     StudentProfileResult studentsResult = new StudentProfileResult(studentsPage);
     return new ResponseModel<>(studentsResult);
   }
