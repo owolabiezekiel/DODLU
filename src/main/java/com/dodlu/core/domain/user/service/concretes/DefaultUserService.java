@@ -452,6 +452,16 @@ public class DefaultUserService {
         });
   }
 
+  @Transactional
+  public CompletableFuture<StudentDocumentModel> getStudentDocument(String studentProfileId) {
+    return supplyAsync(
+        () ->
+            studentDocumentRepository
+                .findByStudentId(studentProfileId)
+                .orElse(StudentDocuments.builder().build())
+                .toModel());
+  }
+
   private User buildUser(String username, String email, String password, Role role) {
     return User.builder()
         .username(

@@ -50,7 +50,7 @@ public class StudentDocuments {
   public StudentDocumentModel toModel() {
     return StudentDocumentModel.builder()
         .id(id)
-        .student(student.toModel())
+        .student(student == null ? null : student.toModel())
         .resumeUrl(resumeUrl)
         .coverLetterUrl(coverLetterUrl)
         .transcriptUrl(transcriptUrl)

@@ -157,4 +157,14 @@ public class UserController {
     StudentDocumentModel studentDocument = userService.studentUpdateTranscript(user, file).join();
     return new ResponseModel<>(studentDocument);
   }
+
+  @GetMapping(value = "/student/documents/{studentProfileId}")
+  @Operation(description = "Get student documents by student profile id")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  @PreAuthorize("hasAnyAuthority('EMPLOYER', 'ADMIN', 'SUPERVISOR', 'COORDINATOR')")
+  public ResponseModel<StudentDocumentModel> getStudentDocumentsById(
+      @PathVariable("studentProfileId") String studentProfileId) {
+    StudentDocumentModel documentModel = userService.getStudentDocument(studentProfileId).join();
+    return new ResponseModel<>(documentModel);
+  }
 }

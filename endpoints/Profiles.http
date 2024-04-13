@@ -78,3 +78,8 @@ Authorization: {{student_token}}
 {
   "phoneNumber": "0803344556"
 }
+
+### Get Student Documents by Username
+GET {{host}}/user/student/documents/5707150b-a3f5-4c7f-852b-6c2d273c335b
+Content-Type: application/json
+Authorization: {{employer_token}}
