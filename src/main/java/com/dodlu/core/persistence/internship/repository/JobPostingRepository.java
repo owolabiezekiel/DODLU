@@ -9,6 +9,7 @@ import com.dodlu.core.persistence.user.entity.EmployerProfile;
 import com.dodlu.core.persistence.user.entity.StudentProfile;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
+import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,6 +34,9 @@ public interface JobPostingRepository
     }
     if (filter.getCountry() != null) {
       predicate = jobPosting.country.eq(filter.getCountry());
+    }
+    if (filter.isActive()) {
+      predicate = predicate.and(jobPosting.expirationDate.loe(LocalDateTime.now()));
     }
 
     return findAll(predicate, pageable);
@@ -92,6 +96,13 @@ public interface JobPostingRepository
           predicate != null
               ? predicate.and(jobPosting.country.eq(filter.getCountry()))
               : jobPosting.country.eq(filter.getCountry());
+    }
+
+    if (filter.isActive()) {
+      predicate =
+          predicate != null
+              ? predicate.and(jobPosting.expirationDate.loe(LocalDateTime.now()))
+              : jobPosting.expirationDate.loe(LocalDateTime.now());
     }
     return predicate;
   }
