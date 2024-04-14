@@ -35,8 +35,12 @@ public interface JobPostingRepository
     if (filter.getCountry() != null) {
       predicate = jobPosting.country.eq(filter.getCountry());
     }
-    if (filter.isActive()) {
-      predicate = predicate.and(jobPosting.expirationDate.loe(LocalDateTime.now()));
+    if (filter.getActive() != null) {
+      if (filter.getActive()) {
+        predicate = predicate.and(jobPosting.expirationDate.goe(LocalDateTime.now()));
+      } else {
+        predicate = predicate.and(jobPosting.expirationDate.lt(LocalDateTime.now()));
+      }
     }
 
     return findAll(predicate, pageable);
@@ -98,11 +102,18 @@ public interface JobPostingRepository
               : jobPosting.country.eq(filter.getCountry());
     }
 
-    if (filter.isActive()) {
-      predicate =
-          predicate != null
-              ? predicate.and(jobPosting.expirationDate.loe(LocalDateTime.now()))
-              : jobPosting.expirationDate.loe(LocalDateTime.now());
+    if (filter.getActive() != null) {
+      if (filter.getActive()) {
+        predicate =
+            predicate != null
+                ? predicate.and(jobPosting.expirationDate.goe(LocalDateTime.now()))
+                : jobPosting.expirationDate.goe(LocalDateTime.now());
+      } else {
+        predicate =
+            predicate != null
+                ? predicate.and(jobPosting.expirationDate.lt(LocalDateTime.now()))
+                : jobPosting.expirationDate.lt(LocalDateTime.now());
+      }
     }
     return predicate;
   }

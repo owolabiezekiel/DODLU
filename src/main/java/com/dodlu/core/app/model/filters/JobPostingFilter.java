@@ -18,5 +18,5 @@ public class JobPostingFilter {
   private State state;
   private Country country;
   private Industry industry;
-  private boolean active;
+  private Boolean active;
 }
