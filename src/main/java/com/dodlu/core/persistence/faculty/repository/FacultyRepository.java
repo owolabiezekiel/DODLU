@@ -7,4 +7,6 @@ public interface FacultyRepository extends JpaRepository<Faculty, String> {
   boolean existsByName(String name);
 
   boolean existsByDeanId(String id);
+
+  long count();
 }

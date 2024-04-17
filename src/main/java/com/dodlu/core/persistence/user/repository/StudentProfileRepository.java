@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StudentProfileRepository extends JpaRepository<StudentProfile, String> {
   Optional<StudentProfile> findByUsernameIgnoreCase(String username);
+
+  long countByIsDeletedIsFalse();
 }

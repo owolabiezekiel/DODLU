@@ -7,4 +7,6 @@ public interface DepartmentRepository extends JpaRepository<Department, String> 
   boolean existsByHodId(String id);
 
   boolean existsByNameEqualsIgnoreCaseAndFacultyId(String name, String faculty);
+
+  long count();
 }

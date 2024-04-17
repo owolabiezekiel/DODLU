@@ -1,0 +1,4 @@
+### Get all countries
+GET {{host}}/admin/dashboard-overview
+Authorization: {{token}}
+

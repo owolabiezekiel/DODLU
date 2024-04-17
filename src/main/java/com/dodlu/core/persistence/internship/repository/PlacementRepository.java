@@ -14,4 +14,8 @@ public interface PlacementRepository extends JpaRepository<Placement, String> {
   Boolean existsByStudentIdAndActive(String studentId, boolean active);
 
   Page<Placement> findAllByCompanyId(String employerId, Pageable pageable);
+
+  long countByActiveIsTrue();
+
+  long count();
 }
