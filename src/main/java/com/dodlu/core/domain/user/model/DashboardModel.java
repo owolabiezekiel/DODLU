@@ -17,4 +17,6 @@ public class DashboardModel {
   private long activePlacementCount;
   private long totalPlacementCount;
   private long totalActiveStudents;
+  private long registeredEmployers;
+  private long totalCoordinators;
 }

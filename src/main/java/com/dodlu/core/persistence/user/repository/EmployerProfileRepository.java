@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EmployerProfileRepository extends JpaRepository<EmployerProfile, String> {
   Optional<EmployerProfile> findByUsernameIgnoreCase(String username);
+
+  long countByIsDeletedIsFalse();
 }

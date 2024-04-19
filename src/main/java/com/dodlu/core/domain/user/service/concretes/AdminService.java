@@ -7,6 +7,8 @@ import com.dodlu.core.domain.user.model.DashboardModel;
 import com.dodlu.core.persistence.department.repository.DepartmentRepository;
 import com.dodlu.core.persistence.faculty.repository.FacultyRepository;
 import com.dodlu.core.persistence.internship.repository.PlacementRepository;
+import com.dodlu.core.persistence.user.repository.CoordinatorProfileRepository;
+import com.dodlu.core.persistence.user.repository.EmployerProfileRepository;
 import com.dodlu.core.persistence.user.repository.StudentProfileRepository;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ public class AdminService {
   private final FacultyRepository facultyRepository;
   private final PlacementRepository placementRepository;
   private final StudentProfileRepository studentProfileRepository;
+  private final EmployerProfileRepository employerRepository;
+  private final CoordinatorProfileRepository coordinatorRepository;
   private final CoreExceptionService exceptionService;
 
   @Transactional
@@ -33,6 +37,8 @@ public class AdminService {
           long activePlacementCount = placementRepository.countByActiveIsTrue();
           long totalPlacementCount = placementRepository.count();
           long totalActiveStudents = studentProfileRepository.countByIsDeletedIsFalse();
+          long registeredEmployers = employerRepository.countByIsDeletedIsFalse();
+          long totalCoordinators = coordinatorRepository.countByIsDeletedIsFalse();
 
           return DashboardModel.builder()
               .departmentCount(departmentCount)
@@ -40,6 +46,8 @@ public class AdminService {
               .activePlacementCount(activePlacementCount)
               .totalPlacementCount(totalPlacementCount)
               .totalActiveStudents(totalActiveStudents)
+              .registeredEmployers(registeredEmployers)
+              .totalCoordinators(totalCoordinators)
               .build();
         });
   }
