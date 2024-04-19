@@ -58,14 +58,28 @@ public class PlacementController {
   @ApiResponses({
     @ApiResponse(code = 200, message = "Success", response = SupervisorProfileModel.class)
   })
+  @PreAuthorize("hasAnyAuthority('STUDENT')")
   public ResponseModel<SupervisorProfileModel> getStudentSupervisor(
       @AuthenticationPrincipal User user) {
     SupervisorProfileModel supervisor = placementService.getStudentSupervisor(user).join();
     return new ResponseModel<>(supervisor);
   }
 
+  @GetMapping("/student/{studentProfileId}/supervisor")
+  @Operation(description = "Get student supervisor by student profile id")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = SupervisorProfileModel.class)
+  })
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPERVISOR', 'COORDINATOR', 'EMPLOYER', 'STUDENT')")
+  public ResponseModel<SupervisorProfileModel> getStudentSupervisor(
+      @PathVariable("studentProfileId") String studentProfileId) {
+    SupervisorProfileModel supervisor =
+        placementService.getStudentSupervisor(studentProfileId).join();
+    return new ResponseModel<>(supervisor);
+  }
+
   @GetMapping("/supervisor/students")
-  @Operation(description = "Get all supervisor students")
+  @Operation(description = "Get  supervisor students")
   @ApiResponses({
     @ApiResponse(
         code = 200,
@@ -73,11 +87,32 @@ public class PlacementController {
         response = StudentProfileResult.class,
         responseContainer = "page")
   })
+  @PreAuthorize("hasAnyAuthority('SUPERVISOR')")
   public ResponseModel<StudentProfileResult> getSupervisorStudents(
       @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
     Pageable pageable = buildPageable(paging);
     Page<StudentProfileModel> studentsPage =
         placementService.getSupervisorStudents(user, pageable).join();
+    StudentProfileResult studentsResult = new StudentProfileResult(studentsPage);
+    return new ResponseModel<>(studentsResult);
+  }
+
+  @GetMapping("/supervisor/{supervisorProfileId}/students")
+  @Operation(description = "Get  supervisor students by supervisor profile id")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = StudentProfileResult.class,
+        responseContainer = "page")
+  })
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPERVISOR', 'COORDINATOR', 'EMPLOYER')")
+  public ResponseModel<StudentProfileResult> getSupervisorStudents(
+      @PathVariable("supervisorProfileId") String supervisorProfileId,
+      @ModelAttribute PagingAndSortingParams paging) {
+    Pageable pageable = buildPageable(paging);
+    Page<StudentProfileModel> studentsPage =
+        placementService.getSupervisorStudents(supervisorProfileId, pageable).join();
     StudentProfileResult studentsResult = new StudentProfileResult(studentsPage);
     return new ResponseModel<>(studentsResult);
   }

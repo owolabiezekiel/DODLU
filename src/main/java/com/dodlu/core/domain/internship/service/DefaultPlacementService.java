@@ -109,6 +109,16 @@ public class DefaultPlacementService {
   }
 
   @Transactional
+  public CompletableFuture<SupervisorProfileModel> getStudentSupervisor(String studentId) {
+    return supplyAsync(
+        () -> {
+          var studentSupervisor =
+              studentSupervisorRepository.findByStudentIdAndActiveIsTrue(studentId).orElse(null);
+          return studentSupervisor == null ? null : studentSupervisor.getSupervisor().toModel();
+        });
+  }
+
+  @Transactional
   public CompletableFuture<Page<StudentProfileModel>> getSupervisorStudents(
       User user, Pageable pageable) {
     return supplyAsync(
@@ -120,6 +130,23 @@ public class DefaultPlacementService {
           Page<StudentSupervisor> pagedContent =
               studentSupervisorRepository.findStudentSupervisorBySupervisorIdAndActiveIsTrue(
                   pageable, supervisorProfile.getId());
+          List<StudentProfileModel> studentProfiles =
+              pagedContent.stream()
+                  .map(studentSupervisor -> studentSupervisor.getStudent().toModel())
+                  .toList();
+          return new PageImpl<>(
+              studentProfiles, pagedContent.getPageable(), pagedContent.getTotalElements());
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Page<StudentProfileModel>> getSupervisorStudents(
+      String supervisorProfileId, Pageable pageable) {
+    return supplyAsync(
+        () -> {
+          Page<StudentSupervisor> pagedContent =
+              studentSupervisorRepository.findStudentSupervisorBySupervisorIdAndActiveIsTrue(
+                  pageable, supervisorProfileId);
           List<StudentProfileModel> studentProfiles =
               pagedContent.stream()
                   .map(studentSupervisor -> studentSupervisor.getStudent().toModel())
