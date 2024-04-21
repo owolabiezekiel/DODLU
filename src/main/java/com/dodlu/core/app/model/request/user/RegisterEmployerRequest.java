@@ -23,7 +23,6 @@ import lombok.experimental.Accessors;
     second = "confirmPassword",
     message = "Password and confirm password does not match")
 public class RegisterEmployerRequest {
-
   @NotBlank(message = "email is required")
   @Email(message = "email not valid")
   private String email;
@@ -49,7 +48,7 @@ public class RegisterEmployerRequest {
   private String lastName;
 
   @NotBlank(message = "companyName is required")
-  @Size(min = 3, message = "phoneNumber must be at least 11 characters")
+  @Size(min = 3, message = "companyName must be at least 3 characters")
   private String companyName;
 
   @Size(max = 1000, message = "vision must not be more than 1000 characters")

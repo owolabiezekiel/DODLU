@@ -25,20 +25,14 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.file.ImageDownloadRequest;
-import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
-import com.dodlu.core.app.model.request.user.CreateStudentRequest;
-import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
-import com.dodlu.core.app.model.request.user.UpdateStudentProfileRequest;
+import com.dodlu.core.app.model.request.user.*;
 import com.dodlu.core.domain.file.service.abstracts.StorageService;
 import com.dodlu.core.domain.internship.model.StudentDocumentModel;
 import com.dodlu.core.domain.notification.email.service.concretes.JmsEmailService;
 import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Level;
 import com.dodlu.core.domain.user.enums.Programme;
-import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
-import com.dodlu.core.domain.user.model.GeneralProfileModel;
-import com.dodlu.core.domain.user.model.StudentProfileModel;
-import com.dodlu.core.domain.user.model.SupervisorProfileModel;
+import com.dodlu.core.domain.user.model.*;
 import com.dodlu.core.persistence.base.UserProfile;
 import com.dodlu.core.persistence.department.entity.Department;
 import com.dodlu.core.persistence.department.repository.DepartmentRepository;
@@ -449,6 +443,40 @@ public class DefaultUserService {
             userRepository.save(user);
           }
           return studentProfileRepository.save(studentProfile).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<EmployerProfileModel> employerUpdateProfile(
+      User user, UpdateEmployerRequest request) {
+    return supplyAsync(
+        () -> {
+          EmployerProfile employerProfile =
+              getEmployerByUsername(
+                  employerProfileRepository, exceptionService, user.getUsername());
+          System.out.println(request.getVision());
+
+          if (!isNullOrBlank(request.getPhoneNumber()))
+            employerProfile.setPhoneNumber(request.getPhoneNumber());
+          if (!isNullOrBlank(request.getFirstName()))
+            employerProfile.setFirstName(request.getFirstName());
+          if (!isNullOrBlank(request.getLastName()))
+            employerProfile.setLastName(request.getLastName());
+          if (!isNullOrBlank(request.getCompanyName()))
+            employerProfile.getCompany().setName(request.getCompanyName());
+          if (!isNullOrBlank(request.getVision()))
+            employerProfile.getCompany().setVision(request.getVision());
+          if (!isNullOrBlank(request.getMission()))
+            employerProfile.getCompany().setMission(request.getMission());
+          if (!isNullOrBlank(request.getMission()))
+            employerProfile.getCompany().setMission(request.getMission());
+          if (!isNullOrBlank(request.getEmail())) {
+            employerProfile.setEmail(request.getEmail());
+            user.setEmail(request.getEmail());
+            userRepository.save(user);
+          }
+
+          return employerProfileRepository.save(employerProfile).toModel();
         });
   }
 

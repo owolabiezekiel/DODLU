@@ -1,3 +1,14 @@
 ### Get all employer supervisors
 GET {{host}}/employer/supervisors
 Authorization: {{employer_token}}
+
+### Employer update user profile
+PUT {{host}}/user/profile_update/employer
+Content-Type: application/json
+Authorization: {{employer_token}}
+
+{
+  "firstName": "Updated Firstname",
+  "vision": "To be the best behaved in conduct and morals now updated",
+  "mission": "Somewhere in the south"
+}

@@ -3,16 +3,10 @@ package com.dodlu.core.app.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
-import com.dodlu.core.app.model.request.user.CreateCoordinatorRequest;
-import com.dodlu.core.app.model.request.user.CreateStudentRequest;
-import com.dodlu.core.app.model.request.user.CreateSupervisorRequest;
-import com.dodlu.core.app.model.request.user.UpdateStudentProfileRequest;
+import com.dodlu.core.app.model.request.user.*;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.internship.model.StudentDocumentModel;
-import com.dodlu.core.domain.user.model.CoordinatorProfileModel;
-import com.dodlu.core.domain.user.model.GeneralProfileModel;
-import com.dodlu.core.domain.user.model.StudentProfileModel;
-import com.dodlu.core.domain.user.model.SupervisorProfileModel;
+import com.dodlu.core.domain.user.model.*;
 import com.dodlu.core.domain.user.service.concretes.DefaultUserService;
 import com.dodlu.core.persistence.base.UserProfile;
 import com.dodlu.core.persistence.user.entity.User;
@@ -110,6 +104,18 @@ public class UserController {
   public ResponseModel<StudentProfileModel> updateStudentProfile(
       @AuthenticationPrincipal User user, @Valid @RequestBody UpdateStudentProfileRequest request) {
     StudentProfileModel userProfile = userService.updateStudentProfile(user, request).join();
+    return new ResponseModel<>(userProfile);
+  }
+
+  @PutMapping(value = "/profile_update/employer")
+  @Operation(description = "Employer update user profile")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = EmployerProfileModel.class)
+  })
+  @PreAuthorize("hasAnyAuthority('EMPLOYER')")
+  public ResponseModel<EmployerProfileModel> employerUpdateProfile(
+      @AuthenticationPrincipal User user, @Valid @RequestBody UpdateEmployerRequest request) {
+    EmployerProfileModel userProfile = userService.employerUpdateProfile(user, request).join();
     return new ResponseModel<>(userProfile);
   }
 

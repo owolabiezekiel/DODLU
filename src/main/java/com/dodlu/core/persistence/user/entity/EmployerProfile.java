@@ -24,7 +24,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SuperBuilder
 @RequiredArgsConstructor
 public class EmployerProfile extends UserProfile {
-  @ManyToOne
+  @OneToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "company_id", referencedColumnName = "id")
   private Company company;
 
