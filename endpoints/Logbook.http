@@ -16,3 +16,8 @@ Authorization: {{student_token}}
 {
   "description": "Updated random description"
 }
+
+### Start logbook count
+POST {{host}}/logbook/start
+Content-Type: application/json
+Authorization: {{student_token}}

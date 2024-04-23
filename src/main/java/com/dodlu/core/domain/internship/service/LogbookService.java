@@ -51,8 +51,10 @@ public class LogbookService {
               getStudentProfileByUsername(
                   studentProfileRepository, exceptionService, user.getUsername());
 
+          log.info("{}", studentProfile);
           Logbook logbook =
               logbookRepository.findByStudentIdAndActiveIsTrue(studentProfile.getId()).orElse(null);
+          log.info("{}", logbook);
           return logbook == null ? null : logbook.toModel();
         });
   }
@@ -105,6 +107,7 @@ public class LogbookService {
               .setDescription(request.getDescription())
               .setApproved(false)
               .setDateTime(today)
+              .setDayOfWeek(today.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH))
               .setComment("");
 
           return logbookEntryRepository.save(logbookEntry).toModel();
@@ -140,6 +143,7 @@ public class LogbookService {
                     ? (logbook.getCapacityInMonths() * 4) + 2
                     : (logbook.getCapacityInMonths() * 4) + 4;
             logbook.setCapacityInWeeks(capacityInWeeks);
+            logbook.setValidUntil(LocalDateTime.now().plusWeeks(capacityInWeeks));
           }
 
           logbook = logbookRepository.save(logbook);
