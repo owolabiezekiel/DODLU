@@ -1,9 +1,7 @@
 package com.dodlu.core.app.controller;
 
-import static com.dodlu.core.app.utils.MapperUtil.buildPageable;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.dodlu.core.app.model.PagingAndSortingParams;
 import com.dodlu.core.app.model.request.internship.InsertLogbookEntryRequest;
 import com.dodlu.core.app.model.response.LogbookEntryResult;
 import com.dodlu.core.app.model.response.ResponseModel;
@@ -15,10 +13,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -56,15 +53,12 @@ public class LogbookController {
         code = 200,
         message = "Success",
         response = LogbookEntryResult.class,
-        responseContainer = "page")
+        responseContainer = "list")
   })
   @PreAuthorize("hasAnyAuthority('STUDENT')")
-  public ResponseModel<LogbookEntryResult> getLogbookEntries(
-      @AuthenticationPrincipal User user, @ModelAttribute PagingAndSortingParams paging) {
-    Pageable pageable = buildPageable(paging);
-    Page<LogbookEntryModel> logbookEntryPage =
-        logbookService.getLogbookEntries(user, pageable).join();
-    LogbookEntryResult logbookEntryResult = new LogbookEntryResult(logbookEntryPage);
+  public ResponseModel<List<LogbookEntryModel>> getLogbookEntries(
+      @AuthenticationPrincipal User user) {
+    List<LogbookEntryModel> logbookEntryResult = logbookService.getLogbookEntries(user).join();
     return new ResponseModel<>(logbookEntryResult);
   }
 

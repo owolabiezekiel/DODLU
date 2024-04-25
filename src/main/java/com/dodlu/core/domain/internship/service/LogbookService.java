@@ -25,10 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,8 +59,7 @@ public class LogbookService {
   }
 
   @Transactional
-  public CompletableFuture<Page<LogbookEntryModel>> getLogbookEntries(
-      User user, Pageable pageable) {
+  public CompletableFuture<List<LogbookEntryModel>> getLogbookEntries(User user) {
     return supplyAsync(
         () -> {
           StudentProfile studentProfile =
@@ -74,9 +72,9 @@ public class LogbookService {
                   .orElseThrow(
                       () -> exceptionService.handleCreateBadRequest("No Logbook found for user"));
 
-          return logbookEntryRepository
-              .findByLogbookId(pageable, logbook.getId())
-              .map(LogbookEntry::toModel);
+          return logbookEntryRepository.findByLogbookId(logbook.getId()).stream()
+              .map(LogbookEntry::toModel)
+              .collect(Collectors.toList());
         });
   }
 
@@ -188,6 +186,7 @@ public class LogbookService {
               .weekNumber(weekNumber)
               .dayOfWeek(currentDay.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH))
               .dateTime(currentDay.atStartOfDay())
+              .description("")
               .comment("")
               .build();
 
