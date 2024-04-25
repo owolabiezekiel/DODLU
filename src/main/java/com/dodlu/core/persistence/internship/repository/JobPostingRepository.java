@@ -49,11 +49,12 @@ public interface JobPostingRepository
   default Page<JobPosting> findAll(Pageable pageable, JobPostingFilter filter) {
     BooleanExpression predicate = findAllJobsExpressions(filter);
 
-    if (predicate == null) {
-      return findAll(pageable);
-    } else {
-      return findAll(predicate, pageable);
-    }
+    predicate =
+        predicate != null
+            ? predicate.and(jobPosting.numberOfOpenPositions.gt(1))
+            : jobPosting.numberOfOpenPositions.gt(1);
+
+    return findAll(predicate, pageable);
   }
 
   default Page<JobPosting> findAllForStudent(
