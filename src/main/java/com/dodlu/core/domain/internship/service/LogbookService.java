@@ -59,6 +59,16 @@ public class LogbookService {
   }
 
   @Transactional
+  public CompletableFuture<LogbookModel> getLogbookByStudentProfileId(String studentProfileId) {
+    return supplyAsync(
+        () -> {
+          Logbook logbook =
+              logbookRepository.findByStudentIdAndActiveIsTrue(studentProfileId).orElse(null);
+          return logbook == null ? null : logbook.toModel();
+        });
+  }
+
+  @Transactional
   public CompletableFuture<List<LogbookEntryModel>> getLogbookEntries(User user) {
     return supplyAsync(
         () -> {
@@ -69,6 +79,23 @@ public class LogbookService {
           Logbook logbook =
               logbookRepository
                   .findByStudentIdAndActiveIsTrue(studentProfile.getId())
+                  .orElseThrow(
+                      () -> exceptionService.handleCreateBadRequest("No Logbook found for user"));
+
+          return logbookEntryRepository.findByLogbookId(logbook.getId()).stream()
+              .map(LogbookEntry::toModel)
+              .collect(Collectors.toList());
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<List<LogbookEntryModel>> getLogbookEntriesByStudentProfileId(
+      String studentProfileId) {
+    return supplyAsync(
+        () -> {
+          Logbook logbook =
+              logbookRepository
+                  .findByStudentIdAndActiveIsTrue(studentProfileId)
                   .orElseThrow(
                       () -> exceptionService.handleCreateBadRequest("No Logbook found for user"));
 

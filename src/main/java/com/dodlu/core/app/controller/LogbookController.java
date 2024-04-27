@@ -37,6 +37,16 @@ public class LogbookController {
     return new ResponseModel<>(logbookModel);
   }
 
+  @GetMapping(value = "/{studentProfileId}")
+  @Operation(description = "Get student logbook by student profile id")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = LogbookModel.class)})
+  @PreAuthorize("hasAnyAuthority('EMPLOYER', 'ADMIN', 'COORDINATOR', 'SUPERVISOR')")
+  public ResponseModel<LogbookModel> getLogbook(@PathVariable String studentProfileId) {
+    LogbookModel logbookModel =
+        logbookService.getLogbookByStudentProfileId(studentProfileId).join();
+    return new ResponseModel<>(logbookModel);
+  }
+
   @PostMapping(value = "/start")
   @Operation(description = "Set start day on logbook")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = LogbookModel.class)})
@@ -59,6 +69,23 @@ public class LogbookController {
   public ResponseModel<List<LogbookEntryModel>> getLogbookEntries(
       @AuthenticationPrincipal User user) {
     List<LogbookEntryModel> logbookEntryResult = logbookService.getLogbookEntries(user).join();
+    return new ResponseModel<>(logbookEntryResult);
+  }
+
+  @GetMapping("/entries/{studentProfileId}")
+  @Operation(description = "Get logbook contents by student profile id")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = LogbookEntryResult.class,
+        responseContainer = "list")
+  })
+  @PreAuthorize("hasAnyAuthority('EMPLOYER', 'ADMIN', 'COORDINATOR', 'SUPERVISOR')")
+  public ResponseModel<List<LogbookEntryModel>> getLogbookEntries(
+      @PathVariable String studentProfileId) {
+    List<LogbookEntryModel> logbookEntryResult =
+        logbookService.getLogbookEntriesByStudentProfileId(studentProfileId).join();
     return new ResponseModel<>(logbookEntryResult);
   }
 
