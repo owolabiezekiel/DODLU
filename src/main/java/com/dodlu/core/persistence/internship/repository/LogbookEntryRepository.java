@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface LogbookEntryRepository extends JpaRepository<LogbookEntry, String> {
   @Query("SELECT e FROM LogbookEntry e WHERE e.logbook.id = :logbookId ORDER BY e.dateTime ASC")
@@ -21,4 +23,10 @@ public interface LogbookEntryRepository extends JpaRepository<LogbookEntry, Stri
       @Param("logbook") Logbook logbook, @Param("dateTime") LocalDateTime dateTime);
 
   boolean existsByLogbookId(String logbookId);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LogbookEntry l SET l.comment = :comment, l.approved = true WHERE l.weekNumber = :weekNumber")
+  int updateCommentForWeek(@Param("comment") String comment, @Param("weekNumber") int weekNumber);
 }

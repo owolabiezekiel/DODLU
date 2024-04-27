@@ -1,11 +1,15 @@
 package com.dodlu.core.domain.internship.service;
 
+import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUsername;
 import static com.dodlu.core.domain.utils.PlacementUtils.assertStudentHasPlacement;
 import static com.dodlu.core.domain.utils.StudentProfileUtils.getStudentProfileByUsername;
+import static com.dodlu.core.domain.utils.SupervisorProfileUtils.getSupervisorProfileByUsername;
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.internship.InsertLogbookEntryRequest;
+import com.dodlu.core.app.model.request.internship.LogbookCommentRequest;
 import com.dodlu.core.domain.internship.model.LogbookEntryModel;
 import com.dodlu.core.domain.internship.model.LogbookModel;
 import com.dodlu.core.persistence.internship.entity.Logbook;
@@ -13,9 +17,14 @@ import com.dodlu.core.persistence.internship.entity.LogbookEntry;
 import com.dodlu.core.persistence.internship.repository.LogbookEntryRepository;
 import com.dodlu.core.persistence.internship.repository.LogbookRepository;
 import com.dodlu.core.persistence.internship.repository.PlacementRepository;
+import com.dodlu.core.persistence.internship.repository.StudentSupervisorRepository;
+import com.dodlu.core.persistence.user.entity.EmployerProfile;
 import com.dodlu.core.persistence.user.entity.StudentProfile;
+import com.dodlu.core.persistence.user.entity.SupervisorProfile;
 import com.dodlu.core.persistence.user.entity.User;
+import com.dodlu.core.persistence.user.repository.EmployerProfileRepository;
 import com.dodlu.core.persistence.user.repository.StudentProfileRepository;
+import com.dodlu.core.persistence.user.repository.SupervisorProfileRepository;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +49,9 @@ public class LogbookService {
   private final LogbookRepository logbookRepository;
   private final LogbookEntryRepository logbookEntryRepository;
   private final PlacementRepository placementRepository;
+  private final SupervisorProfileRepository supervisorProfileRepository;
+  private final EmployerProfileRepository employerProfileRepository;
+  private final StudentSupervisorRepository studentSupervisorRepository;
   private final CoreExceptionService exceptionService;
 
   @Transactional
@@ -197,6 +209,50 @@ public class LogbookService {
           }
 
           return logbook.toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Void> supervisorComment(
+      User user, LogbookCommentRequest request, String studentProfileId) {
+    return runAsync(
+        () -> {
+          SupervisorProfile supervisorProfile =
+              getSupervisorProfileByUsername(
+                  supervisorProfileRepository, exceptionService, user.getUsername());
+
+          if (!studentSupervisorRepository.existsBySupervisorIdAndStudentIdAndActive(
+              supervisorProfile.getId(), studentProfileId, false)) {
+            throw exceptionService.handleCreateForbidden(
+                "Cannot determine student-supervisor relationship");
+          }
+
+          int count =
+              logbookEntryRepository.updateCommentForWeek(
+                  request.getComment(), request.getWeekNumber());
+          log.info("Updated {} records", count);
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Void> employerComment(
+      User user, LogbookCommentRequest request, String studentProfileId) {
+    return runAsync(
+        () -> {
+          EmployerProfile employerProfile =
+              getEmployerByUsername(
+                  employerProfileRepository, exceptionService, user.getUsername());
+
+          if (!placementRepository.existsByCompanyIdAndStudentId(
+              employerProfile.getCompany().getId(), studentProfileId)) {
+            throw exceptionService.handleCreateForbidden(
+                "Student doesnt have placement in your organization");
+          }
+
+          int count =
+              logbookEntryRepository.updateCommentForWeek(
+                  request.getComment(), request.getWeekNumber());
+          log.info("Updated {} records", count);
         });
   }
 

@@ -21,3 +21,13 @@ Authorization: {{student_token}}
 POST {{host}}/logbook/start
 Content-Type: application/json
 Authorization: {{student_token}}
+
+### Employer comment on logbook for week
+POST {{host}}/logbook/d751eeea-5611-407a-982e-33a5353e685e/comment/employer
+Content-Type: application/json
+Authorization: {{employer_token}}
+
+{
+  "weekNumber": 1,
+  "comment": "Very good performance for the week"
+}

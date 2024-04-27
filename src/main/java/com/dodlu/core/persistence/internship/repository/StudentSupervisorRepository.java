@@ -10,6 +10,9 @@ public interface StudentSupervisorRepository extends JpaRepository<StudentSuperv
   boolean existsByCompanyIdAndStudentIdAndActive(
       String companyId, String studentId, boolean active);
 
+  boolean existsBySupervisorIdAndStudentIdAndActive(
+      String supervisorId, String studentId, boolean active);
+
   Optional<StudentSupervisor> findByStudentIdAndActiveIsTrue(String studentId);
 
   Page<StudentSupervisor> findStudentSupervisorBySupervisorIdAndActiveIsTrue(

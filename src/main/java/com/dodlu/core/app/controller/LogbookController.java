@@ -3,6 +3,7 @@ package com.dodlu.core.app.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.request.internship.InsertLogbookEntryRequest;
+import com.dodlu.core.app.model.request.internship.LogbookCommentRequest;
 import com.dodlu.core.app.model.response.LogbookEntryResult;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.internship.model.LogbookEntryModel;
@@ -96,6 +97,30 @@ public class LogbookController {
   public ResponseModel<LogbookEntryModel> insertLogbookEntry(
       @AuthenticationPrincipal User user, @Valid @RequestBody InsertLogbookEntryRequest request) {
     LogbookEntryModel entry = logbookService.insertLogbookEntry(user, request).join();
+    return new ResponseModel<>(entry);
+  }
+
+  @PostMapping(value = "/{studentProfileId}/comment/supervisor", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Supervisor Comment on logbook entry for the week")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  @PreAuthorize("hasAnyAuthority('SUPERVISOR')")
+  public ResponseModel<Void> supervisorComment(
+      @AuthenticationPrincipal User user,
+      @Valid @RequestBody LogbookCommentRequest request,
+      @PathVariable String studentProfileId) {
+    Void entry = logbookService.supervisorComment(user, request, studentProfileId).join();
+    return new ResponseModel<>(entry);
+  }
+
+  @PostMapping(value = "/{studentProfileId}/comment/employer", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Employer Comment on logbook entry for the week")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  @PreAuthorize("hasAnyAuthority('EMPLOYER')")
+  public ResponseModel<Void> employerComment(
+      @AuthenticationPrincipal User user,
+      @Valid @RequestBody LogbookCommentRequest request,
+      @PathVariable String studentProfileId) {
+    Void entry = logbookService.employerComment(user, request, studentProfileId).join();
     return new ResponseModel<>(entry);
   }
 }
