@@ -89,4 +89,15 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
     </changeSet>
+
+    <changeSet author="tobiowolabi" id="create_health_personnel_role">
+        <insert tableName="roles">
+            <column name="description" value="Health personnel"/>
+            <column name="name" value="HEALTH_PERSONNEL"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

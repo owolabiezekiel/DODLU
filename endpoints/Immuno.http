@@ -1,0 +1,66 @@
+### Create Parent Details
+POST {{host}}/immuno/parent
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "title": "Miss",
+  "firstName": "Olubunmi",
+  "lastName": "Owolabi",
+  "email": "owo.ezekiel22@gmail.com",
+  "phoneNumber": "08106723916"
+}
+
+### Get single parent by id
+GET {{host}}/immuno/parent?id=da7f571d-6bb0-4d0f-b239-59fbc7900829
+Authorization: {{token}}
+
+### Get single parent by email
+GET {{host}}/immuno/parent?email=owo.ezekiel@gmail.com
+Authorization: {{token}}
+
+### Get single parent by phone
+GET {{host}}/immuno/parent?phoneNumber=08106723911
+Authorization: {{token}}
+
+### Create Child Details For Parent
+POST {{host}}/immuno/parent/4067ef60-5a42-45f9-8cd5-a0cbbcd1aa1b/child
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "gender": "MALE",
+  "dateOfBirth": "1996-12-10",
+  "firstName": "Olubunmi",
+  "lastName": "Owolabi"
+}
+
+### Get single child by id
+GET {{host}}/immuno/child/3b22de55-19c2-4d38-bab6-b8ab127f487f
+Authorization: {{token}}
+
+### Get all faculties
+GET {{host}}/faculty
+Authorization: {{token}}
+
+### Get single faculty
+GET {{host}}/faculty/d7dcc83c-62a2-40e9-8e1b-44ec8b0e9f6b
+Authorization: {{token}}
+
+### Create Department
+POST {{host}}/department
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "name": "Geography",
+  "facultyId": "d7dcc83c-62a2-40e9-8e1b-44ec8b0e9f6b"
+}
+
+### Get all departments
+GET {{host}}/department
+Authorization: {{token}}
+
+### Get single department
+GET {{host}}/department/da7f571d-6bb0-4d0f-b239-59fbc7900829
+Authorization: {{token}}
