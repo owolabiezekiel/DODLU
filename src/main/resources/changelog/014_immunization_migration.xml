@@ -82,4 +82,150 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="vaccine_migration" author="tobilobaowolabi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="vaccine"/>
+            </not>
+        </preConditions>
+        <createTable tableName="vaccine">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="age_target" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="type" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="dosage" type="double">
+                <constraints nullable="false" />
+            </column>
+            <column name="dosage_type" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="route_of_administration" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="site" type="VARCHAR(250)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="immunization_migration" author="tobilobaowolabi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="immunization"/>
+            </not>
+        </preConditions>
+        <createTable tableName="immunization">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="vaccine_id" type="TEXT">
+                <constraints nullable="false" foreignKeyName="fk_immunization_vaccine"
+                             references="vaccine(id)"/>
+            </column>
+            <column name="minimum_administer_date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="administered" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false" />
+            </column>
+            <column name="date_of_administration" type="date" />
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="immunization_record_migration" author="tobilobaowolabi">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="immunization_record"/>
+            </not>
+        </preConditions>
+        <createTable tableName="immunization_record">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+
+            <column name="child_id" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="immunization_id" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex indexName="immuno_record_child_idx" tableName="immunization_record">
+            <column name="child_id"/>
+        </createIndex>
+        <createIndex indexName="immuno_record_immunization_idx" tableName="immunization_record">
+            <column name="immunization_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="create_default_immunizations" author="tobilobaowolabi">
+        <insert tableName="vaccine">
+            <column name="age_target" value="BIRTH"/>
+            <column name="type" value="BCG"/>
+            <column name="dosage" value="0.05"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRA_DERMAL"/>
+            <column name="site" value="Left Upper Arm"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="BIRTH"/>
+            <column name="type" value="OPV0"/>
+            <column name="dosage" value="2"/>
+            <column name="dosage_type" value="DROP"/>
+            <column name="route_of_administration" value="ORAL"/>
+            <column name="site" value="Mouth"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="BIRTH"/>
+            <column name="type" value="HEP_BO_BIRTH"/>
+            <column name="dosage" value="0.05"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of right thigh"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

@@ -1,16 +1,18 @@
 package com.dodlu.core.persistence.immunization.entity;
 
+import static com.dodlu.core.app.utils.StringUtilities.emptyIfNull;
+
 import com.dodlu.core.domain.immunization.model.ChildModel;
 import com.dodlu.core.domain.immunization.model.ChildWithParentModel;
 import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.persistence.base.BaseEntity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.Objects;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,9 +40,32 @@ public class Child extends BaseEntity {
   @Column(nullable = false)
   private LocalDate dateOfBirth;
 
+  @Transient
+  @Setter(AccessLevel.NONE)
+  private String age;
+
   @ManyToOne
   @JoinColumn(name = "parent_id", referencedColumnName = "id")
   private Parent parent;
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "immunization_record",
+      joinColumns = @JoinColumn(name = "child_id", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "immunization_id", referencedColumnName = "id"))
+  private Set<Immunization> immunizations;
+
+  public String getAge() {
+    LocalDate now = LocalDate.now();
+    Period period = Period.between(this.dateOfBirth, now);
+    return formatPeriod(period);
+  }
+
+  private String formatPeriod(Period period) {
+    return String.format(
+        "%d years, %d months, and %d days",
+        period.getYears(), period.getMonths(), period.getDays());
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -63,6 +88,11 @@ public class Child extends BaseEntity {
         .lastName(lastName)
         .gender(gender)
         .dateOfBirth(dateOfBirth)
+        .age(getAge())
+        .immunizations(
+            emptyIfNull(immunizations).stream()
+                .map(Immunization::toModel)
+                .collect(Collectors.toSet()))
         .build();
   }
 
@@ -73,7 +103,12 @@ public class Child extends BaseEntity {
         .lastName(lastName)
         .gender(gender)
         .dateOfBirth(dateOfBirth)
+        .age(getAge())
         .parent(parent.toModel())
+        .immunizations(
+            emptyIfNull(immunizations).stream()
+                .map(Immunization::toModel)
+                .collect(Collectors.toSet()))
         .build();
   }
 }

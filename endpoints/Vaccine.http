@@ -1,0 +1,22 @@
+### Get all vaccines
+GET {{host}}/vaccine
+Authorization: {{token}}
+
+### Get single vaccine
+GET {{host}}/vaccine/13d067e0-77fa-41d7-8973-ed1f8fb337aa
+Authorization: {{token}}
+
+### Create Vaccine
+POST {{host}}/vaccine
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "ageTarget": "WEEK_SIX",
+  "type": "PENTAVALENT1",
+  "dosage": 0.5,
+  "dosageType": "ML",
+  "administerRoute": "INTRAMUSCULAR",
+  "administerSite": "Anterolateral aspect of left thigh"
+}
+
