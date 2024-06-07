@@ -14,7 +14,7 @@ public class VaccineUtils {
       VaccineRepository vaccineRepository, CoreExceptionService exceptionService, String id) {
     return vaccineRepository
         .findById(id)
-        .orElseThrow(() -> exceptionService.handleCreateBadRequest("Department does not exist"));
+        .orElseThrow(() -> exceptionService.handleCreateBadRequest("Vaccine does not exist"));
   }
 
   public static Vaccine getVaccineById(

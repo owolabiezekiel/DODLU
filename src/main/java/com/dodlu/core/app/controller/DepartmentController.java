@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -46,6 +47,7 @@ public class DepartmentController {
         response = DepartmentResult.class,
         responseContainer = "page")
   })
+  @PageableAsQueryParam
   @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'EMPLOYER', 'SUPERVISOR', 'COORDINATOR')")
   public ResponseModel<DepartmentResult> getAllDepartments(@PageableDefault Pageable pageable) {
     Page<DepartmentModel> departmentPage = departmentService.getAllDepartments(pageable).join();

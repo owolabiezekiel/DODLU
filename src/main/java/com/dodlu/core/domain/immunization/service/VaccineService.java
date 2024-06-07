@@ -49,6 +49,19 @@ public class VaccineService {
         });
   }
 
+  @Transactional
+  public CompletableFuture<VaccineModel> updateVaccine(
+      String vaccineId, CreateVaccineRequest request) {
+    return supplyAsync(
+        () -> {
+          Vaccine vaccine =
+              VaccineUtils.getVaccineById(vaccineRepository, exceptionService, vaccineId);
+
+          updateVaccineFromRequest(request, vaccine);
+          return vaccineRepository.save(vaccine).toModel();
+        });
+  }
+
   private void checkNoDuplicateForAgeGroup(CreateVaccineRequest request) {
     Collection<Vaccine> vaccineForTargetAgeSet =
         vaccineRepository.findAllByAgeTarget(request.getAgeTarget());
@@ -75,5 +88,15 @@ public class VaccineService {
         .routeOfAdministration(request.getAdministerRoute())
         .site(request.getAdministerSite())
         .build();
+  }
+
+  private void updateVaccineFromRequest(CreateVaccineRequest request, Vaccine vaccine) {
+    checkNoDuplicateForAgeGroup(request);
+    vaccine.setAgeTarget(request.getAgeTarget());
+    vaccine.setType(request.getType());
+    vaccine.setDosage(request.getDosage());
+    vaccine.setDosageType(request.getDosageType());
+    vaccine.setRouteOfAdministration(request.getAdministerRoute());
+    vaccine.setSite(request.getAdministerSite());
   }
 }

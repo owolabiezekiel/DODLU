@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/v1/vaccine", produces = APPLICATION_JSON_VALUE)
-@Slf4j
 @CrossOrigin("*")
 public class VaccineController {
   private final VaccineService vaccineService;
 
   @GetMapping
-  @Operation(description = "get single parent details")
+  @Operation(description = "get all vaccines")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = VaccineResult.class)})
+  @PageableAsQueryParam
   public ResponseModel<VaccineResult> getParent(@PageableDefault Pageable pageable) {
     return vaccineService
         .getAllVaccines(pageable)
@@ -49,5 +49,13 @@ public class VaccineController {
   public ResponseModel<VaccineModel> getVaccineById(
       @Valid @RequestBody CreateVaccineRequest request) {
     return vaccineService.createVaccine(request).thenApply(ResponseModel::new).join();
+  }
+
+  @PutMapping(value = "/{vaccineId}")
+  @Operation(description = "Update vaccine by id")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = VaccineModel.class)})
+  public ResponseModel<VaccineModel> updateVaccine(
+      @PathVariable String vaccineId, @Valid @RequestBody CreateVaccineRequest request) {
+    return vaccineService.updateVaccine(vaccineId, request).thenApply(ResponseModel::new).join();
   }
 }
