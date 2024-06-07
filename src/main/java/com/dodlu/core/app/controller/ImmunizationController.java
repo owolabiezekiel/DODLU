@@ -3,6 +3,7 @@ package com.dodlu.core.app.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.request.immunization.CreateChildRequest;
+import com.dodlu.core.app.model.request.immunization.CreateImmunizationRequest;
 import com.dodlu.core.app.model.request.immunization.CreateParentRequest;
 import com.dodlu.core.app.model.request.immunization.SearchAttributes;
 import com.dodlu.core.app.model.response.ResponseModel;
@@ -75,5 +76,23 @@ public class ImmunizationController {
   public ResponseModel<ChildWithParentModel> getChildById(@PathVariable String childId) {
     ChildWithParentModel child = immunizationService.getSingleChild(childId).join();
     return new ResponseModel<>(child);
+  }
+
+  @PostMapping(value = "/immuno-record/{childId}", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "create immunization for child")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = ParentModel.class)})
+  public ResponseModel<Void> createImmunization(
+      @Valid @RequestBody CreateImmunizationRequest request, @PathVariable String childId) {
+    immunizationService.createImmunizationRecord(childId, request).join();
+    return new ResponseModel<>(null);
+  }
+
+  @PutMapping(value = "/immuno-record/{immunoRecordId}")
+  @Operation(description = "update immunization record")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = ParentModel.class)})
+  public ResponseModel<Void> updateImmunizationRecord(
+      @PathVariable String immunoRecordId, @Valid @RequestBody CreateImmunizationRequest request) {
+    immunizationService.updateImmunizationRecord(immunoRecordId, request).join();
+    return new ResponseModel<>(null);
   }
 }

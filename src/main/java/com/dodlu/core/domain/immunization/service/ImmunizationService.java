@@ -1,15 +1,16 @@
 package com.dodlu.core.domain.immunization.service;
 
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.immunization.CreateChildRequest;
+import com.dodlu.core.app.model.request.immunization.CreateImmunizationRequest;
 import com.dodlu.core.app.model.request.immunization.CreateParentRequest;
 import com.dodlu.core.app.model.request.immunization.SearchAttributes;
-import com.dodlu.core.domain.immunization.model.ChildModel;
-import com.dodlu.core.domain.immunization.model.ChildWithParentModel;
-import com.dodlu.core.domain.immunization.model.ParentModel;
+import com.dodlu.core.domain.immunization.model.*;
 import com.dodlu.core.domain.immunization.model.enums.AgeTarget;
+import com.dodlu.core.domain.utils.VaccineUtils;
 import com.dodlu.core.persistence.immunization.entity.*;
 import com.dodlu.core.persistence.immunization.repository.*;
 import java.time.LocalDate;
@@ -148,6 +149,72 @@ public class ImmunizationService {
                       () -> exceptionService.handleCreateBadRequest("Child does not exist"));
           updateChildFromRequest(request, child);
           return childRepository.save(child).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Void> createImmunizationRecord(
+      String childId, CreateImmunizationRequest request) {
+    return runAsync(
+        () -> {
+          Vaccine vaccine =
+              VaccineUtils.getVaccineById(
+                  vaccineRepository, exceptionService, request.getVaccineId());
+
+          if (request.isAdministered() && request.getDateOfAdministration() == null) {
+            throw exceptionService.handleCreateBadRequest(
+                "Date of vaccine administration is required");
+          }
+
+          Immunization immunization =
+              Immunization.builder()
+                  .vaccine(vaccine)
+                  .minimumAdministerDate(request.getMinimumAdministerDate())
+                  .administered(request.isAdministered())
+                  .dateOfAdministration(request.getDateOfAdministration())
+                  .build();
+
+          immunization = immunizationRepository.save(immunization);
+
+          Child child =
+              childRepository
+                  .findById(childId)
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateBadRequest("Child details does not exist"));
+
+          ImmunizationRecord record =
+              ImmunizationRecord.builder().immunization(immunization).child(child).build();
+          immunizationRecordRepository.save(record);
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Void> updateImmunizationRecord(
+      String immunizationId, CreateImmunizationRequest request) {
+    return runAsync(
+        () -> {
+          Immunization immunization =
+              immunizationRepository
+                  .findById(immunizationId)
+                  .orElseThrow(
+                      () -> exceptionService.handleCreateBadRequest("Immunization does not exist"));
+
+          if (request.isAdministered() && request.getDateOfAdministration() == null) {
+            throw exceptionService.handleCreateBadRequest(
+                "Date of vaccine administration is required");
+          }
+
+          Vaccine vaccine =
+              VaccineUtils.getVaccineById(
+                  vaccineRepository, exceptionService, request.getVaccineId());
+
+          immunization.setVaccine(vaccine);
+          immunization.setMinimumAdministerDate(request.getMinimumAdministerDate());
+          immunization.setAdministered(request.isAdministered());
+          immunization.setDateOfAdministration(request.getDateOfAdministration());
+
+          immunizationRepository.save(immunization);
         });
   }
 
