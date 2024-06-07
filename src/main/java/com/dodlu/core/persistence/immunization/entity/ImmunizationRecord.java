@@ -2,7 +2,6 @@ package com.dodlu.core.persistence.immunization.entity;
 
 import com.dodlu.core.persistence.base.BaseEntity;
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +27,7 @@ public class ImmunizationRecord extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name = "immunization_id")
-  private Immunization immunizations;
-
-  @Column(nullable = false)
-  private LocalDate administerDate;
-
-  @Column(nullable = false)
-  private Boolean administered;
+  private Immunization immunization;
 
   @Override
   public boolean equals(Object o) {

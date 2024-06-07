@@ -16,7 +16,7 @@ public enum AgeTarget {
   MONTH_NINE("Month 9"),
   MONTH_TWELVE("Month 12"),
   MONTH_FIFTEEN("Month 15"),
-  YEAR_NINE("Month 12"),
+  YEAR_NINE("Year 9"),
 
   UNKNOWN("unknown");
 

@@ -30,11 +30,11 @@ Authorization: {{token}}
 
 {
   "gender": "MALE",
-  "dateOfBirth": "1996-12-10",
-  "firstName": "Olubunmi",
-  "lastName": "Owolabi"
+  "dateOfBirth": "2024-06-07",
+  "firstName": "Tobiloba",
+  "lastName": "Ezekiel"
 }
 
 ### Get single child by id
-GET {{host}}/immuno/child/3b22de55-19c2-4d38-bab6-b8ab127f487f
+GET {{host}}/immuno/child/a414d15f-264c-4c5a-a2a8-0c1ea9ed324c
 Authorization: {{token}}
