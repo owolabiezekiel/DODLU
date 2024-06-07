@@ -33,6 +33,7 @@ public enum VaccineType {
   MEASLES1("Measles 1st dose (MCV1)"),
   YELLOW_FEVER("Yellow Fever"),
   MENINGITIS("Meningitis Vaccine"),
+
   VITAMIN_A2("Vitamin A 2nd done"),
 
   MEASLES2("Measles 2nd dose (MCV2)"),

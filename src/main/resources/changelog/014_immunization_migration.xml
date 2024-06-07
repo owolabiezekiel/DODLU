@@ -228,4 +228,287 @@
         </insert>
     </changeSet>
 
+<!---   +++++++++++++++++++++++  Week Six  ++++++++++++++++++++++ -->
+    <changeSet id="create_week_six_immunizations" author="tobilobaowolabi">
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_SIX"/>
+            <column name="type" value="PENTAVALENT1"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of left thigh"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_SIX"/>
+            <column name="type" value="PREMOCOCCAL1"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of right thigh"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_SIX"/>
+            <column name="type" value="OPV1"/>
+            <column name="dosage" value="2"/>
+            <column name="dosage_type" value="DROP"/>
+            <column name="route_of_administration" value="ORAL"/>
+            <column name="site" value="Mouth"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_SIX"/>
+            <column name="type" value="IPV1"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of right thigh (2.5cm apart from PCV)"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_SIX"/>
+            <column name="type" value="ROTAVIRUS1"/>
+            <column name="dosage" value="5"/>
+            <column name="dosage_type" value="DROP"/>
+            <column name="route_of_administration" value="ORAL"/>
+            <column name="site" value="Mouth"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
+    <!---   +++++++++++++++++++++++  Week Ten  ++++++++++++++++++++++ -->
+    <changeSet id="create_week_ten_immunizations" author="tobilobaowolabi">
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_TEN"/>
+            <column name="type" value="PENTAVALENT2"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of left thigh"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_TEN"/>
+            <column name="type" value="PREMOCOCCAL2"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of right thigh"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_TEN"/>
+            <column name="type" value="OPV2"/>
+            <column name="dosage" value="2"/>
+            <column name="dosage_type" value="DROP"/>
+            <column name="route_of_administration" value="ORAL"/>
+            <column name="site" value="Mouth"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_TEN"/>
+            <column name="type" value="ROTAVIRUS2"/>
+            <column name="dosage" value="5"/>
+            <column name="dosage_type" value="DROP"/>
+            <column name="route_of_administration" value="ORAL"/>
+            <column name="site" value="Mouth"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
+    <!---   +++++++++++++++++++++++  Week Fourteen  ++++++++++++++++++++++ -->
+    <changeSet id="create_week_fourteen_immunizations" author="tobilobaowolabi">
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_FOURTEEN"/>
+            <column name="type" value="PENTAVALENT3"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of left thigh"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_FOURTEEN"/>
+            <column name="type" value="PREMOCOCCAL3"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of right thigh"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_FOURTEEN"/>
+            <column name="type" value="OPV3"/>
+            <column name="dosage" value="2"/>
+            <column name="dosage_type" value="DROP"/>
+            <column name="route_of_administration" value="ORAL"/>
+            <column name="site" value="Mouth"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_FOURTEEN"/>
+            <column name="type" value="ROTAVIRUS3"/>
+            <column name="dosage" value="5"/>
+            <column name="dosage_type" value="DROP"/>
+            <column name="route_of_administration" value="ORAL"/>
+            <column name="site" value="Mouth"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="WEEK_FOURTEEN"/>
+            <column name="type" value="IPV2"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of right thigh (2.5cm apart from PCV)"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
+    <!---   +++++++++++++++++++++++  Month Six  ++++++++++++++++++++++ -->
+    <changeSet id="create_month_six_immunizations" author="tobilobaowolabi">
+        <insert tableName="vaccine">
+            <column name="age_target" value="MONTH_SIX"/>
+            <column name="type" value="VITAMIN_A1"/>
+            <column name="dosage" value="100000"/>
+            <column name="dosage_type" value="IU"/>
+            <column name="route_of_administration" value="ORAL"/>
+            <column name="site" value="Mouth"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
+    <!---   +++++++++++++++++++++++  Month Nine  ++++++++++++++++++++++ -->
+    <changeSet id="create_month_nine_immunizations" author="tobilobaowolabi">
+        <insert tableName="vaccine">
+            <column name="age_target" value="MONTH_NINE"/>
+            <column name="type" value="MEASLES1"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="SUBCUTANEOUS"/>
+            <column name="site" value="Left upper arm"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="MONTH_NINE"/>
+            <column name="type" value="YELLOW_FEVER"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="SUBCUTANEOUS"/>
+            <column name="site" value="Right upper arm"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="vaccine">
+            <column name="age_target" value="MONTH_NINE"/>
+            <column name="type" value="MENINGITIS"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Anterolateral aspect of left thigh"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
+    <!---   +++++++++++++++++++++++  Month Twelve  ++++++++++++++++++++++ -->
+    <changeSet id="create_month_twelve_immunizations" author="tobilobaowolabi">
+        <insert tableName="vaccine">
+            <column name="age_target" value="MONTH_TWELVE"/>
+            <column name="type" value="VITAMIN_A2"/>
+            <column name="dosage" value="200000"/>
+            <column name="dosage_type" value="IU"/>
+            <column name="route_of_administration" value="ORAL"/>
+            <column name="site" value="Mouth"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
+    <!---   +++++++++++++++++++++++  Month Fifteen  ++++++++++++++++++++++ -->
+    <changeSet id="create_month_fifteen_immunizations" author="tobilobaowolabi">
+        <insert tableName="vaccine">
+            <column name="age_target" value="MONTH_FIFTEEN"/>
+            <column name="type" value="MEASLES2"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="SUBCUTANEOUS"/>
+            <column name="site" value="Left upper arm"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
+    <!---   +++++++++++++++++++++++  Year Nine  ++++++++++++++++++++++ -->
+    <changeSet id="create_year_nine_immunizations" author="tobilobaowolabi">
+        <insert tableName="vaccine">
+            <column name="age_target" value="YEAR_NINE"/>
+            <column name="type" value="HPV"/>
+            <column name="dosage" value="0.5"/>
+            <column name="dosage_type" value="ML"/>
+            <column name="route_of_administration" value="INTRAMUSCULAR"/>
+            <column name="site" value="Deltoid muscle (Left upper arm)"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
