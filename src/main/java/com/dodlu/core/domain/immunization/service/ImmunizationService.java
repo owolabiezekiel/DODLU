@@ -6,6 +6,7 @@ import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.immunization.CreateChildRequest;
 import com.dodlu.core.app.model.request.immunization.CreateParentRequest;
 import com.dodlu.core.app.model.request.immunization.SearchAttributes;
+import com.dodlu.core.domain.immunization.model.ChildModel;
 import com.dodlu.core.domain.immunization.model.ChildWithParentModel;
 import com.dodlu.core.domain.immunization.model.ParentModel;
 import com.dodlu.core.domain.immunization.model.enums.AgeTarget;
@@ -36,6 +37,20 @@ public class ImmunizationService {
         () -> {
           doCreateParentValidation(request);
           Parent parent = buildParentFromRequest(request);
+          return parentRepository.save(parent).toModel(null);
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<ParentModel> updateParent(String parentId, CreateParentRequest request) {
+    return supplyAsync(
+        () -> {
+          Parent parent =
+              parentRepository
+                  .findById(parentId)
+                  .orElseThrow(
+                      () -> exceptionService.handleCreateBadRequest("Parent does not exist"));
+          updateParentFromRequest(request, parent);
           return parentRepository.save(parent).toModel(null);
         });
   }
@@ -119,6 +134,20 @@ public class ImmunizationService {
           child.setImmunizations(extractImmunizationFromRecord(records));
           children.add(child);
           return parent.toModel(children);
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<ChildModel> updateChild(String childId, CreateChildRequest request) {
+    return supplyAsync(
+        () -> {
+          Child child =
+              childRepository
+                  .findById(childId)
+                  .orElseThrow(
+                      () -> exceptionService.handleCreateBadRequest("Child does not exist"));
+          updateChildFromRequest(request, child);
+          return childRepository.save(child).toModel();
         });
   }
 
@@ -307,6 +336,14 @@ public class ImmunizationService {
         .build();
   }
 
+  private void updateParentFromRequest(CreateParentRequest request, Parent parent) {
+    parent.setEmail(request.getEmail());
+    parent.setPhoneNumber(request.getPhoneNumber());
+    parent.setTitle(request.getTitle());
+    parent.setFirstName(request.getFirstName());
+    parent.setLastName(request.getLastName());
+  }
+
   private Child buildChildFromRequest(CreateChildRequest request) {
     return Child.builder()
         .firstName(request.getFirstName())
@@ -314,6 +351,13 @@ public class ImmunizationService {
         .gender(request.getGender())
         .dateOfBirth(request.getDateOfBirth())
         .build();
+  }
+
+  private void updateChildFromRequest(CreateChildRequest request, Child child) {
+    child.setFirstName(request.getFirstName());
+    child.setLastName(request.getLastName());
+    child.setGender(request.getGender());
+    child.setDateOfBirth(request.getDateOfBirth());
   }
 
   private void doCreateParentValidation(CreateParentRequest request) {

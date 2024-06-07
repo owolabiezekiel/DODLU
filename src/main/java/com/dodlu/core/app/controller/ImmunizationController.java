@@ -6,6 +6,7 @@ import com.dodlu.core.app.model.request.immunization.CreateChildRequest;
 import com.dodlu.core.app.model.request.immunization.CreateParentRequest;
 import com.dodlu.core.app.model.request.immunization.SearchAttributes;
 import com.dodlu.core.app.model.response.ResponseModel;
+import com.dodlu.core.domain.immunization.model.ChildModel;
 import com.dodlu.core.domain.immunization.model.ChildWithParentModel;
 import com.dodlu.core.domain.immunization.model.ParentModel;
 import com.dodlu.core.domain.immunization.service.ImmunizationService;
@@ -14,13 +15,11 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/v1/immuno", produces = APPLICATION_JSON_VALUE)
-@Slf4j
 @CrossOrigin("*")
 public class ImmunizationController {
   private final ImmunizationService immunizationService;
@@ -30,6 +29,15 @@ public class ImmunizationController {
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = ParentModel.class)})
   public ResponseModel<ParentModel> createParent(@Valid @RequestBody CreateParentRequest request) {
     ParentModel parent = immunizationService.createParent(request).join();
+    return new ResponseModel<>(parent);
+  }
+
+  @PutMapping(value = "/parent/{parentId}")
+  @Operation(description = "update parent details")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = ParentModel.class)})
+  public ResponseModel<ParentModel> updateParent(
+      @PathVariable String parentId, @Valid @RequestBody CreateParentRequest request) {
+    ParentModel parent = immunizationService.updateParent(parentId, request).join();
     return new ResponseModel<>(parent);
   }
 
@@ -50,6 +58,15 @@ public class ImmunizationController {
     return new ResponseModel<>(parent);
   }
 
+  @PutMapping(value = "/child/{childId}")
+  @Operation(description = "update child details")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = ParentModel.class)})
+  public ResponseModel<ChildModel> updateChild(
+      @PathVariable String childId, @Valid @RequestBody CreateChildRequest request) {
+    ChildModel parent = immunizationService.updateChild(childId, request).join();
+    return new ResponseModel<>(parent);
+  }
+
   @GetMapping(value = "/child/{childId}")
   @Operation(description = "get single child details")
   @ApiResponses({
@@ -59,20 +76,4 @@ public class ImmunizationController {
     ChildWithParentModel child = immunizationService.getSingleChild(childId).join();
     return new ResponseModel<>(child);
   }
-
-  //    @GetMapping
-  //    @Operation(description = "Get a Parent details")
-  //    @ApiResponses({
-  //      @ApiResponse(
-  //          code = 200,
-  //          message = "Success",
-  //          response = FacultyResult.class,
-  //          responseContainer = "page")
-  //    })
-  //    public ResponseModel<FacultyResult> getAllFaculties(@PageableDefault Pageable pageable) {
-  //      Page<FacultyModel> facultyPage = facultyService.getAllFaculties(pageable).join();
-  //      FacultyResult facultyResult = new FacultyResult(facultyPage);
-  //      return new ResponseModel<>(facultyResult);
-  //    }
-
 }
