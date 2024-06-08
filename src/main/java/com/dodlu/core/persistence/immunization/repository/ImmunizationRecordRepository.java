@@ -1,6 +1,28 @@
 package com.dodlu.core.persistence.immunization.repository;
 
-import com.dodlu.core.persistence.immunization.entity.ImmunizationRecord;
-import org.springframework.data.jpa.repository.JpaRepository;
+import static com.dodlu.core.persistence.immunization.entity.QImmunizationRecord.immunizationRecord;
 
-public interface ImmunizationRecordRepository extends JpaRepository<ImmunizationRecord, String> {}
+import com.dodlu.core.persistence.immunization.entity.ImmunizationRecord;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import java.time.LocalDate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+
+public interface ImmunizationRecordRepository
+    extends JpaRepository<ImmunizationRecord, String>,
+        QuerydslPredicateExecutor<ImmunizationRecord> {
+
+  default Page<ImmunizationRecord> fetchImminentImmunizationRecord(Pageable pageable) {
+    LocalDate today = LocalDate.now();
+    BooleanExpression predicate =
+        immunizationRecord
+            .immunization
+            .minimumAdministerDate
+            .eq(today)
+            .and(immunizationRecord.immunization.administered.eq(false));
+
+    return findAll(predicate, pageable);
+  }
+}
