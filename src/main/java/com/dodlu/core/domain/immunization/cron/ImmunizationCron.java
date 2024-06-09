@@ -21,7 +21,7 @@ public class ImmunizationCron {
   private final ImmunizationRecordRepository immunizationRecordRepository;
 
   @Scheduled(cron = "0 0 0 * * *") // Runs every day at 12 AM
-  //@Scheduled(cron = "0 * * * * *") // Runs every minute -- Testing purposes only
+  // @Scheduled(cron = "0 * * * * *") // Runs every minute -- Testing purposes only
   public void notifyParentsOfDueVaccine() {
     log.info("fetching all immunization that are due for today");
 
