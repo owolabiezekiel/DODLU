@@ -2,6 +2,7 @@ package com.dodlu.core.app.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.dodlu.core.app.model.filters.ChildFilter;
 import com.dodlu.core.app.model.filters.ParentFilter;
 import com.dodlu.core.app.model.request.immunization.CreateChildRequest;
 import com.dodlu.core.app.model.request.immunization.CreateImmunizationRequest;
@@ -97,6 +98,22 @@ public class ImmunizationController {
   public ResponseModel<ChildWithParentModel> getChildById(@PathVariable String childId) {
     ChildWithParentModel child = immunizationService.getSingleChild(childId).join();
     return new ResponseModel<>(child);
+  }
+
+  @GetMapping(value = "/children")
+  @Operation(description = "get all children details")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = ChildWithParentModel.class,
+        responseContainer = "page")
+  })
+  public ResponseModel<Page<ChildWithParentModel>> getChildren(
+      @PageableDefault Pageable pageable, @ModelAttribute ChildFilter filter) {
+    Page<ChildWithParentModel> children =
+        immunizationService.getAllChildren(pageable, filter).join();
+    return new ResponseModel<>(children);
   }
 
   @PostMapping(value = "/immuno-record/{childId}", consumes = APPLICATION_JSON_VALUE)

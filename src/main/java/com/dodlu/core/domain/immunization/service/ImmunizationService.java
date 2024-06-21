@@ -4,6 +4,7 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
+import com.dodlu.core.app.model.filters.ChildFilter;
 import com.dodlu.core.app.model.filters.ParentFilter;
 import com.dodlu.core.app.model.request.immunization.CreateChildRequest;
 import com.dodlu.core.app.model.request.immunization.CreateImmunizationRequest;
@@ -108,22 +109,6 @@ public class ImmunizationService {
   }
 
   @Transactional
-  public CompletableFuture<ChildWithParentModel> getSingleChild(String childId) {
-    return supplyAsync(
-        () -> {
-          Child child =
-              childRepository
-                  .findById(childId)
-                  .orElseThrow(
-                      () ->
-                          exceptionService.handleCreateNotFoundException(
-                              "Child details does not exist"));
-
-          return child.toChildWithParentModel();
-        });
-  }
-
-  @Transactional
   public CompletableFuture<ParentModel> createChild(String parentId, CreateChildRequest request) {
     return supplyAsync(
         () -> {
@@ -144,6 +129,29 @@ public class ImmunizationService {
           child.setImmunizations(extractImmunizationFromRecord(records));
           children.add(child);
           return parent.toModel(children);
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Page<ChildWithParentModel>> getAllChildren(
+      Pageable pageable, ChildFilter filter) {
+    return supplyAsync(
+        () -> childRepository.findAll(pageable, filter).map(Child::toChildWithParentModel));
+  }
+
+  @Transactional
+  public CompletableFuture<ChildWithParentModel> getSingleChild(String childId) {
+    return supplyAsync(
+        () -> {
+          Child child =
+              childRepository
+                  .findById(childId)
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateNotFoundException(
+                              "Child details does not exist"));
+
+          return child.toChildWithParentModel();
         });
   }
 
