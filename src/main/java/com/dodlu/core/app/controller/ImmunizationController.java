@@ -72,6 +72,14 @@ public class ImmunizationController {
     return new ResponseModel<>(parents);
   }
 
+  @GetMapping(value = "/parents/count")
+  @Operation(description = "get parent count")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = Long.class)})
+  public ResponseModel<Long> getParentCount() {
+    Long parentCount = immunizationService.getParentsCount().join();
+    return new ResponseModel<>(parentCount);
+  }
+
   @PostMapping(value = "/parent/{parentId}/child", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "create child details for parent")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = ParentModel.class)})
@@ -116,6 +124,14 @@ public class ImmunizationController {
     return new ResponseModel<>(children);
   }
 
+  @GetMapping(value = "/children/count")
+  @Operation(description = "get children count")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = Long.class)})
+  public ResponseModel<Long> getChildrenCount() {
+    Long childrenCount = immunizationService.getChildrenCount().join();
+    return new ResponseModel<>(childrenCount);
+  }
+
   @PostMapping(value = "/immuno-record/{childId}", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "create immunization for child")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = ParentModel.class)})
@@ -123,6 +139,15 @@ public class ImmunizationController {
       @Valid @RequestBody CreateImmunizationRequest request, @PathVariable String childId) {
     immunizationService.createImmunizationRecord(childId, request).join();
     return new ResponseModel<>(null);
+  }
+
+  @GetMapping(value = "/immuno-record/count")
+  @Operation(description = "get administered immunization count")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = Long.class)})
+  public ResponseModel<Long> getAdministeredImmunizationCount() {
+    Long administeredImmunizationCount =
+        immunizationService.getAdministeredImmunizationCount().join();
+    return new ResponseModel<>(administeredImmunizationCount);
   }
 
   @PutMapping(value = "/immuno-record/{immunoRecordId}")

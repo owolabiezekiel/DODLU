@@ -47,20 +47,6 @@ public class ImmunizationService {
   }
 
   @Transactional
-  public CompletableFuture<ParentModel> updateParent(String parentId, CreateParentRequest request) {
-    return supplyAsync(
-        () -> {
-          Parent parent =
-              parentRepository
-                  .findById(parentId)
-                  .orElseThrow(
-                      () -> exceptionService.handleCreateBadRequest("Parent does not exist"));
-          updateParentFromRequest(request, parent);
-          return parentRepository.save(parent).toModel(null);
-        });
-  }
-
-  @Transactional
   public CompletableFuture<ParentModel> getSingleParent(SearchAttributes searchAttributes) {
     return supplyAsync(
         () -> {
@@ -109,6 +95,25 @@ public class ImmunizationService {
   }
 
   @Transactional
+  public CompletableFuture<Long> getParentsCount() {
+    return supplyAsync(parentRepository::count);
+  }
+
+  @Transactional
+  public CompletableFuture<ParentModel> updateParent(String parentId, CreateParentRequest request) {
+    return supplyAsync(
+        () -> {
+          Parent parent =
+              parentRepository
+                  .findById(parentId)
+                  .orElseThrow(
+                      () -> exceptionService.handleCreateBadRequest("Parent does not exist"));
+          updateParentFromRequest(request, parent);
+          return parentRepository.save(parent).toModel(null);
+        });
+  }
+
+  @Transactional
   public CompletableFuture<ParentModel> createChild(String parentId, CreateChildRequest request) {
     return supplyAsync(
         () -> {
@@ -153,6 +158,11 @@ public class ImmunizationService {
 
           return child.toChildWithParentModel();
         });
+  }
+
+  @Transactional
+  public CompletableFuture<Long> getChildrenCount() {
+    return supplyAsync(childRepository::count);
   }
 
   @Transactional
@@ -204,6 +214,11 @@ public class ImmunizationService {
               ImmunizationRecord.builder().immunization(immunization).child(child).build();
           immunizationRecordRepository.save(record);
         });
+  }
+
+  @Transactional
+  public CompletableFuture<Long> getAdministeredImmunizationCount() {
+    return supplyAsync(immunizationRepository::countByAdministeredIsTrue);
   }
 
   @Transactional

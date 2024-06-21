@@ -25,6 +25,15 @@ public class VaccineService {
   private final CoreExceptionService exceptionService;
 
   @Transactional
+  public CompletableFuture<VaccineModel> createVaccine(CreateVaccineRequest request) {
+    return supplyAsync(
+        () -> {
+          Vaccine vaccine = buildVaccineFromRequest(request);
+          return vaccineRepository.save(vaccine).toModel();
+        });
+  }
+
+  @Transactional
   public CompletableFuture<Page<VaccineModel>> getAllVaccines(Pageable pageable) {
     return supplyAsync(() -> vaccineRepository.findAll(pageable).map(Vaccine::toModel));
   }
@@ -41,12 +50,8 @@ public class VaccineService {
   }
 
   @Transactional
-  public CompletableFuture<VaccineModel> createVaccine(CreateVaccineRequest request) {
-    return supplyAsync(
-        () -> {
-          Vaccine vaccine = buildVaccineFromRequest(request);
-          return vaccineRepository.save(vaccine).toModel();
-        });
+  public CompletableFuture<Long> getVaccineCount() {
+    return supplyAsync(vaccineRepository::count);
   }
 
   @Transactional

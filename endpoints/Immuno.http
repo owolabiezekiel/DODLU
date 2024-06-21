@@ -23,6 +23,10 @@ Authorization: {{token}}
 GET {{host}}/immuno/parents?page=0&size=20&email=ezekiel@gmail
 Authorization: {{token}}
 
+### Get all parents count
+GET {{host}}/immuno/parents/count?page=0&size=20&email=ezekiel@gmail
+Authorization: {{token}}
+
 ### Get single parent by phone
 GET {{host}}/immuno/parent?phoneNumber=08106723911
 Authorization: {{token}}
@@ -45,4 +49,13 @@ Authorization: {{token}}
 
 ### Get all children
 GET {{host}}/immuno/children?page=0&size=20&gender=MALE
+Authorization: {{token}}
+
+### Get all children count
+GET {{host}}/immuno/children/count?page=0&size=20&email=ezekiel@gmail
+Authorization: {{token}}
+
+
+### Get all administered immunization count
+GET {{host}}/immuno/immuno-record/count?page=0&size=20&email=ezekiel@gmail
 Authorization: {{token}}

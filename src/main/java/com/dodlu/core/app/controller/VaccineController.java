@@ -41,6 +41,14 @@ public class VaccineController {
     return vaccineService.getVaccineById(vaccineId).thenApply(ResponseModel::new).join();
   }
 
+  @GetMapping(value = "/count")
+  @Operation(description = "get vaccine count")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = Long.class)})
+  public ResponseModel<Long> getVaccineCount() {
+    Long vaccineCount = vaccineService.getVaccineCount().join();
+    return new ResponseModel<>(vaccineCount);
+  }
+
   @PostMapping
   @Operation(description = "Create new vaccine")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = VaccineModel.class)})

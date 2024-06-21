@@ -6,6 +6,10 @@ Authorization: {{token}}
 GET {{host}}/vaccine/13d067e0-77fa-41d7-8973-ed1f8fb337aa
 Authorization: {{token}}
 
+### Get all vaccine count
+GET {{host}}/vaccine/count?page=0&size=20&email=ezekiel@gmail
+Authorization: {{token}}
+
 ### Create Vaccine
 POST {{host}}/vaccine
 Content-Type: application/json
