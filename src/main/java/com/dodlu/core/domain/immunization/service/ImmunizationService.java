@@ -4,6 +4,7 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
+import com.dodlu.core.app.model.filters.ParentFilter;
 import com.dodlu.core.app.model.request.immunization.CreateChildRequest;
 import com.dodlu.core.app.model.request.immunization.CreateImmunizationRequest;
 import com.dodlu.core.app.model.request.immunization.CreateParentRequest;
@@ -18,6 +19,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,6 +99,12 @@ public class ImmunizationService {
           throw new IllegalArgumentException(
               "A query parameter for id, email, or phoneNumber is required.");
         });
+  }
+
+  @Transactional
+  public CompletableFuture<Page<ParentWithNoChildModel>> getAllParents(
+      Pageable pageable, ParentFilter filter) {
+    return supplyAsync(() -> parentRepository.findAll(pageable, filter).map(Parent::toModel));
   }
 
   @Transactional

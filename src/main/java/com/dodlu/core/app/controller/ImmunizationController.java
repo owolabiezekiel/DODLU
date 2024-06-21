@@ -2,6 +2,7 @@ package com.dodlu.core.app.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.dodlu.core.app.model.filters.ParentFilter;
 import com.dodlu.core.app.model.request.immunization.CreateChildRequest;
 import com.dodlu.core.app.model.request.immunization.CreateImmunizationRequest;
 import com.dodlu.core.app.model.request.immunization.CreateParentRequest;
@@ -10,12 +11,16 @@ import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.immunization.model.ChildModel;
 import com.dodlu.core.domain.immunization.model.ChildWithParentModel;
 import com.dodlu.core.domain.immunization.model.ParentModel;
+import com.dodlu.core.domain.immunization.model.ParentWithNoChildModel;
 import com.dodlu.core.domain.immunization.service.ImmunizationService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -48,6 +53,22 @@ public class ImmunizationController {
   public ResponseModel<ParentModel> getParent(@ModelAttribute SearchAttributes search) {
     ParentModel parent = immunizationService.getSingleParent(search).join();
     return new ResponseModel<>(parent);
+  }
+
+  @GetMapping(value = "/parents")
+  @Operation(description = "get all parent details")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = ParentModel.class,
+        responseContainer = "page")
+  })
+  public ResponseModel<Page<ParentWithNoChildModel>> getParent(
+      @PageableDefault Pageable pageable, @ModelAttribute ParentFilter filter) {
+    Page<ParentWithNoChildModel> parents =
+        immunizationService.getAllParents(pageable, filter).join();
+    return new ResponseModel<>(parents);
   }
 
   @PostMapping(value = "/parent/{parentId}/child", consumes = APPLICATION_JSON_VALUE)

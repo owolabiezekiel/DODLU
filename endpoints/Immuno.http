@@ -19,6 +19,10 @@ Authorization: {{token}}
 GET {{host}}/immuno/parent?email=owo.ezekiel@gmail.com
 Authorization: {{token}}
 
+### Get all parents
+GET {{host}}/immuno/parents?page=0&size=20&email=ezekiel@gmail
+Authorization: {{token}}
+
 ### Get single parent by phone
 GET {{host}}/immuno/parent?phoneNumber=08106723911
 Authorization: {{token}}
