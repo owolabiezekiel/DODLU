@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Accessors(chain = true)
@@ -45,10 +47,12 @@ public class Child extends BaseEntity {
   private String age;
 
   @ManyToOne
+  @Fetch(FetchMode.JOIN)
   @JoinColumn(name = "parent_id", referencedColumnName = "id")
   private Parent parent;
 
   @ManyToMany(fetch = FetchType.EAGER)
+  @Fetch(FetchMode.JOIN)
   @JoinTable(
       name = "immunization_record",
       joinColumns = @JoinColumn(name = "child_id", referencedColumnName = "id"),

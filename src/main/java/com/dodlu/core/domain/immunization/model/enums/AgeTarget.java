@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.stream.Stream;
 
 public enum AgeTarget {
-  BIRTH("birth"),
+  BIRTH("Birth"),
   WEEK_SIX("Week 6"),
   WEEK_TEN("Week 10"),
   WEEK_FOURTEEN("Week 14"),

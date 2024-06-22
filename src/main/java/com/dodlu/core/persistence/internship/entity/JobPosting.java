@@ -19,6 +19,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Accessors(chain = true)
@@ -30,6 +31,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @ToString
 @SuperBuilder
 @RequiredArgsConstructor
+@DynamicUpdate
 public class JobPosting extends BaseEntity {
   @Column(nullable = false)
   private String title;
