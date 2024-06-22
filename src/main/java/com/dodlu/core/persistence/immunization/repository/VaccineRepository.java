@@ -18,13 +18,15 @@ public interface VaccineRepository
   default Page<Vaccine> findAllWithSearch(Pageable pageable, String searchKey) {
     BooleanExpression predicate = null;
     if (searchKey != null) {
+      String sanitizedSearch = searchKey.replace(" ", "_");
+      System.out.println(sanitizedSearch);
       predicate =
           vaccine
               .site
               .containsIgnoreCase(searchKey)
               .or(vaccine.ageTarget.stringValue().containsIgnoreCase(searchKey))
               .or(vaccine.type.stringValue().containsIgnoreCase(searchKey))
-              .or(vaccine.routeOfAdministration.stringValue().containsIgnoreCase(searchKey));
+              .or(vaccine.routeOfAdministration.stringValue().containsIgnoreCase(sanitizedSearch));
     }
 
     return predicate == null ? findAll(pageable) : findAll(predicate, pageable);
