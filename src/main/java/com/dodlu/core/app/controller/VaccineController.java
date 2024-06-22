@@ -26,9 +26,11 @@ public class VaccineController {
   @GetMapping
   @Operation(description = "get all vaccines")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = VaccineResult.class)})
-  public ResponseModel<VaccineResult> getParent(@PageableDefault Pageable pageable) {
+  public ResponseModel<VaccineResult> getParent(
+      @PageableDefault Pageable pageable,
+      @RequestParam(name = "search", required = false) String searchString) {
     return vaccineService
-        .getAllVaccines(pageable)
+        .getAllVaccines(pageable, searchString)
         .thenApply(VaccineResult::new)
         .thenApply(ResponseModel::new)
         .join();

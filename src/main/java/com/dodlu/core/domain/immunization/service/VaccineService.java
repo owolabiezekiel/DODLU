@@ -34,8 +34,10 @@ public class VaccineService {
   }
 
   @Transactional
-  public CompletableFuture<Page<VaccineModel>> getAllVaccines(Pageable pageable) {
-    return supplyAsync(() -> vaccineRepository.findAll(pageable).map(Vaccine::toModel));
+  public CompletableFuture<Page<VaccineModel>> getAllVaccines(
+      Pageable pageable, String searchString) {
+    return supplyAsync(
+        () -> vaccineRepository.findAllWithSearch(pageable, searchString).map(Vaccine::toModel));
   }
 
   @Transactional

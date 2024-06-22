@@ -1,5 +1,5 @@
 ### Get all vaccines
-GET {{host}}/vaccine?size=50&page=0
+GET {{host}}/vaccine?size=50&page=0&search=
 Authorization: {{token}}
 
 ### Get single vaccine
