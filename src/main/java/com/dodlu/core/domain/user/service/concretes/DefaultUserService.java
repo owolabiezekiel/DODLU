@@ -401,6 +401,12 @@ public class DefaultUserService {
                       coordinatorProfileRepository, exceptionService, user.getUsername())
                   .toGeneralProfileModel();
             }
+            case ADMIN -> {
+              return userRepository
+                  .findByUsernameEqualsIgnoreCase(user.getUsername())
+                  .orElseThrow(() -> exceptionService.handleCreateBadRequest("User not found"))
+                  .toGeneralProfileModel();
+            }
             default -> throw exceptionService.handleCreateBadRequest("Unknown user type");
           }
         });

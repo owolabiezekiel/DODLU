@@ -4,10 +4,7 @@ import static com.dodlu.core.app.utils.StringUtilities.emptyIfNullStream;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import com.dodlu.core.domain.user.model.EntityStatus;
-import com.dodlu.core.domain.user.model.RoleModel;
-import com.dodlu.core.domain.user.model.UserModel;
-import com.dodlu.core.domain.user.model.UserType;
+import com.dodlu.core.domain.user.model.*;
 import com.dodlu.core.persistence.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -73,6 +70,10 @@ public class User extends BaseEntity implements UserDetails {
         .setLastLoginDate(getLastLoginDate())
         .setStatus(getStatus())
         .setRole(getRoleModels());
+  }
+
+  public GeneralProfileModel toGeneralProfileModel() {
+    return GeneralProfileModel.builder().id(id).email(getEmail()).username(getUsername()).build();
   }
 
   @Override
