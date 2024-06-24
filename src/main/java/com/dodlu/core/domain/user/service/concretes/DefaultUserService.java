@@ -62,6 +62,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 public class DefaultUserService {
+  private final AdminProfileRepository adminProfileRepository;
   private final StudentProfileRepository studentProfileRepository;
   private final DepartmentRepository departmentRepository;
   private final SupervisorProfileRepository supervisorProfileRepository;
@@ -402,10 +403,17 @@ public class DefaultUserService {
                   .toGeneralProfileModel();
             }
             case ADMIN -> {
-              return userRepository
-                  .findByUsernameEqualsIgnoreCase(user.getUsername())
-                  .orElseThrow(() -> exceptionService.handleCreateBadRequest("User not found"))
-                  .toGeneralProfileModel();
+              AdminProfile adminProfile =
+                  adminProfileRepository.findByUsernameIgnoreCase(user.getUsername()).orElse(null);
+              return adminProfile != null
+                  ? adminProfile.toGeneralProfileModel()
+                  : userRepository
+                      .findByUsernameEqualsIgnoreCase(user.getUsername())
+                      .orElseThrow(
+                          () ->
+                              exceptionService.handleCreateBadRequest(
+                                  "user profile does not exist"))
+                      .toGeneralProfileModel();
             }
             default -> throw exceptionService.handleCreateBadRequest("Unknown user type");
           }
