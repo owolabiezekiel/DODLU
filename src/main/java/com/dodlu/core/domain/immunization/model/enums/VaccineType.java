@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.stream.Stream;
 
 public enum VaccineType {
-  BCG("*BCG"),
-  OPV0("**OPV0"),
-  HEP_BO_BIRTH("***Hep BO birth"),
+  BCG("BCG"),
+  OPV0("OPV0"),
+  HEP_BO_BIRTH("Hep BO birth"),
 
   PENTAVALENT1("Pentavalent(DPT, Hep B and Hib) 1"),
   PREMOCOCCAL1("Premococcal Conjugate Vaccine 1"),
