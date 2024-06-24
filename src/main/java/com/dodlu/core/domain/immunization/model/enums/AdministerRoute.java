@@ -31,7 +31,7 @@ public enum AdministerRoute {
     }
 
     return Stream.of(AdministerRoute.values())
-        .filter(e -> e.name().equalsIgnoreCase(value))
+        .filter(e -> e.name().equalsIgnoreCase(value) || e.name.equalsIgnoreCase(value))
         .findFirst()
         .orElse(UNKNOWN);
   }

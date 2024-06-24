@@ -38,7 +38,7 @@ public enum VaccineType {
 
   MEASLES2("Measles 2nd dose (MCV2)"),
 
-  HPV("****HPV"),
+  HPV("HPV"),
 
   UNKNOWN("unknown");
 
@@ -60,7 +60,7 @@ public enum VaccineType {
     }
 
     return Stream.of(VaccineType.values())
-        .filter(e -> e.name().equalsIgnoreCase(value))
+        .filter(e -> e.name().equalsIgnoreCase(value) || e.name.equalsIgnoreCase(value))
         .findFirst()
         .orElse(UNKNOWN);
   }

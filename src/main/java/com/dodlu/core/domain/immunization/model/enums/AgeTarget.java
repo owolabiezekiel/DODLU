@@ -38,7 +38,7 @@ public enum AgeTarget {
     }
 
     return Stream.of(AgeTarget.values())
-        .filter(e -> e.name.equalsIgnoreCase(value))
+        .filter(e -> e.name().equalsIgnoreCase(value) || e.name.equalsIgnoreCase(value))
         .findFirst()
         .orElse(UNKNOWN);
   }

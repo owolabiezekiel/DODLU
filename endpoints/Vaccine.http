@@ -17,7 +17,7 @@ Authorization: {{token}}
 
 {
   "ageTarget": "WEEK 10",
-  "type": "PENTAVALENT1",
+  "type": "Hep BO birth",
   "dosage": 0.5,
   "dosageType": "ML",
   "administerRoute": "INTRAMUSCULAR",
