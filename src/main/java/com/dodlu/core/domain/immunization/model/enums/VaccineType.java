@@ -60,7 +60,7 @@ public enum VaccineType {
     }
 
     return Stream.of(VaccineType.values())
-        .filter(e -> e.toString().equalsIgnoreCase(value))
+        .filter(e -> e.name().equalsIgnoreCase(value))
         .findFirst()
         .orElse(UNKNOWN);
   }

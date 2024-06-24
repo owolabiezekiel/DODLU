@@ -30,7 +30,7 @@ public enum DosageType {
     }
 
     return Stream.of(DosageType.values())
-        .filter(e -> e.toString().equalsIgnoreCase(value))
+        .filter(e -> e.name().equalsIgnoreCase(value))
         .findFirst()
         .orElse(UNKNOWN);
   }

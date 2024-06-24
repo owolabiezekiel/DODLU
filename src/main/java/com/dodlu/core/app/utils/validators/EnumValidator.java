@@ -10,7 +10,8 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, Enum> {
     if (value == null) {
       return true;
     } else {
-      return !value.toString().equalsIgnoreCase("UNKNOWN");
+      return !value.toString().equalsIgnoreCase("UNKNOWN")
+          || !value.name().equalsIgnoreCase("unknown");
     }
   }
 }

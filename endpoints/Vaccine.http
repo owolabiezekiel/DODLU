@@ -16,7 +16,7 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "ageTarget": "WEEK_SIX",
+  "ageTarget": "WEEK 10",
   "type": "PENTAVALENT1",
   "dosage": 0.5,
   "dosageType": "ML",
