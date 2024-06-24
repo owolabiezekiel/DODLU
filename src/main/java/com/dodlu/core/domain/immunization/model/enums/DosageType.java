@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 public enum DosageType {
   ML("ml"),
-  DROP("drop(s)"),
+  DROP("drop"),
   IU("IU"),
   UNKNOWN("unknown");
 
