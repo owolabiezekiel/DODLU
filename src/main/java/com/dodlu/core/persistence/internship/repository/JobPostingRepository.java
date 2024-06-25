@@ -1,7 +1,7 @@
 package com.dodlu.core.persistence.internship.repository;
 
-import static com.dodlu.core.persistence.internship.entity.QJobPosting.jobPosting;
-import static com.dodlu.core.persistence.internship.entity.QJobPostingApplication.jobPostingApplication;
+import static com.dodlu.core.persistence.internship.entity.querydsl.QJobPosting.jobPosting;
+import static com.dodlu.core.persistence.internship.entity.querydsl.QJobPostingApplication.jobPostingApplication;
 
 import com.dodlu.core.app.model.filters.JobPostingFilter;
 import com.dodlu.core.persistence.internship.entity.JobPosting;

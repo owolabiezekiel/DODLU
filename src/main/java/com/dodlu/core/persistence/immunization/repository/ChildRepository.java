@@ -1,7 +1,7 @@
 package com.dodlu.core.persistence.immunization.repository;
 
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
-import static com.dodlu.core.persistence.immunization.entity.QChild.child;
+import static com.dodlu.core.persistence.immunization.entity.querydsl.QChild.child;
 
 import com.dodlu.core.app.model.filters.ChildFilter;
 import com.dodlu.core.persistence.immunization.entity.Child;

@@ -1,6 +1,6 @@
 package com.dodlu.core.persistence.immunization.repository;
 
-import static com.dodlu.core.persistence.immunization.entity.QVaccine.vaccine;
+import static com.dodlu.core.persistence.immunization.entity.querydsl.QVaccine.vaccine;
 
 import com.dodlu.core.domain.immunization.model.enums.AgeTarget;
 import com.dodlu.core.persistence.immunization.entity.Vaccine;

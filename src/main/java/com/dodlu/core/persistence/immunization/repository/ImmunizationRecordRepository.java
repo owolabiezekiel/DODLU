@@ -1,6 +1,6 @@
 package com.dodlu.core.persistence.immunization.repository;
 
-import static com.dodlu.core.persistence.immunization.entity.QImmunizationRecord.immunizationRecord;
+import static com.dodlu.core.persistence.immunization.entity.querydsl.QImmunizationRecord.immunizationRecord;
 
 import com.dodlu.core.persistence.immunization.entity.ImmunizationRecord;
 import com.querydsl.core.types.dsl.BooleanExpression;
