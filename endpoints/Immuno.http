@@ -59,3 +59,7 @@ Authorization: {{token}}
 ### Get all administered immunization count
 GET {{host}}/immuno/immuno-record/count?page=0&size=20&email=ezekiel@gmail
 Authorization: {{token}}
+
+### Get today's pemding immunization
+GET {{host}}/immuno/pending/today?size=20
+Authorization: {{token}}

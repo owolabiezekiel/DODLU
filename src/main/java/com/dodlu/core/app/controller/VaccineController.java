@@ -26,7 +26,7 @@ public class VaccineController {
   @GetMapping
   @Operation(description = "get all vaccines")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = VaccineResult.class)})
-  public ResponseModel<VaccineResult> getParent(
+  public ResponseModel<VaccineResult> getVaccines(
       @PageableDefault Pageable pageable,
       @RequestParam(name = "search", required = false) String searchString) {
     return vaccineService

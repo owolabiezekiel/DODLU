@@ -1,5 +1,6 @@
 package com.dodlu.core.persistence.immunization.entity;
 
+import com.dodlu.core.domain.immunization.model.ImminentImmunoRecordModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import jakarta.persistence.*;
 import java.util.Objects;
@@ -41,5 +42,13 @@ public class ImmunizationRecord extends BaseEntity {
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), id);
+  }
+
+  public ImminentImmunoRecordModel toModel() {
+    return ImminentImmunoRecordModel.builder()
+        .id(id)
+        .child(child.toModel())
+        .immunization(immunization.toModel())
+        .build();
   }
 }

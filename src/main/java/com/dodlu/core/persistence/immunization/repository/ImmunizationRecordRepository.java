@@ -25,4 +25,17 @@ public interface ImmunizationRecordRepository
 
     return findAll(predicate, pageable);
   }
+
+  default Page<ImmunizationRecord> fetchImminentImmunizationRecord(
+      Pageable pageable, LocalDate startDate, LocalDate endDate) {
+    BooleanExpression predicate =
+        immunizationRecord
+            .immunization
+            .minimumAdministerDate
+            .goe(startDate)
+            .and(immunizationRecord.immunization.minimumAdministerDate.loe(endDate))
+            .and(immunizationRecord.immunization.administered.eq(false));
+
+    return findAll(predicate, pageable);
+  }
 }

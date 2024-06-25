@@ -9,10 +9,7 @@ import com.dodlu.core.app.model.request.immunization.CreateImmunizationRequest;
 import com.dodlu.core.app.model.request.immunization.CreateParentRequest;
 import com.dodlu.core.app.model.request.immunization.SearchAttributes;
 import com.dodlu.core.app.model.response.ResponseModel;
-import com.dodlu.core.domain.immunization.model.ChildModel;
-import com.dodlu.core.domain.immunization.model.ChildWithParentModel;
-import com.dodlu.core.domain.immunization.model.ParentModel;
-import com.dodlu.core.domain.immunization.model.ParentWithNoChildModel;
+import com.dodlu.core.domain.immunization.model.*;
 import com.dodlu.core.domain.immunization.service.ImmunizationService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -157,5 +154,15 @@ public class ImmunizationController {
       @PathVariable String immunoRecordId, @Valid @RequestBody CreateImmunizationRequest request) {
     immunizationService.updateImmunizationRecord(immunoRecordId, request).join();
     return new ResponseModel<>(null);
+  }
+
+  @GetMapping(value = "/pending/today")
+  @Operation(description = "get today's pending immunization")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = Long.class)})
+  public ResponseModel<Page<ImminentImmunoRecordModel>> getTodayImminentImmunization(
+      @PageableDefault Pageable pageable) {
+    Page<ImminentImmunoRecordModel> records =
+        immunizationService.getPendingImmunizationToday(pageable).join();
+    return new ResponseModel<>(records);
   }
 }
