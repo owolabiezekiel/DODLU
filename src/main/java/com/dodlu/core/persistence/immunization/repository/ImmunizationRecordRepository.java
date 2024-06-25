@@ -28,6 +28,15 @@ public interface ImmunizationRecordRepository
 
   default Page<ImmunizationRecord> fetchImminentImmunizationRecord(
       Pageable pageable, LocalDate startDate, LocalDate endDate) {
+    if (startDate == null) {
+      startDate = LocalDate.now();
+    }
+    if (endDate == null) {
+      endDate = LocalDate.now();
+    }
+    if (startDate.isAfter(endDate)) {
+      endDate = startDate;
+    }
     BooleanExpression predicate =
         immunizationRecord
             .immunization

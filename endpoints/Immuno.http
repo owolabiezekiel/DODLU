@@ -63,3 +63,7 @@ Authorization: {{token}}
 ### Get today's pemding immunization
 GET {{host}}/immuno/pending/today?size=20
 Authorization: {{token}}
+
+### Get today's pemding immunization
+GET {{host}}/immuno/pending/betweenDays?endDate=2024-12-12
+Authorization: {{token}}

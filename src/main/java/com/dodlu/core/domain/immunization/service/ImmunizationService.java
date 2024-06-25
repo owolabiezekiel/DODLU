@@ -260,12 +260,15 @@ public class ImmunizationService {
                 .map(ImmunizationRecord::toModel));
   }
 
-  //  @Transactional
-  //  public CompletableFuture<Page<ImmunizationRecordModel>> getPendingImmunizationBetweenDays(){
-  //    return supplyAsync(() -> {
-  //
-  //    });
-  //  }
+  @Transactional
+  public CompletableFuture<Page<ImminentImmunoRecordModel>> getPendingImmunizationBetweenDays(
+      Pageable pageable, LocalDate startDate, LocalDate endDate) {
+    return supplyAsync(
+        () ->
+            immunizationRecordRepository
+                .fetchImminentImmunizationRecord(pageable, startDate, endDate)
+                .map(ImmunizationRecord::toModel));
+  }
 
   private Set<Immunization> extractImmunizationFromRecord(List<ImmunizationRecord> records) {
     Set<Immunization> immunizations = new HashSet<>();

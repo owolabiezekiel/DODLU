@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -158,11 +159,35 @@ public class ImmunizationController {
 
   @GetMapping(value = "/pending/today")
   @Operation(description = "get today's pending immunization")
-  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = Long.class)})
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = ImminentImmunoRecordModel.class,
+        responseContainer = "page")
+  })
   public ResponseModel<Page<ImminentImmunoRecordModel>> getTodayImminentImmunization(
       @PageableDefault Pageable pageable) {
     Page<ImminentImmunoRecordModel> records =
         immunizationService.getPendingImmunizationToday(pageable).join();
+    return new ResponseModel<>(records);
+  }
+
+  @GetMapping(value = "/pending/betweenDays")
+  @Operation(description = "get  pending immunization for days")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = ImminentImmunoRecordModel.class,
+        responseContainer = "page")
+  })
+  public ResponseModel<Page<ImminentImmunoRecordModel>> getImminentImmunizationBetweenDays(
+      @PageableDefault Pageable pageable,
+      @RequestParam(name = "startDate", required = false) LocalDate startDate,
+      @RequestParam(name = "endDate", required = false) LocalDate endDate) {
+    Page<ImminentImmunoRecordModel> records =
+        immunizationService.getPendingImmunizationBetweenDays(pageable, startDate, endDate).join();
     return new ResponseModel<>(records);
   }
 }
