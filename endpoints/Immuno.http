@@ -8,11 +8,12 @@ Authorization: {{token}}
   "firstName": "Olubunmi",
   "lastName": "Owolabi",
   "email": "owo.ezekiel22@gmail.com",
-  "phoneNumber": "08106723916"
+  "phoneNumber": "08106723917",
+  "dateOfBirth": "2001-06-07"
 }
 
 ### Get single parent by id
-GET {{host}}/immuno/parent?id=da7f571d-6bb0-4d0f-b239-59fbc7900829
+GET {{host}}/immuno/parent?id=11de7ca0-3a03-4353-928b-cfff9ae6da19
 Authorization: {{token}}
 
 ### Get single parent by email

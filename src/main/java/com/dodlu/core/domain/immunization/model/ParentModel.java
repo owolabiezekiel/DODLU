@@ -1,5 +1,6 @@
 package com.dodlu.core.domain.immunization.model;
 
+import java.time.LocalDate;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +20,7 @@ public class ParentModel {
   private String lastName;
   private String phoneNumber;
   private String email;
+  private LocalDate dateOfBirth;
+  private String age;
   private Set<ChildModel> children;
 }

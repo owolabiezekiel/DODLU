@@ -452,6 +452,7 @@ public class ImmunizationService {
         .lastName(request.getLastName())
         .phoneNumber(request.getPhoneNumber())
         .email(request.getEmail().toLowerCase())
+        .dateOfBirth(request.getDateOfBirth())
         .build();
   }
 
@@ -461,6 +462,7 @@ public class ImmunizationService {
     parent.setTitle(request.getTitle());
     parent.setFirstName(request.getFirstName());
     parent.setLastName(request.getLastName());
+    parent.setDateOfBirth(request.getDateOfBirth());
   }
 
   private Child buildChildFromRequest(CreateChildRequest request) {

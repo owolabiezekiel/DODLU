@@ -1,5 +1,6 @@
 package com.dodlu.core.app.utils;
 
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Stream;
 import lombok.experimental.UtilityClass;
@@ -18,12 +19,26 @@ public class StringUtilities {
     return (list == null) ? List.of() : list;
   }
 
-  public static Set<String> toSet(String data) {
-    if (isNullOrBlank(data)) return new HashSet<>();
-    return new HashSet<>(Arrays.asList(data.split(",")));
-  }
-
   public static String toStringFromSet(Set<String> data) {
     return String.join(",", emptyIfNull(data));
+  }
+
+  public static String formatPeriod(Period period) {
+    int years = period.getYears();
+    int months = period.getMonths();
+    int days = period.getDays();
+
+    if (years <= 0) {
+      return String.format("%d months and %d days", months, days);
+    }
+    if (months <= 0) {
+      return String.format("%d years and %d days", years, days);
+    }
+
+    if (days <= 0) {
+      return String.format("%d years and %d months", years, months);
+    }
+
+    return String.format("%d years, %d months, and %d days", years, months, days);
   }
 }

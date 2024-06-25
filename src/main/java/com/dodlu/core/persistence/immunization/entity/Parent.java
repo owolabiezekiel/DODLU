@@ -1,18 +1,18 @@
 package com.dodlu.core.persistence.immunization.entity;
 
 import static com.dodlu.core.app.utils.StringUtilities.emptyIfNull;
+import static com.dodlu.core.app.utils.StringUtilities.formatPeriod;
 
 import com.dodlu.core.domain.immunization.model.ParentModel;
 import com.dodlu.core.domain.immunization.model.ParentWithNoChildModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -41,6 +41,19 @@ public class Parent extends BaseEntity {
   @Column(nullable = false)
   private String email;
 
+  @Column(nullable = false)
+  private LocalDate dateOfBirth;
+
+  @Transient
+  @Setter(AccessLevel.NONE)
+  private String age;
+
+  public String getAge() {
+    LocalDate now = LocalDate.now();
+    Period period = Period.between(this.dateOfBirth, now);
+    return formatPeriod(period);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -63,6 +76,8 @@ public class Parent extends BaseEntity {
         .lastName(lastName)
         .phoneNumber(phoneNumber)
         .email(email)
+        .dateOfBirth(dateOfBirth)
+        .age(getAge())
         .children(emptyIfNull(children).stream().map(Child::toModel).collect(Collectors.toSet()))
         .build();
   }
@@ -75,6 +90,8 @@ public class Parent extends BaseEntity {
         .lastName(lastName)
         .phoneNumber(phoneNumber)
         .email(email)
+        .dateOfBirth(dateOfBirth)
+        .age(getAge())
         .build();
   }
 }

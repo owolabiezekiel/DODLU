@@ -1,6 +1,7 @@
 package com.dodlu.core.persistence.immunization.entity;
 
 import static com.dodlu.core.app.utils.StringUtilities.emptyIfNull;
+import static com.dodlu.core.app.utils.StringUtilities.formatPeriod;
 
 import com.dodlu.core.domain.immunization.model.ChildModel;
 import com.dodlu.core.domain.immunization.model.ChildWithParentModel;
@@ -63,12 +64,6 @@ public class Child extends BaseEntity {
     LocalDate now = LocalDate.now();
     Period period = Period.between(this.dateOfBirth, now);
     return formatPeriod(period);
-  }
-
-  private String formatPeriod(Period period) {
-    return String.format(
-        "%d years, %d months, and %d days",
-        period.getYears(), period.getMonths(), period.getDays());
   }
 
   @Override

@@ -511,4 +511,16 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
     </changeSet>
+
+    <changeSet author="tobiowolabi" id="add_date_of_birth_to_parent_record">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="parents" columnName="date_of_birth"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="parents">
+            <column name="date_of_birth" type="date" defaultValueComputed="CURRENT_DATE" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

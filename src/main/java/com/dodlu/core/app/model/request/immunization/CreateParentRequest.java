@@ -1,9 +1,7 @@
 package com.dodlu.core.app.model.request.immunization;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,4 +30,8 @@ public class CreateParentRequest {
   @NotBlank(message = "phoneNumber is required")
   @Size(min = 11, message = "phoneNumber must be at least 11 characters")
   private String phoneNumber;
+
+  @NotNull(message = "date of birth is required")
+  @PastOrPresent(message = "date of birth can not be in the future")
+  private LocalDate dateOfBirth;
 }
