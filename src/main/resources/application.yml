@@ -109,5 +109,3 @@ dodlu:
   secrets:
     jwt-secret: ${JWT_SECRET:somesecret}
     jwt-expiration: ${JWT_EXPIRATION:86400000}
-
-#just some comments
