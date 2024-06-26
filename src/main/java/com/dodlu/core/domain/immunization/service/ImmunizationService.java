@@ -264,6 +264,12 @@ public class ImmunizationService {
   }
 
   @Transactional
+  public CompletableFuture<Long> getPendingImmunizationTodayCount() {
+    return supplyAsync(
+        immunizationRecordRepository::getPendingImmunizationTodayCount);
+  }
+
+  @Transactional
   public CompletableFuture<Page<ImminentImmunoRecordModel>> getPendingImmunizationBetweenDays(
       Pageable pageable, LocalDate startDate, LocalDate endDate) {
     return supplyAsync(

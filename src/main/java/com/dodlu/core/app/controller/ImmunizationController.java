@@ -173,6 +173,19 @@ public class ImmunizationController {
     return new ResponseModel<>(records);
   }
 
+  @GetMapping(value = "/pending/today/count")
+  @Operation(description = "get today's pending immunization count ")
+  @ApiResponses({
+      @ApiResponse(
+          code = 200,
+          message = "Success",
+          response = Long.class)
+  })
+  public ResponseModel<Long> getTodayImminentImmunizationCount() {
+    Long count =
+        immunizationService.getPendingImmunizationTodayCount().join();
+    return new ResponseModel<>(count);
+  }
   @GetMapping(value = "/pending/betweenDays")
   @Operation(description = "get  pending immunization for days")
   @ApiResponses({
