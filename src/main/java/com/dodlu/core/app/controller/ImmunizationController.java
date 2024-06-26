@@ -63,9 +63,9 @@ public class ImmunizationController {
         response = ParentModel.class,
         responseContainer = "page")
   })
-  public ResponseModel<Page<ParentWithNoChildModel>> getParent(
+  public ResponseModel<Page<ParentModel>> getParent(
       @PageableDefault Pageable pageable, @ModelAttribute ParentFilter filter) {
-    Page<ParentWithNoChildModel> parents =
+    Page<ParentModel> parents =
         immunizationService.getAllParents(pageable, filter).join();
     return new ResponseModel<>(parents);
   }

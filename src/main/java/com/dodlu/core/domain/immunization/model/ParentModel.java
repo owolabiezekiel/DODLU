@@ -22,5 +22,5 @@ public class ParentModel {
   private String email;
   private LocalDate dateOfBirth;
   private String age;
-  private Set<ChildModel> children;
+  private Set<ChildWithNoImmunoModel> children;
 }

@@ -4,6 +4,7 @@ import static com.dodlu.core.app.utils.StringUtilities.emptyIfNull;
 import static com.dodlu.core.app.utils.StringUtilities.formatPeriod;
 
 import com.dodlu.core.domain.immunization.model.ChildModel;
+import com.dodlu.core.domain.immunization.model.ChildWithNoImmunoModel;
 import com.dodlu.core.domain.immunization.model.ChildWithParentModel;
 import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.persistence.base.BaseEntity;
@@ -92,6 +93,17 @@ public class Child extends BaseEntity {
             emptyIfNull(immunizations).stream()
                 .map(Immunization::toModel)
                 .collect(Collectors.toSet()))
+        .build();
+  }
+
+  public ChildWithNoImmunoModel toModelWithoutImmunization(){
+    return ChildWithNoImmunoModel.builder()
+        .id(id)
+        .firstName(firstName)
+        .lastName(lastName)
+        .gender(gender)
+        .dateOfBirth(dateOfBirth)
+        .age(getAge())
         .build();
   }
 

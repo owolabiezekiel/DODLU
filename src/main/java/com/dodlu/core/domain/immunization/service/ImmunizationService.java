@@ -89,9 +89,12 @@ public class ImmunizationService {
   }
 
   @Transactional
-  public CompletableFuture<Page<ParentWithNoChildModel>> getAllParents(
+  public CompletableFuture<Page<ParentModel>> getAllParents(
       Pageable pageable, ParentFilter filter) {
-    return supplyAsync(() -> parentRepository.findAll(pageable, filter).map(Parent::toModel));
+    return supplyAsync(() -> parentRepository.findAll(pageable, filter).map((parent) -> {
+      Set<Child> parentChildren = childRepository.findAllByParentId(parent.getId());
+      return parent.toModel(parentChildren);
+    }));
   }
 
   @Transactional

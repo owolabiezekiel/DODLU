@@ -21,7 +21,7 @@ GET {{host}}/immuno/parent?email=owo.ezekiel@gmail.com
 Authorization: {{token}}
 
 ### Get all parents
-GET {{host}}/immuno/parents?page=0&size=20&email=ezekiel@gmail
+GET {{host}}/immuno/parents?page=0&size=20
 Authorization: {{token}}
 
 ### Get all parents count
