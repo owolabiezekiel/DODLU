@@ -24,6 +24,10 @@ Authorization: {{token}}
 GET {{host}}/immuno/parents?page=0&size=20
 Authorization: {{token}}
 
+### Get all parents with search string
+GET {{host}}/immuno/parents/search?page=0&size=20&search=owo.ezekiel2
+Authorization: {{token}}
+
 ### Get all parents count
 GET {{host}}/immuno/parents/count?page=0&size=20&email=ezekiel@gmail
 Authorization: {{token}}

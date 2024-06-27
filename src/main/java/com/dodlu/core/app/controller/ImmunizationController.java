@@ -70,6 +70,18 @@ public class ImmunizationController {
     return new ResponseModel<>(parents);
   }
 
+  @GetMapping(value = "/parents/search")
+  @Operation(description = "get all parents with search key")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = ParentModel.class,
+      responseContainer = "page")})
+  public ResponseModel<Page<ParentModel>> getParents(
+      @PageableDefault Pageable pageable,
+      @RequestParam(name = "search", required = false) String searchString) {
+    Page<ParentModel> parents =
+        immunizationService.getAllParents(pageable, searchString).join();
+    return new ResponseModel<>(parents);
+  }
+
   @GetMapping(value = "/parents/count")
   @Operation(description = "get parent count")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = Long.class)})

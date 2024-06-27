@@ -22,6 +22,20 @@ public interface ParentRepository
 
   Optional<Parent> findByPhoneNumberEquals(String phoneNumber);
 
+  default Page<Parent> findAllWithSearch(Pageable pageable, String searchKey) {
+    BooleanExpression predicate = null;
+    if (searchKey != null) {
+      predicate =
+          parent
+              .firstName.containsIgnoreCase(searchKey)
+              .or(parent.lastName.containsIgnoreCase(searchKey))
+              .or(parent.email.containsIgnoreCase(searchKey))
+              .or(parent.phoneNumber.containsIgnoreCase(searchKey));
+    }
+
+    return predicate == null ? findAll(pageable) : findAll(predicate, pageable);
+  }
+
   default Page<Parent> findAll(Pageable pageable, ParentFilter filter) {
     BooleanExpression predicate = null;
 
