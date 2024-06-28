@@ -96,7 +96,7 @@ public class Child extends BaseEntity {
         .build();
   }
 
-  public ChildWithNoImmunoModel toModelWithoutImmunization(){
+  public ChildWithNoImmunoModel toModelWithoutImmunization() {
     return ChildWithNoImmunoModel.builder()
         .id(id)
         .firstName(firstName)

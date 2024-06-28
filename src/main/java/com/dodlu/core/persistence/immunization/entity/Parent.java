@@ -78,7 +78,10 @@ public class Parent extends BaseEntity {
         .email(email)
         .dateOfBirth(dateOfBirth)
         .age(getAge())
-        .children(emptyIfNull(children).stream().map(Child::toModelWithoutImmunization).collect(Collectors.toSet()))
+        .children(
+            emptyIfNull(children).stream()
+                .map(Child::toModelWithoutImmunization)
+                .collect(Collectors.toSet()))
         .build();
   }
 

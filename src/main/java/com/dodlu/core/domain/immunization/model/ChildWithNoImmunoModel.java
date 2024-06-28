@@ -1,13 +1,12 @@
 package com.dodlu.core.domain.immunization.model;
 
 import com.dodlu.core.domain.user.enums.Gender;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-
-import java.time.LocalDate;
 
 @Accessors(chain = true)
 @NoArgsConstructor

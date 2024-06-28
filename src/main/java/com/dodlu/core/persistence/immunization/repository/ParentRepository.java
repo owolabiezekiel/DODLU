@@ -27,7 +27,8 @@ public interface ParentRepository
     if (searchKey != null) {
       predicate =
           parent
-              .firstName.containsIgnoreCase(searchKey)
+              .firstName
+              .containsIgnoreCase(searchKey)
               .or(parent.lastName.containsIgnoreCase(searchKey))
               .or(parent.email.containsIgnoreCase(searchKey))
               .or(parent.phoneNumber.containsIgnoreCase(searchKey));

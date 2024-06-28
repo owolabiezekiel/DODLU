@@ -65,20 +65,23 @@ public class ImmunizationController {
   })
   public ResponseModel<Page<ParentModel>> getParent(
       @PageableDefault Pageable pageable, @ModelAttribute ParentFilter filter) {
-    Page<ParentModel> parents =
-        immunizationService.getAllParents(pageable, filter).join();
+    Page<ParentModel> parents = immunizationService.getAllParents(pageable, filter).join();
     return new ResponseModel<>(parents);
   }
 
   @GetMapping(value = "/parents/search")
   @Operation(description = "get all parents with search key")
-  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = ParentModel.class,
-      responseContainer = "page")})
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = ParentModel.class,
+        responseContainer = "page")
+  })
   public ResponseModel<Page<ParentModel>> getParents(
       @PageableDefault Pageable pageable,
       @RequestParam(name = "search", required = false) String searchString) {
-    Page<ParentModel> parents =
-        immunizationService.getAllParents(pageable, searchString).join();
+    Page<ParentModel> parents = immunizationService.getAllParents(pageable, searchString).join();
     return new ResponseModel<>(parents);
   }
 
@@ -131,6 +134,23 @@ public class ImmunizationController {
       @PageableDefault Pageable pageable, @ModelAttribute ChildFilter filter) {
     Page<ChildWithParentModel> children =
         immunizationService.getAllChildren(pageable, filter).join();
+    return new ResponseModel<>(children);
+  }
+
+  @GetMapping(value = "/children/search")
+  @Operation(description = "get all children with search key")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = ChildWithParentModel.class,
+        responseContainer = "page")
+  })
+  public ResponseModel<Page<ChildWithParentModel>> getChildren(
+      @PageableDefault Pageable pageable,
+      @RequestParam(name = "search", required = false) String searchString) {
+    Page<ChildWithParentModel> children =
+        immunizationService.getAllChildren(pageable, searchString).join();
     return new ResponseModel<>(children);
   }
 
@@ -187,17 +207,12 @@ public class ImmunizationController {
 
   @GetMapping(value = "/pending/today/count")
   @Operation(description = "get today's pending immunization count ")
-  @ApiResponses({
-      @ApiResponse(
-          code = 200,
-          message = "Success",
-          response = Long.class)
-  })
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = Long.class)})
   public ResponseModel<Long> getTodayImminentImmunizationCount() {
-    Long count =
-        immunizationService.getPendingImmunizationTodayCount().join();
+    Long count = immunizationService.getPendingImmunizationTodayCount().join();
     return new ResponseModel<>(count);
   }
+
   @GetMapping(value = "/pending/betweenDays")
   @Operation(description = "get  pending immunization for days")
   @ApiResponses({

@@ -56,6 +56,10 @@ Authorization: {{token}}
 GET {{host}}/immuno/children?page=0&size=20&gender=MALE
 Authorization: {{token}}
 
+### Get all children with search string
+GET {{host}}/immuno/children/search?page=0&size=20&search=FEMAL
+Authorization: {{token}}
+
 ### Get all children count
 GET {{host}}/immuno/children/count?page=0&size=20&email=ezekiel@gmail
 Authorization: {{token}}

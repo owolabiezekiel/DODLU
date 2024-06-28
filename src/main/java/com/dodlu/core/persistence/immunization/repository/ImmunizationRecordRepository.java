@@ -48,7 +48,7 @@ public interface ImmunizationRecordRepository
     return findAll(predicate, pageable);
   }
 
-  default Long getPendingImmunizationTodayCount(){
+  default Long getPendingImmunizationTodayCount() {
     LocalDate today = LocalDate.now();
     BooleanExpression predicate =
         immunizationRecord

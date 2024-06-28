@@ -39,4 +39,18 @@ public interface ChildRepository
 
     return predicate == null ? findAll(pageable) : findAll(predicate, pageable);
   }
+
+  default Page<Child> findAllWithSearch(Pageable pageable, String searchKey) {
+    BooleanExpression predicate = null;
+    if (!isNullOrBlank(searchKey)) {
+      predicate =
+          child
+              .firstName
+              .containsIgnoreCase(searchKey)
+              .or(child.lastName.containsIgnoreCase(searchKey))
+              .or(child.gender.stringValue().containsIgnoreCase(searchKey));
+    }
+
+    return predicate == null ? findAll(pageable) : findAll(predicate, pageable);
+  }
 }

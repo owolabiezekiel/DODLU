@@ -91,20 +91,29 @@ public class ImmunizationService {
   @Transactional
   public CompletableFuture<Page<ParentModel>> getAllParents(
       Pageable pageable, ParentFilter filter) {
-    return supplyAsync(() -> parentRepository.findAll(pageable, filter).map((parent) -> {
-      Set<Child> parentChildren = childRepository.findAllByParentId(parent.getId());
-      return parent.toModel(parentChildren);
-    }));
+    return supplyAsync(
+        () ->
+            parentRepository
+                .findAll(pageable, filter)
+                .map(
+                    (parent) -> {
+                      Set<Child> parentChildren = childRepository.findAllByParentId(parent.getId());
+                      return parent.toModel(parentChildren);
+                    }));
   }
 
   @Transactional
   public CompletableFuture<Page<ParentModel>> getAllParents(
       Pageable pageable, String searchString) {
     return supplyAsync(
-        () -> parentRepository.findAllWithSearch(pageable, searchString).map((parent) -> {
-          Set<Child> parentChildren = childRepository.findAllByParentId(parent.getId());
-          return parent.toModel(parentChildren);
-        }));
+        () ->
+            parentRepository
+                .findAllWithSearch(pageable, searchString)
+                .map(
+                    (parent) -> {
+                      Set<Child> parentChildren = childRepository.findAllByParentId(parent.getId());
+                      return parent.toModel(parentChildren);
+                    }));
   }
 
   @Transactional
@@ -155,6 +164,16 @@ public class ImmunizationService {
       Pageable pageable, ChildFilter filter) {
     return supplyAsync(
         () -> childRepository.findAll(pageable, filter).map(Child::toChildWithParentModel));
+  }
+
+  @Transactional
+  public CompletableFuture<Page<ChildWithParentModel>> getAllChildren(
+      Pageable pageable, String searchString) {
+    return supplyAsync(
+        () ->
+            childRepository
+                .findAllWithSearch(pageable, searchString)
+                .map(Child::toChildWithParentModel));
   }
 
   @Transactional
@@ -275,8 +294,7 @@ public class ImmunizationService {
 
   @Transactional
   public CompletableFuture<Long> getPendingImmunizationTodayCount() {
-    return supplyAsync(
-        immunizationRecordRepository::getPendingImmunizationTodayCount);
+    return supplyAsync(immunizationRecordRepository::getPendingImmunizationTodayCount);
   }
 
   @Transactional
