@@ -269,14 +269,9 @@ public class ImmunizationService {
                 "Date of vaccine administration is required");
           }
 
-          Vaccine vaccine =
-              VaccineUtils.getVaccineById(
-                  vaccineRepository, exceptionService, request.getVaccineId());
-
-          immunization.setVaccine(vaccine);
-          immunization.setMinimumAdministerDate(request.getMinimumAdministerDate());
           immunization.setAdministered(request.isAdministered());
-          immunization.setDateOfAdministration(request.getDateOfAdministration());
+          immunization.setDateOfAdministration(
+              request.isAdministered() ? request.getDateOfAdministration() : null);
 
           immunizationRepository.save(immunization);
         });
