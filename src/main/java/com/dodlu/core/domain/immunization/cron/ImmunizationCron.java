@@ -1,5 +1,9 @@
 package com.dodlu.core.domain.immunization.cron;
 
+import static com.dodlu.core.domain.utils.Constants.IMMINENT_IMMUNIZATION_SMS_NOTIFICATION;
+
+import com.dodlu.core.app.model.request.notification.SmsRequest;
+import com.dodlu.core.domain.notification.sms.SmsService;
 import com.dodlu.core.persistence.immunization.entity.Child;
 import com.dodlu.core.persistence.immunization.entity.ImmunizationRecord;
 import com.dodlu.core.persistence.immunization.entity.Parent;
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ImmunizationCron {
   private final ImmunizationRecordRepository immunizationRecordRepository;
+  private final SmsService smsService;
 
   @Scheduled(cron = "0 0 0 * * *") // Runs every day at 12 AM
   // @Scheduled(cron = "0 * * * * *") // Runs every minute -- Testing purposes only
@@ -38,24 +43,18 @@ public class ImmunizationCron {
             Child child = immunizationRecord.getChild();
             Parent parent = child.getParent();
             Vaccine vaccine = immunizationRecord.getImmunization().getVaccine();
-            log.info(
-                "Found imminent immunization for {} - {}, born on {}.",
-                child.getFirstName(),
-                child.getLastName(),
-                child.getDateOfBirth());
-            log.info(
-                "Contacting parent/guardian with name {} - {} on {} and {}",
-                parent.getFirstName(),
-                parent.getLastName(),
-                parent.getPhoneNumber(),
-                parent.getEmail());
-            log.info(
-                "Vaccine to take is {} {} of {} administered through the {}. Mode -> {}",
-                vaccine.getDosage(),
-                vaccine.getDosageType().getName(),
-                vaccine.getType().getName(),
-                vaccine.getSite(),
-                vaccine.getRouteOfAdministration().getName());
+
+            SmsRequest smsRequest =
+                SmsRequest.builder()
+                    .number("+2348106723916")
+                    .message(
+                        String.format(
+                            IMMINENT_IMMUNIZATION_SMS_NOTIFICATION,
+                            child.getFirstName(),
+                            child.getLastName(),
+                            vaccine.getType().getName()))
+                    .build();
+            smsService.send(smsRequest);
           });
     } while (page.hasNext());
     log.info("Cleaning up completed...");

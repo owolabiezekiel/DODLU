@@ -109,3 +109,10 @@ dodlu:
   secrets:
     jwt-secret: ${JWT_SECRET:somesecret}
     jwt-expiration: ${JWT_EXPIRATION:86400000}
+
+sms:
+  provider:
+    twilio:
+      account-sid: ${TWILIO_ACCOUNT_SID:sample-account-id}
+      phone-number: ${TWILIO_PHONE_NUMBER:sample-phone-number}
+      auth-token: ${TWILIO_AUTH_TOKEN:sample-auth-token}

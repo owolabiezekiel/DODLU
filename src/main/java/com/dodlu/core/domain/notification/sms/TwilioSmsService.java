@@ -1,0 +1,31 @@
+package com.dodlu.core.domain.notification.sms;
+
+import static java.util.concurrent.CompletableFuture.runAsync;
+
+import com.dodlu.core.app.configuration.TwilioConfiguration;
+import com.dodlu.core.app.model.request.notification.SmsRequest;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
+import java.util.concurrent.CompletableFuture;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class TwilioSmsService implements SmsService {
+  private final TwilioConfiguration twilioConfiguration;
+
+  @Override
+  public CompletableFuture<Void> send(SmsRequest request) {
+    return runAsync(
+        () -> {
+          log.info("Sending sms to {} from twilio", request.getNumber());
+          PhoneNumber from = new PhoneNumber(twilioConfiguration.getPhoneNumber());
+          PhoneNumber to = new PhoneNumber(request.getNumber());
+          Message message = Message.creator(to, from, request.getMessage()).create();
+          log.info(message.getStatus().toString());
+        });
+  }
+}
