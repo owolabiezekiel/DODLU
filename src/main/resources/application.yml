@@ -116,3 +116,4 @@ sms:
       account-sid: ${TWILIO_ACCOUNT_SID:sample-account-id}
       phone-number: ${TWILIO_PHONE_NUMBER:sample-phone-number}
       auth-token: ${TWILIO_AUTH_TOKEN:sample-auth-token}
+      callback-url: ${TWILIO_CALLBACK_URL:https://7e36-105-113-27-175.ngrok-free.app/v1/webhook/twilio/sms-update}

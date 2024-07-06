@@ -13,6 +13,7 @@ public class TwilioConfiguration {
   private String accountSid;
   private String phoneNumber;
   private String authToken;
+  private String callbackUrl;
 
   @PostConstruct
   public void twilio() {

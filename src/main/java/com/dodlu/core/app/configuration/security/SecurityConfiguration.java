@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -73,6 +74,7 @@ public class SecurityConfiguration {
               auth.requestMatchers("/actuator").permitAll();
               auth.requestMatchers("/actuator/**").permitAll();
               auth.requestMatchers("/actuator/**").permitAll();
+              auth.requestMatchers(HttpMethod.POST, "/v1/webhook/twilio/**").permitAll();
 
               auth.requestMatchers(
                       "/swagger**",
@@ -94,22 +96,4 @@ public class SecurityConfiguration {
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
-  //  @Bean
-  //  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-  //    http.csrf(AbstractHttpConfigurer::disable)
-  //        .authorizeHttpRequests(
-  //            auth -> {
-  //              auth.requestMatchers("/api/v1/auth/**").permitAll();
-  //              auth.anyRequest().authenticated();
-  //            });
-  //
-  //    http.sessionManagement(
-  //        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-  //
-  //    http.authenticationProvider(authenticationProvider);
-  //
-  //    http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-  //
-  //    return http.build();
-  //  }
 }

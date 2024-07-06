@@ -8,6 +8,7 @@ import com.dodlu.core.persistence.notification.entity.Sms;
 import com.dodlu.core.persistence.notification.repository.SmsRepository;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import java.net.URI;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,11 @@ public class TwilioSmsService implements SmsService {
           log.info("Sending sms to {} from twilio", request.getNumber());
           PhoneNumber from = new PhoneNumber(twilioConfiguration.getPhoneNumber());
           PhoneNumber to = new PhoneNumber(request.getNumber());
-          Message message = Message.creator(to, from, request.getMessage()).create();
+
+          Message message =
+              Message.creator(to, from, request.getMessage())
+                  .setStatusCallback(URI.create(twilioConfiguration.getCallbackUrl()))
+                  .create();
           log.info("{}", message);
           smsRepository.save(buildSms(message));
         });
