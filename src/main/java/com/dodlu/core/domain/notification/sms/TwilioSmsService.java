@@ -4,6 +4,8 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 
 import com.dodlu.core.app.configuration.TwilioConfiguration;
 import com.dodlu.core.app.model.request.notification.SmsRequest;
+import com.dodlu.core.persistence.notification.entity.Sms;
+import com.dodlu.core.persistence.notification.repository.SmsRepository;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import java.util.concurrent.CompletableFuture;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TwilioSmsService implements SmsService {
   private final TwilioConfiguration twilioConfiguration;
+  private final SmsRepository smsRepository;
 
   @Override
   public CompletableFuture<Void> send(SmsRequest request) {
@@ -25,7 +28,18 @@ public class TwilioSmsService implements SmsService {
           PhoneNumber from = new PhoneNumber(twilioConfiguration.getPhoneNumber());
           PhoneNumber to = new PhoneNumber(request.getNumber());
           Message message = Message.creator(to, from, request.getMessage()).create();
-          log.info(message.getStatus().toString());
+          log.info("{}", message);
+          smsRepository.save(buildSms(message));
         });
+  }
+
+  private Sms buildSms(Message message) {
+    return Sms.builder()
+        .smsId(message.getSid())
+        .sender(message.getFrom().toString())
+        .recipient(message.getTo())
+        .text(message.getBody())
+        .status(message.getStatus().toString())
+        .build();
   }
 }
