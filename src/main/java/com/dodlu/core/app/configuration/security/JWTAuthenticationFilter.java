@@ -19,6 +19,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -55,11 +56,13 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         boolean isTokenValid = jwtService.isTokenValid(jwt, userDetails);
         log.info("Token is valid: {}", isTokenValid);
         if (isTokenValid) {
+          SecurityContext context = SecurityContextHolder.createEmptyContext();
           UsernamePasswordAuthenticationToken authToken =
               new UsernamePasswordAuthenticationToken(
                   userDetails, null, userDetails.getAuthorities());
           authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-          SecurityContextHolder.getContext().setAuthentication(authToken);
+          context.setAuthentication(authToken);
+          SecurityContextHolder.setContext(context);
         } else {
           response.setHeader("Content-Type", "application/json");
           response.setStatus(HttpServletResponse.SC_CONFLICT);
