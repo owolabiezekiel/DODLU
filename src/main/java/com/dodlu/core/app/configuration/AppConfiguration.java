@@ -12,7 +12,6 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -31,11 +30,7 @@ public class AppConfiguration {
     return username ->
         userRepository
             .findByUsernameEqualsIgnoreCase(username)
-            .orElseGet(
-                () ->
-                    userRepository
-                        .findByEmailEqualsIgnoreCase(username)
-                        .orElseThrow(() -> new UsernameNotFoundException("User not found")));
+            .orElseGet(() -> userRepository.findByEmailEqualsIgnoreCase(username).orElse(null));
   }
 
   @Bean

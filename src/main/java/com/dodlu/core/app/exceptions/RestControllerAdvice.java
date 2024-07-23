@@ -5,10 +5,15 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import com.dodlu.core.app.model.response.ResponseModel;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletionException;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +22,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -75,17 +79,20 @@ public class RestControllerAdvice<T> extends ResponseEntityExceptionHandler {
         HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(value = {BadCredentialsException.class})
-  public ResponseEntity<ResponseModel<T>> handleBadCredentialsException(
-      BadCredentialsException ex) {
-    log.error("Error: {}", ex.getMessage(), ex);
-    return new ResponseEntity<>(
-        new ResponseModel<>(
-            null,
-            "",
-            singletonList("Invalid username / password combination"),
-            UNAUTHORIZED.value()),
-        UNAUTHORIZED);
+  @ExceptionHandler(CustomBadCredentialsException.class)
+  public void handleCustomUnauthorizedException(CustomBadCredentialsException ex)
+      throws IOException {
+    HttpServletResponse response = ex.getResponse();
+    String message = ex.getMessage();
+    HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+    ResponseModel<Object> responseModel =
+        new ResponseModel<>(null, message, Collections.singletonList(message), status.value());
+
+    response.setHeader("Content-Type", "application/json");
+    response.setStatus(status.value());
+    ObjectMapper objectMapper = new ObjectMapper();
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
   }
 
   @ExceptionHandler(value = {ExpiredJwtException.class})
@@ -145,9 +152,9 @@ public class RestControllerAdvice<T> extends ResponseEntityExceptionHandler {
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
       MethodArgumentNotValidException ex,
-      HttpHeaders headers,
-      HttpStatusCode status,
-      WebRequest request) {
+      @NonNull HttpHeaders headers,
+      @NonNull HttpStatusCode status,
+      @NonNull WebRequest request) {
     BindingResult bindingResult = ex.getBindingResult();
     return new ResponseEntity<>(
         new ResponseModel<>(null, "", ErrorFormatter.format(bindingResult), BAD_REQUEST.value()),
@@ -157,9 +164,9 @@ public class RestControllerAdvice<T> extends ResponseEntityExceptionHandler {
   @Override
   protected ResponseEntity<Object> handleHttpMessageNotReadable(
       HttpMessageNotReadableException ex,
-      HttpHeaders headers,
-      HttpStatusCode status,
-      WebRequest request) {
+      @NonNull HttpHeaders headers,
+      @NonNull HttpStatusCode status,
+      @NonNull WebRequest request) {
     return new ResponseEntity<>(
         new ResponseModel<>(null, "", singletonList(ex.getMessage()), BAD_REQUEST.value()),
         HttpStatus.BAD_REQUEST);

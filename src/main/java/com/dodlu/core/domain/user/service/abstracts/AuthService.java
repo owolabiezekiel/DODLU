@@ -7,6 +7,7 @@ import com.dodlu.core.app.model.request.user.UserLoginRequest;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
 import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.persistence.user.entity.User;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.concurrent.CompletableFuture;
 
 public interface AuthService {
@@ -14,7 +15,8 @@ public interface AuthService {
 
   CompletableFuture<UserModel> registerEmployer(RegisterEmployerRequest request);
 
-  CompletableFuture<LoginResponseModel> userLogin(UserLoginRequest request);
+  CompletableFuture<LoginResponseModel> userLogin(
+      UserLoginRequest request, HttpServletResponse response);
 
   CompletableFuture<Void> changePassword(User user, ChangePasswordRequest request);
 }

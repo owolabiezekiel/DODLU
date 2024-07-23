@@ -14,6 +14,7 @@ import com.dodlu.core.persistence.user.entity.User;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +50,8 @@ public class AuthController {
     @ApiResponse(code = 200, message = "Success", response = LoginResponseModel.class)
   })
   public CompletableFuture<ResponseModel<LoginResponseModel>> login(
-      @Valid @RequestBody UserLoginRequest request) {
-    return authService.userLogin(request).thenApply(ResponseModel::new);
+      @Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
+    return authService.userLogin(request, response).thenApply(ResponseModel::new);
   }
 
   @PostMapping(value = "/change-password", consumes = APPLICATION_JSON_VALUE)
