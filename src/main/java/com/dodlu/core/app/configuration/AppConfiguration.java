@@ -21,7 +21,7 @@ public class AppConfiguration {
   private final UserRepository userRepository;
 
   @Bean
-  public PasswordEncoder encoder() {
+  public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
