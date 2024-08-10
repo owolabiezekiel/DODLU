@@ -25,11 +25,6 @@ spring:
     hibernate:
       ddl-auto: none
 
-  redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:}
-
   liquibase:
     enabled: true
     change-log: ${LIQUIBASE_PATH:changelog/changeLog-master.xml}
@@ -37,6 +32,11 @@ spring:
     multipart:
       max-file-size: ${MAX_UPLOAD_SIZE:10MB}
       max-request-size: ${MAX_REQUEST_SIZE:10MB}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
 
 
 management:
