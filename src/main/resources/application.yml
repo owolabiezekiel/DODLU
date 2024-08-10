@@ -19,9 +19,6 @@ spring:
     url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:dodlu_db}
     username: ${RDS_USERNAME:root}
     password: ${RDS_PASSWORD:root}
-    host: ${RDS_HOSTNAME:localhost}
-    port: ${RDS_PORT:5432}
-    db-name: ${RDS_DB_NAME:dodlu_db}
 
   jpa:
     show-sql: true
