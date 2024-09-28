@@ -13,14 +13,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletionException;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -29,11 +24,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
 @Slf4j
-public class RestControllerAdvice<T> extends ResponseEntityExceptionHandler {
+public class RestControllerAdvice<T> {
+  private final ObjectMapper objectMapper;
+
+  public RestControllerAdvice(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
+
   @ExceptionHandler(value = {FileUploadException.class, NoSuchElementException.class})
   public ResponseEntity<ResponseModel<T>> handleUploadException(Exception ex) {
     log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
@@ -44,29 +44,39 @@ public class RestControllerAdvice<T> extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(value = {CompletionException.class})
-  public ResponseEntity<ResponseModel<T>> handleCompletionException(CompletionException ex) {
+  public ResponseEntity<ResponseModel<T>> handleCompletionException(
+      CompletionException ex, HttpServletResponse response) throws IOException {
     if (ex.getCause() instanceof CoreException) {
-      return handleDomainException((CoreException) ex.getCause());
+      return handleDomainException((CoreException) ex.getCause(), response);
     }
     return handleException(ex);
   }
 
   @ExceptionHandler(value = {AccessDeniedException.class})
-  public ResponseEntity<ResponseModel<T>> handleAccessDeniedException(
-      AccessDeniedException ex, WebRequest request) {
+  public void handleAccessDeniedException(AccessDeniedException ex, HttpServletResponse response)
+      throws IOException {
     log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
-    return new ResponseEntity<>(
+    ResponseModel<?> responseModel =
         new ResponseModel<>(
-            null, ex.getMessage(), singletonList(ex.getMessage()), FORBIDDEN.value()),
-        FORBIDDEN);
+            null, ex.getMessage(), Collections.singletonList(ex.getMessage()), FORBIDDEN.value());
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(FORBIDDEN.value());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
   }
 
   @ExceptionHandler(value = {CoreException.class})
-  public ResponseEntity<ResponseModel<T>> handleDomainException(CoreException ex) {
-    log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
-    return new ResponseEntity<>(
-        new ResponseModel<>(null, "", singletonList(ex.getMessage()), ex.getCode()),
-        valueOf(ex.getCode()));
+  public ResponseEntity<ResponseModel<T>> handleDomainException(
+      CoreException ex, HttpServletResponse response) throws IOException {
+    log.error("CoreException encountered: {}", ex.getMessage(), ex);
+
+    ResponseModel<?> responseModel =
+        new ResponseModel<>(
+            null, ex.getMessage(), Collections.singletonList(ex.getMessage()), ex.getCode());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(ex.getCode());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
+    return null;
   }
 
   @ExceptionHandler(value = {ConstraintViolationException.class})
@@ -149,26 +159,33 @@ public class RestControllerAdvice<T> extends ResponseEntityExceptionHandler {
     return handleException(ex);
   }
 
-  @Override
-  protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      MethodArgumentNotValidException ex,
-      @NonNull HttpHeaders headers,
-      @NonNull HttpStatusCode status,
-      @NonNull WebRequest request) {
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public void handleMethodArgumentNotValid(
+      MethodArgumentNotValidException ex, HttpServletResponse response) throws IOException {
     BindingResult bindingResult = ex.getBindingResult();
-    return new ResponseEntity<>(
-        new ResponseModel<>(null, "", ErrorFormatter.format(bindingResult), BAD_REQUEST.value()),
-        HttpStatus.BAD_REQUEST);
+    var formattedBinding = ErrorFormatter.format(bindingResult);
+    ResponseModel<?> responseModel =
+        new ResponseModel<>(null, formattedBinding.get(0), formattedBinding, 400);
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(BAD_REQUEST.value());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
   }
 
-  @Override
-  protected ResponseEntity<Object> handleHttpMessageNotReadable(
-      HttpMessageNotReadableException ex,
-      @NonNull HttpHeaders headers,
-      @NonNull HttpStatusCode status,
-      @NonNull WebRequest request) {
-    return new ResponseEntity<>(
-        new ResponseModel<>(null, "", singletonList(ex.getMessage()), BAD_REQUEST.value()),
-        HttpStatus.BAD_REQUEST);
+  @ExceptionHandler(Exception.class)
+  public void handleGenericException(Exception ex, HttpServletResponse response)
+      throws IOException {
+    log.error("Unexpected exception encountered: {}", ex.getMessage(), ex);
+
+    ResponseModel<?> responseModel =
+        new ResponseModel<>(
+            null,
+            "",
+            Collections.singletonList("An unexpected error occurred"),
+            HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
   }
 }

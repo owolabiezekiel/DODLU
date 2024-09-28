@@ -3,7 +3,6 @@ package com.dodlu.core.app.model.request.user;
 import com.dodlu.core.app.utils.validators.FieldMatch;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +41,7 @@ public class CreateCustomerRequest {
   @Size(min = 11, message = "phoneNumber must be at least 10 characters")
   private String phoneNumber;
 
-  @NotNull(message = "country is required")
+  @NotBlank(message = "country cannot be blank")
   private String country;
 
   @NotBlank(message = "Password is required")

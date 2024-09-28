@@ -9,6 +9,7 @@ import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.EMPLOYER;
 import static com.dodlu.core.domain.user.model.UserType.STUDENT;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
+import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -265,8 +266,10 @@ public class DefaultAuthService implements AuthService {
   }
 
   private void doCreateCustomerValidation(CreateCustomerRequest request) {
+    if (!isNullOrBlank(request.getUsername())) {
+      checkForDuplicateUsername(request.getUsername());
+    }
     checkForDuplicateEmail(request.getEmail());
-    checkForDuplicateUsername(request.getUsername());
     validateCountry(request.getCountry());
   }
 
@@ -274,7 +277,7 @@ public class DefaultAuthService implements AuthService {
     if (!countryRepository.existsByNameEqualsIgnoreCase(country)) {
       log.info("Country with name {} does not exist", country);
       throw exceptionService.handleCreateBadRequest(
-          "We currently do not support registration from {}", country);
+          format("We currently do not support registration from %s", country));
     }
   }
 }
