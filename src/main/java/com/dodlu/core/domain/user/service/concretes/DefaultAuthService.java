@@ -1,38 +1,48 @@
 package com.dodlu.core.domain.user.service.concretes;
 
-import static com.dodlu.core.app.utils.Constants.EMPLOYER_ROLE_NAME_STRING;
-import static com.dodlu.core.app.utils.Constants.STUDENT_ROLE_NAME_STRING;
+import static com.dodlu.core.app.utils.Constants.*;
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.app.utils.UserUtilities.generateUsername;
+import static com.dodlu.core.domain.user.enums.TokenType.SIGNUP_CONFIRMATION;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.EMPLOYER;
 import static com.dodlu.core.domain.user.model.UserType.STUDENT;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
+import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.configuration.security.JwtService;
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.exceptions.CustomBadCredentialsException;
-import com.dodlu.core.app.model.request.user.ChangePasswordRequest;
-import com.dodlu.core.app.model.request.user.CreateUserRequest;
-import com.dodlu.core.app.model.request.user.RegisterEmployerRequest;
-import com.dodlu.core.app.model.request.user.UserLoginRequest;
+import com.dodlu.core.app.model.request.notification.SmsRequest;
+import com.dodlu.core.app.model.request.user.*;
+import com.dodlu.core.app.model.response.user.CustomerSignupResponse;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
+import com.dodlu.core.app.utils.StringUtilities;
+import com.dodlu.core.app.utils.UserUtilities;
+import com.dodlu.core.domain.notification.sms.SmsService;
+import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Industry;
 import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.domain.user.service.abstracts.AuthService;
+import com.dodlu.core.persistence.auth.entity.Token;
+import com.dodlu.core.persistence.auth.repository.TokenRepository;
 import com.dodlu.core.persistence.company.entity.Company;
 import com.dodlu.core.persistence.company.repository.CompanyRepository;
+import com.dodlu.core.persistence.location.repository.CountryRepository;
+import com.dodlu.core.persistence.user.entity.CustomerProfile;
 import com.dodlu.core.persistence.user.entity.EmployerProfile;
 import com.dodlu.core.persistence.user.entity.Role;
 import com.dodlu.core.persistence.user.entity.User;
+import com.dodlu.core.persistence.user.repository.CustomerProfileRepository;
 import com.dodlu.core.persistence.user.repository.EmployerProfileRepository;
 import com.dodlu.core.persistence.user.repository.RoleRepository;
 import com.dodlu.core.persistence.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +64,12 @@ public class DefaultAuthService implements AuthService {
   private final RoleRepository roleRepository;
   private final EmployerProfileRepository employerProfileRepository;
   private final CompanyRepository companyRepository;
+  private final CustomerProfileRepository customerProfileRepository;
+  private final TokenRepository tokenRepository;
   private final AuthenticationManager authenticationManager;
+  private final CountryRepository countryRepository;
   private final JwtService jwtService;
+  private final SmsService smsService;
   private final CoreExceptionService exceptionService;
 
   @Override
@@ -71,6 +85,62 @@ public class DefaultAuthService implements AuthService {
           user = userRepository.save(user);
 
           return userRepository.save(user).toModel();
+        });
+  }
+
+  @Override
+  public CompletableFuture<CustomerSignupResponse> registerCustomer(CreateCustomerRequest request) {
+    return supplyAsync(
+        () -> {
+          doCreateCustomerValidation(request);
+
+          Role role = getRoleByName(roleRepository, exceptionService, CUSTUMER_ROLE_NAME_STRING);
+          User user =
+              buildUser(request.getUsername(), request.getEmail(), request.getPassword(), role);
+          user.setStatus(INACTIVE);
+          userRepository.save(user);
+
+          String passcode = UserUtilities.generateRandomDigits(4);
+          log.info("Passcode generated was {}", passcode);
+
+          var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
+
+          var customerProfile =
+              CustomerProfile.builder()
+                  .username(user.getUsername())
+                  .email(user.getEmail())
+                  .phoneNumber(request.getPhoneNumber())
+                  .firstName(request.getFirstName())
+                  .lastName(request.getLastName())
+                  .middleName(request.getMiddleName())
+                  .gender(Gender.UNKNOWN)
+                  .country(country)
+                  .build();
+          customerProfileRepository.save(customerProfile);
+
+          Token token =
+              Token.builder()
+                  .user(user)
+                  .code(passwordEncoder.encode(passcode))
+                  .type(SIGNUP_CONFIRMATION)
+                  .createdAt(LocalDateTime.now())
+                  .expiresAt(LocalDateTime.now().plusMinutes(30))
+                  .build();
+
+          tokenRepository.save(token);
+
+          CompletableFuture.runAsync(
+              () -> {
+                var smsRequest =
+                    SmsRequest.builder()
+                        .message(passcode)
+                        .number(
+                            country.getPhoneExtensionCode()
+                                + StringUtilities.extractLastDigits(request.getPhoneNumber(), 10))
+                        .build();
+                smsService.send(smsRequest);
+              });
+          return CustomerSignupResponse.builder().passcode(passcode).build();
         });
   }
 
@@ -192,6 +262,22 @@ public class DefaultAuthService implements AuthService {
   private void checkForDuplicateUsername(String username) {
     if (userRepository.existsByUsernameEqualsIgnoreCase(username.strip())) {
       throw exceptionService.handleCreateBadRequest("This username is already taken");
+    }
+  }
+
+  private void doCreateCustomerValidation(CreateCustomerRequest request) {
+    if (!isNullOrBlank(request.getUsername())) {
+      checkForDuplicateUsername(request.getUsername());
+    }
+    checkForDuplicateEmail(request.getEmail());
+    validateCountry(request.getCountry());
+  }
+
+  private void validateCountry(String country) {
+    if (!countryRepository.existsByNameEqualsIgnoreCase(country)) {
+      log.info("Country with name {} does not exist", country);
+      throw exceptionService.handleCreateBadRequest(
+          format("We currently do not support registration from %s", country));
     }
   }
 }

@@ -371,4 +371,19 @@
         />
     </changeSet>
 
+    <changeSet id="1727537931306-1" author="tobilobaowolabi (generated)">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="countries" columnName="phone_extension_code"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="countries">
+            <column name="phone_extension_code" type="VARCHAR(5)">
+                <constraints nullable="true" unique="true" uniqueConstraintName="countries_phone_extension_code"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
+
 </databaseChangeLog>

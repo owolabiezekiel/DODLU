@@ -15,4 +15,5 @@ public class CountryModel {
   private String id;
   private String name;
   private String iso3Code;
+  private String phoneExtensionCode;
 }

@@ -33,14 +33,30 @@ Content-Type: application/json
   "industry": "Engineering"
 }
 
+### Customer register
+POST {{host}}/auth/customer/register
+Content-Type: application/json
+
+{
+  "email": "owo.obaseki@gmail.com",
+  "password": "password",
+  "confirmPassword": "password",
+  "firstName": "Babatunde",
+  "lastName": "Sanwo-Olu",
+  "phoneNumber": "08106723916",
+  "companyName": "Buy Power NG",
+  "industry": "Engineering",
+  "country": "Nigeria"
+}
+
 
 ### employer login
 POST {{host}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "owo.ezekiel1@gmail.com",
-  "password": "password"
+  "username": "owo.ezekiel3@gmail.com",
+  "password": "password1"
 }
 
 ### admin login
@@ -48,7 +64,7 @@ POST {{host}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "tobyJAva3",
+  "username": "tobyJAva33",
   "password": "password"
 }
 

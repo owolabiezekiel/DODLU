@@ -28,6 +28,9 @@ public class Country extends BaseEntity {
   @Column(nullable = false)
   private String iso3Code;
 
+  @Column(unique = true)
+  private String phoneExtensionCode;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -43,6 +46,11 @@ public class Country extends BaseEntity {
   }
 
   public CountryModel toModel() {
-    return CountryModel.builder().id(id).name(name).iso3Code(iso3Code).build();
+    return CountryModel.builder()
+        .id(id)
+        .name(name)
+        .iso3Code(iso3Code)
+        .phoneExtensionCode(phoneExtensionCode)
+        .build();
   }
 }

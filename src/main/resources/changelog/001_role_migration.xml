@@ -100,4 +100,15 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
     </changeSet>
+
+    <changeSet author="tobiowolabi" id="create_customer_role">
+        <insert tableName="roles">
+            <column name="description" value="Customer Role"/>
+            <column name="name" value="CUSTOMER"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" value="system"/>
+            <column name="updated_by" value="system"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
