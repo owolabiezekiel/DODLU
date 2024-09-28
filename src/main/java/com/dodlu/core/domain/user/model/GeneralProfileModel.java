@@ -1,6 +1,7 @@
 package com.dodlu.core.domain.user.model;
 
 import com.dodlu.core.domain.department.model.DepartmentModel;
+import com.dodlu.core.domain.location.model.CountryModel;
 import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Level;
 import com.dodlu.core.domain.user.enums.Programme;
@@ -23,6 +24,7 @@ public class GeneralProfileModel {
   private String phoneNumber;
   private String firstName;
   private String lastName;
+  private String middleName;
   private String profileImageUrl;
   private CompanyModel company;
   private Gender gender;
@@ -35,4 +37,5 @@ public class GeneralProfileModel {
   private Programme programme;
   private Level level;
   private EmployerProfileModel employer;
+  private CountryModel country;
 }

@@ -39,7 +39,7 @@ POST {{host}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "owo.ezekiel1@gmail.com",
+  "username": "owo.ezekiel3@gmail.com",
   "password": "password"
 }
 
@@ -48,7 +48,7 @@ POST {{host}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "tobyJAva3",
+  "username": "tobyJAva33",
   "password": "password"
 }
 

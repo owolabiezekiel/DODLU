@@ -28,10 +28,10 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
   private final AuthService authService;
 
-  @PostMapping(value = "/student/register", consumes = APPLICATION_JSON_VALUE)
-  @Operation(description = "Endpoint for students to register")
+  @PostMapping(value = "/customer/register", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Endpoint for customers to register")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
-  public CompletableFuture<ResponseModel<UserModel>> studentRegister(
+  public CompletableFuture<ResponseModel<UserModel>> customerRegister(
       @Valid @RequestBody CreateUserRequest request) {
     return authService.registerStudentUser(request).thenApply(ResponseModel::new);
   }
