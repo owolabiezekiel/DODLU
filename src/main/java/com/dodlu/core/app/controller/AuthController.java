@@ -2,11 +2,9 @@ package com.dodlu.core.app.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.dodlu.core.app.model.request.user.ChangePasswordRequest;
-import com.dodlu.core.app.model.request.user.CreateUserRequest;
-import com.dodlu.core.app.model.request.user.RegisterEmployerRequest;
-import com.dodlu.core.app.model.request.user.UserLoginRequest;
+import com.dodlu.core.app.model.request.user.*;
 import com.dodlu.core.app.model.response.ResponseModel;
+import com.dodlu.core.app.model.response.user.CustomerSignupResponse;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
 import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.domain.user.service.abstracts.AuthService;
@@ -31,17 +29,17 @@ public class AuthController {
   @PostMapping(value = "/customer/register", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint for customers to register")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
-  public CompletableFuture<ResponseModel<UserModel>> customerRegister(
-      @Valid @RequestBody CreateUserRequest request) {
-    return authService.registerStudentUser(request).thenApply(ResponseModel::new);
+  public ResponseModel<CustomerSignupResponse> customerRegister(
+      @Valid @RequestBody CreateCustomerRequest request) {
+    return authService.registerCustomer(request).thenApply(ResponseModel::new).join();
   }
 
   @PostMapping(value = "/employer/register", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint for employers to register")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
-  public CompletableFuture<ResponseModel<UserModel>> employerRegister(
+  public ResponseModel<UserModel> employerRegister(
       @Valid @RequestBody RegisterEmployerRequest request) {
-    return authService.registerEmployer(request).thenApply(ResponseModel::new);
+    return authService.registerEmployer(request).thenApply(ResponseModel::new).join();
   }
 
   @PostMapping(value = "/login", consumes = APPLICATION_JSON_VALUE)

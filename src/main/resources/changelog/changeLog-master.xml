@@ -38,4 +38,5 @@
     <include file="changelog/013_location_migration.xml"/>
     <include file="changelog/014_immunization_migration.xml"/>
     <include file="changelog/015_sms_migration.xml"/>
+    <include file="changelog/016_tokens_migration.xml"/>
 </databaseChangeLog>

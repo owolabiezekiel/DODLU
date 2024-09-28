@@ -33,6 +33,22 @@ Content-Type: application/json
   "industry": "Engineering"
 }
 
+### Customer register
+POST {{host}}/auth/customer/register
+Content-Type: application/json
+
+{
+  "username": "buypowerbabs",
+  "email": "owo.ezekiel1@gmail.com",
+  "password": "password",
+  "confirmPassword": "password",
+  "firstName": "Babatunde",
+  "lastName": "Sanwo-Olu",
+  "phoneNumber": "08106723916",
+  "companyName": "Buy Power NG",
+  "industry": "Engineering"
+}
+
 
 ### employer login
 POST {{host}}/auth/login

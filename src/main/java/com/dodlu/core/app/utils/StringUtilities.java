@@ -41,4 +41,11 @@ public class StringUtilities {
 
     return String.format("%d years, %d months, and %d days", years, months, days);
   }
+
+  public static String extractLastDigits(String input, int length) {
+    if (input.length() <= length) {
+      return input;
+    }
+    return input.substring(input.length() - length);
+  }
 }
