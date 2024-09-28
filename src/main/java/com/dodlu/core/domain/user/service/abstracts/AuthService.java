@@ -19,4 +19,6 @@ public interface AuthService {
       UserLoginRequest request, HttpServletResponse response);
 
   CompletableFuture<Void> changePassword(User user, ChangePasswordRequest request);
+
+  CompletableFuture<Void> verifyPhone(VerifyPhoneRequest request);
 }

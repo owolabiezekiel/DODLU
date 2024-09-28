@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.stream.Stream;
 
 public enum TokenType {
-  SIGNUP_CONFIRMATION,
+  VERIFY_PHONE,
   UNKNOWN;
 
   @JsonCreator

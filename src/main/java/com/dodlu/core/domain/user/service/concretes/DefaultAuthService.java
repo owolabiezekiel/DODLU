@@ -3,11 +3,10 @@ package com.dodlu.core.domain.user.service.concretes;
 import static com.dodlu.core.app.utils.Constants.*;
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.app.utils.UserUtilities.generateUsername;
-import static com.dodlu.core.domain.user.enums.TokenType.SIGNUP_CONFIRMATION;
+import static com.dodlu.core.domain.user.enums.TokenType.VERIFY_PHONE;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
-import static com.dodlu.core.domain.user.model.UserType.EMPLOYER;
-import static com.dodlu.core.domain.user.model.UserType.STUDENT;
+import static com.dodlu.core.domain.user.model.UserType.*;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
 import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.runAsync;
@@ -97,7 +96,7 @@ public class DefaultAuthService implements AuthService {
           Role role = getRoleByName(roleRepository, exceptionService, CUSTUMER_ROLE_NAME_STRING);
           User user =
               buildUser(request.getUsername(), request.getEmail(), request.getPassword(), role);
-          user.setStatus(INACTIVE);
+          user.setStatus(INACTIVE).setType(CUSTOMER);
           userRepository.save(user);
 
           String passcode = UserUtilities.generateRandomDigits(4);
@@ -122,7 +121,7 @@ public class DefaultAuthService implements AuthService {
               Token.builder()
                   .user(user)
                   .code(passwordEncoder.encode(passcode))
-                  .type(SIGNUP_CONFIRMATION)
+                  .type(VERIFY_PHONE)
                   .createdAt(LocalDateTime.now())
                   .expiresAt(LocalDateTime.now().plusMinutes(30))
                   .build();
@@ -210,6 +209,48 @@ public class DefaultAuthService implements AuthService {
           String newPasswordEncoded = passwordEncoder.encode(request.getNewPassword());
           user.setPassword(newPasswordEncoded);
           userRepository.save(user);
+        });
+  }
+
+  @Override
+  public CompletableFuture<Void> verifyPhone(VerifyPhoneRequest request) {
+    return runAsync(
+        () -> {
+          CustomerProfile customerProfile =
+              customerProfileRepository
+                  .findByPhoneNumber(request.getPhoneNumber())
+                  .orElseThrow(
+                      () -> {
+                        log.info(
+                            "Customer with phone number {} does not exist",
+                            request.getPhoneNumber());
+                        return exceptionService.handleCreateBadRequest(
+                            "Could not fetch customer details");
+                      });
+
+          User user =
+              userRepository
+                  .findByEmailEqualsIgnoreCase(customerProfile.getEmail())
+                  .orElseThrow(
+                      () -> exceptionService.handleCreateNotFoundException("user does not exist"));
+
+          Token token =
+              tokenRepository
+                  .findByUserAndType(user, VERIFY_PHONE)
+                  .orElseThrow(
+                      () -> exceptionService.handleCreateBadRequest("Token does not exist"));
+
+          if (!passwordEncoder.matches(request.getPasscode(), token.getCode())) {
+            throw exceptionService.handleCreateBadRequest("Invalid passcode");
+          }
+
+          if (token.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw exceptionService.handleCreateBadRequest("Passcode Expired");
+          }
+
+          user.setStatus(ACTIVE);
+          userRepository.save(user);
+          tokenRepository.delete(token);
         });
   }
 

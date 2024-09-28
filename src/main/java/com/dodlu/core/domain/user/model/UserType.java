@@ -12,6 +12,7 @@ public enum UserType {
   SUPERVISOR,
   STUDENT,
   LECTURER,
+  CUSTOMER,
   UNKNOWN;
 
   @JsonCreator

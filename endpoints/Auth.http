@@ -50,13 +50,24 @@ Content-Type: application/json
 }
 
 
+
+### Customer verify phone number
+POST {{host}}/auth/customer/verify-phone
+Content-Type: application/json
+
+{
+  "phoneNumber": "08106723916",
+  "passcode": "6484"
+}
+
+
 ### employer login
 POST {{host}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "owo.ezekiel3@gmail.com",
-  "password": "password1"
+  "username": "owo.obaseki@gmail.com",
+  "password": "password"
 }
 
 ### admin login

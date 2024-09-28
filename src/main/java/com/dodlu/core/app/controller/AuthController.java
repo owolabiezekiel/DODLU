@@ -34,6 +34,13 @@ public class AuthController {
     return authService.registerCustomer(request).thenApply(ResponseModel::new).join();
   }
 
+  @PostMapping(value = "/customer/verify-phone", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Endpoint for customers to verify phone number")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> customerVerifyPhone(@Valid @RequestBody VerifyPhoneRequest request) {
+    return authService.verifyPhone(request).thenApply(ResponseModel::new).join();
+  }
+
   @PostMapping(value = "/employer/register", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint for employers to register")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
