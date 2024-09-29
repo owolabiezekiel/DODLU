@@ -49,7 +49,19 @@ Content-Type: application/json
   "country": "Nigeria"
 }
 
+### Customer request password reset
+POST {{host}}/auth/customer/request-password-reset?email=owo.obaseki@gmail.com
 
+### Complete password reset
+POST {{host}}/auth/customer/complete-password-reset
+Content-Type: application/json
+
+{
+  "email": "owo.obaseki@gmail.com",
+  "passcode": "193277",
+  "newPassword": "password",
+  "confirmNewPassword": "password"
+}
 
 ### Customer verify phone number
 POST {{host}}/auth/customer/verify-phone

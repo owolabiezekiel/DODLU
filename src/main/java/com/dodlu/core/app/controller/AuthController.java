@@ -41,6 +41,21 @@ public class AuthController {
     return authService.verifyPhone(request).thenApply(ResponseModel::new).join();
   }
 
+  @PostMapping(value = "/customer/request-password-reset")
+  @Operation(description = "Endpoint for customers to request password reset")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> customerRequestPasswordReset(@RequestParam() String email) {
+    return authService.requestPasswordReset(email).thenApply(ResponseModel::new).join();
+  }
+
+  @PostMapping(value = "/customer/complete-password-reset", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Endpoint for customers to complete password reset")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> customerCompletePasswordReset(
+      @Valid @RequestBody ResetPasswordRequest request) {
+    return authService.completePasswordReset(request).thenApply(ResponseModel::new).join();
+  }
+
   @PostMapping(value = "/employer/register", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint for employers to register")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})

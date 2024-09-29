@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 public enum TokenType {
   VERIFY_PHONE,
+  RESET_PASSWORD,
   UNKNOWN;
 
   @JsonCreator

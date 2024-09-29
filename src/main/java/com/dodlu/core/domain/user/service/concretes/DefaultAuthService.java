@@ -3,6 +3,7 @@ package com.dodlu.core.domain.user.service.concretes;
 import static com.dodlu.core.app.utils.Constants.*;
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.app.utils.UserUtilities.generateUsername;
+import static com.dodlu.core.domain.user.enums.TokenType.RESET_PASSWORD;
 import static com.dodlu.core.domain.user.enums.TokenType.VERIFY_PHONE;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
@@ -250,6 +251,97 @@ public class DefaultAuthService implements AuthService {
 
           user.setStatus(ACTIVE);
           userRepository.save(user);
+          tokenRepository.delete(token);
+        });
+  }
+
+  @Override
+  public CompletableFuture<Void> requestPasswordReset(String email) {
+    return runAsync(
+        () -> {
+          CustomerProfile customerProfile =
+              customerProfileRepository
+                  .findByEmailEqualsIgnoreCase(email)
+                  .orElseThrow(
+                      () -> {
+                        log.info("Customer with email {} does not exist", email);
+                        return exceptionService.handleCreateBadRequest("User does not exist");
+                      });
+
+          User user =
+              userRepository
+                  .findByEmailEqualsIgnoreCase(email)
+                  .orElseThrow(
+                      () -> {
+                        log.info("User with email {} does not exist", email);
+                        return exceptionService.handleCreateBadRequest("User does not exist");
+                      });
+
+          var existingToken = tokenRepository.findByUserAndType(user, RESET_PASSWORD);
+          existingToken.ifPresent(tokenRepository::delete);
+
+          String passcode = UserUtilities.generateRandomDigits(6);
+          log.info("Passcode generated was {}", passcode);
+
+          Token token =
+              Token.builder()
+                  .user(user)
+                  .code(passwordEncoder.encode(passcode))
+                  .type(RESET_PASSWORD)
+                  .createdAt(LocalDateTime.now())
+                  .expiresAt(LocalDateTime.now().plusDays(1))
+                  .build();
+          tokenRepository.save(token);
+
+          CompletableFuture.runAsync(
+              () -> {
+                var smsRequest =
+                    SmsRequest.builder()
+                        .message(passcode)
+                        .number(
+                            customerProfile.getCountry().getPhoneExtensionCode()
+                                + StringUtilities.extractLastDigits(
+                                    customerProfile.getPhoneNumber(), 10))
+                        .build();
+                smsService.send(smsRequest);
+              });
+        });
+  }
+
+  @Override
+  public CompletableFuture<Void> completePasswordReset(ResetPasswordRequest request) {
+    return runAsync(
+        () -> {
+          User user =
+              userRepository
+                  .findByEmailEqualsIgnoreCase(request.getEmail())
+                  .orElseThrow(
+                      () -> {
+                        log.info("User with email {} does not exist", request.getEmail());
+                        return exceptionService.handleCreateBadRequest("User does not exist");
+                      });
+
+          var existingToken = tokenRepository.findByUserAndType(user, RESET_PASSWORD);
+          if (existingToken.isEmpty()) {
+            log.info("Token not found");
+            throw exceptionService.handleCreateBadRequest("Invalid passcode supplied");
+          }
+
+          var token = existingToken.get();
+
+          if (token.getExpiresAt().isBefore(LocalDateTime.now())) {
+            log.info("Token has expired");
+            throw exceptionService.handleCreateBadRequest("Invalid passcode supplied");
+          }
+
+          if (!passwordEncoder.matches(request.getPasscode(), token.getCode())) {
+            log.info("Passcodes do not match");
+            throw exceptionService.handleCreateBadRequest("Invalid passcode");
+          }
+
+          user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+          userRepository.save(user);
+
           tokenRepository.delete(token);
         });
   }
