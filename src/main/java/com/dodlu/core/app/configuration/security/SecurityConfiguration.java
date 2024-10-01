@@ -70,6 +70,7 @@ public class SecurityConfiguration {
         .authorizeHttpRequests(
             auth -> {
               auth.requestMatchers("/api/v1/auth/**").permitAll();
+              auth.requestMatchers(HttpMethod.GET, "/api/v1/location/country").permitAll();
               auth.requestMatchers("/v1/health").permitAll();
               auth.requestMatchers("/actuator").permitAll();
               auth.requestMatchers("/actuator/**").permitAll();
