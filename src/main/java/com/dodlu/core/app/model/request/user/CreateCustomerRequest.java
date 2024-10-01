@@ -27,18 +27,18 @@ public class CreateCustomerRequest {
   private String email;
 
   @NotBlank(message = "firstName is required")
-  @Size(min = 8, max = 255, message = "firstName must be at least 2 characters")
+  @Size(min = 2, max = 255, message = "firstName must be at least 2 characters")
   private String firstName;
 
   @NotBlank(message = "lastName is required")
-  @Size(min = 8, max = 255, message = "lastName must be at least 2 characters")
+  @Size(min = 2, max = 255, message = "lastName must be at least 2 characters")
   private String lastName;
 
-  @Size(min = 8, max = 255, message = "middleName must be at least 2 characters")
+  @Size(min = 2, max = 255, message = "middleName must be at least 2 characters")
   private String middleName;
 
   @NotBlank(message = "phoneNumber is required")
-  @Size(min = 11, message = "phoneNumber must be at least 10 characters")
+  @Size(min = 10, message = "phoneNumber must be at least 10 characters")
   private String phoneNumber;
 
   @NotBlank(message = "country cannot be blank")
