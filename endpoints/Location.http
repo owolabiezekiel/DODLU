@@ -20,7 +20,6 @@ Authorization: {{employer_token}}
 
 ### Get all countries
 GET {{host}}/location/country
-Authorization: {{employer_token}}
 
 ### Get all states for country
 GET {{host}}/location/states/79ede848-a9e0-4257-a10a-df0082ba50a3

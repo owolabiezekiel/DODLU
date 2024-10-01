@@ -54,7 +54,6 @@ public class LocationController {
         response = CountryModel.class,
         responseContainer = "set")
   })
-  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT', 'EMPLOYER', 'SUPERVISOR', 'COORDINATOR')")
   public ResponseModel<Set<CountryModel>> getAllCountries() {
     Set<CountryModel> countries = locationService.getAllCountries().join();
     return new ResponseModel<>(countries);
