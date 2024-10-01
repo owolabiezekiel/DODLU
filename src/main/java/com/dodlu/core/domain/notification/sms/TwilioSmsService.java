@@ -33,7 +33,6 @@ public class TwilioSmsService implements SmsService {
               Message.creator(to, from, request.getMessage())
                   .setStatusCallback(URI.create(twilioConfiguration.getCallbackUrl()))
                   .create();
-          log.info("{}", message);
           smsRepository.save(buildSms(message));
         });
   }

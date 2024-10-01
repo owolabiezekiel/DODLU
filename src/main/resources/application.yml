@@ -21,7 +21,7 @@ spring:
     password: ${RDS_PASSWORD:root}
 
   jpa:
-    show-sql: true
+    show-sql: ${SHOW_SQL:false}
     hibernate:
       ddl-auto: none
 

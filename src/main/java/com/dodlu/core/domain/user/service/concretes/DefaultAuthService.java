@@ -8,6 +8,7 @@ import static com.dodlu.core.domain.user.enums.TokenType.VERIFY_PHONE;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.*;
+import static com.dodlu.core.domain.utils.Constants.VERIFY_PHONE_STRING;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
 import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.runAsync;
@@ -101,7 +102,6 @@ public class DefaultAuthService implements AuthService {
           userRepository.save(user);
 
           String passcode = UserUtilities.generateRandomDigits(4);
-          log.info("Passcode generated was {}", passcode);
 
           var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
 
@@ -133,7 +133,7 @@ public class DefaultAuthService implements AuthService {
               () -> {
                 var smsRequest =
                     SmsRequest.builder()
-                        .message(passcode)
+                        .message(format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), passcode))
                         .number(
                             country.getPhoneExtensionCode()
                                 + StringUtilities.extractLastDigits(request.getPhoneNumber(), 10))
