@@ -133,7 +133,8 @@ public class DefaultAuthService implements AuthService {
               () -> {
                 var smsRequest =
                     SmsRequest.builder()
-                        .message(format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), passcode))
+                        .message(
+                            format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), passcode))
                         .number(
                             country.getPhoneExtensionCode()
                                 + StringUtilities.extractLastDigits(request.getPhoneNumber(), 10))
