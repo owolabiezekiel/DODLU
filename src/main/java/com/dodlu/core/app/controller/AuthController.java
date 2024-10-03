@@ -4,7 +4,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.request.user.*;
 import com.dodlu.core.app.model.response.ResponseModel;
-import com.dodlu.core.app.model.response.user.CustomerSignupResponse;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
 import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.domain.user.service.abstracts.AuthService;
@@ -28,9 +27,8 @@ public class AuthController {
 
   @PostMapping(value = "/customer/register", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint for customers to register")
-  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
-  public ResponseModel<CustomerSignupResponse> customerRegister(
-      @Valid @RequestBody CreateCustomerRequest request) {
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> customerRegister(@Valid @RequestBody CreateCustomerRequest request) {
     return authService.registerCustomer(request).thenApply(ResponseModel::new).join();
   }
 

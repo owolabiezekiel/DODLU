@@ -8,7 +8,6 @@ import static com.dodlu.core.domain.user.enums.TokenType.VERIFY_PHONE;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.*;
-import static com.dodlu.core.domain.utils.Constants.VERIFY_PHONE_STRING;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
 import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.runAsync;
@@ -19,7 +18,6 @@ import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.exceptions.CustomBadCredentialsException;
 import com.dodlu.core.app.model.request.notification.SmsRequest;
 import com.dodlu.core.app.model.request.user.*;
-import com.dodlu.core.app.model.response.user.CustomerSignupResponse;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
 import com.dodlu.core.app.utils.StringUtilities;
 import com.dodlu.core.app.utils.UserUtilities;
@@ -90,15 +88,16 @@ public class DefaultAuthService implements AuthService {
   }
 
   @Override
-  public CompletableFuture<CustomerSignupResponse> registerCustomer(CreateCustomerRequest request) {
-    return supplyAsync(
+  public CompletableFuture<Void> registerCustomer(CreateCustomerRequest request) {
+    return runAsync(
         () -> {
           doCreateCustomerValidation(request);
 
           Role role = getRoleByName(roleRepository, exceptionService, CUSTUMER_ROLE_NAME_STRING);
           User user =
               buildUser(request.getUsername(), request.getEmail(), request.getPassword(), role);
-          user.setStatus(INACTIVE).setType(CUSTOMER);
+          user.setStatus(ACTIVE)
+              .setType(CUSTOMER); // to-do: set back to INACTIVE when we start phone validation
           userRepository.save(user);
 
           String passcode = UserUtilities.generateRandomDigits(4);
@@ -118,30 +117,32 @@ public class DefaultAuthService implements AuthService {
                   .build();
           customerProfileRepository.save(customerProfile);
 
-          Token token =
-              Token.builder()
-                  .user(user)
-                  .code(passwordEncoder.encode(passcode))
-                  .type(VERIFY_PHONE)
-                  .createdAt(LocalDateTime.now())
-                  .expiresAt(LocalDateTime.now().plusMinutes(30))
-                  .build();
+          //          Token token =
+          //              Token.builder()
+          //                  .user(user)
+          //                  .code(passwordEncoder.encode(passcode))
+          //                  .type(VERIFY_PHONE)
+          //                  .createdAt(LocalDateTime.now())
+          //                  .expiresAt(LocalDateTime.now().plusMinutes(30))
+          //                  .build();
+          //
+          //          tokenRepository.save(token);
 
-          tokenRepository.save(token);
-
-          CompletableFuture.runAsync(
-              () -> {
-                var smsRequest =
-                    SmsRequest.builder()
-                        .message(
-                            format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), passcode))
-                        .number(
-                            country.getPhoneExtensionCode()
-                                + StringUtilities.extractLastDigits(request.getPhoneNumber(), 10))
-                        .build();
-                smsService.send(smsRequest);
-              });
-          return CustomerSignupResponse.builder().passcode(passcode).build();
+          //          CompletableFuture.runAsync(
+          //              () -> {
+          //                var smsRequest =
+          //                    SmsRequest.builder()
+          //                        .message(
+          //                            format(VERIFY_PHONE_STRING, customerProfile.getFirstName(),
+          // passcode))
+          //                        .number(
+          //                            country.getPhoneExtensionCode()
+          //                                +
+          // StringUtilities.extractLastDigits(request.getPhoneNumber(), 10))
+          //                        .build();
+          //                smsService.send(smsRequest);
+          //              });
+          //          return CustomerSignupResponse.builder().passcode(passcode).build();
         });
   }
 
