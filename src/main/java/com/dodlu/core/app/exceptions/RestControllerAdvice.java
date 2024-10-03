@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 @Slf4j
@@ -75,6 +76,21 @@ public class RestControllerAdvice<T> {
 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(ex.getCode());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
+    return null;
+  }
+
+  @ExceptionHandler(value = {NoResourceFoundException.class})
+  public ResponseEntity<ResponseModel<T>> handleNoResourceFound(
+      NoResourceFoundException ex, HttpServletResponse response) throws IOException {
+    log.error("No resource found exception encountered: {}", ex.getMessage());
+
+    ResponseModel<?> responseModel =
+        new ResponseModel<>(
+            null, ex.getMessage(), Collections.singletonList(ex.getMessage()), BAD_REQUEST.value());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(BAD_REQUEST.value());
     response.getWriter().write(objectMapper.writeValueAsString(responseModel));
     return null;
   }
