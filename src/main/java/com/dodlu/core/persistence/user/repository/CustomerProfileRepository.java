@@ -8,4 +8,7 @@ public interface CustomerProfileRepository extends JpaRepository<CustomerProfile
   Optional<CustomerProfile> findByPhoneNumber(String phoneNumber);
 
   Optional<CustomerProfile> findByEmailEqualsIgnoreCase(String email);
+
+  boolean existsByPhoneNumberAndCountry_NameEqualsIgnoreCase(
+      String phoneNumber, String countryName);
 }

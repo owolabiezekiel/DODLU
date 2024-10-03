@@ -399,12 +399,20 @@ public class DefaultAuthService implements AuthService {
     }
   }
 
+  private void checkForDuplicatePhoneNumber(String phoneNumber, String countryName) {
+    if (customerProfileRepository.existsByPhoneNumberAndCountry_NameEqualsIgnoreCase(
+        phoneNumber, countryName)) {
+      throw exceptionService.handleCreateBadRequest("Customer with phone number already exists");
+    }
+  }
+
   private void doCreateCustomerValidation(CreateCustomerRequest request) {
     if (!isNullOrBlank(request.getUsername())) {
       checkForDuplicateUsername(request.getUsername());
     }
     checkForDuplicateEmail(request.getEmail());
     validateCountry(request.getCountry());
+    checkForDuplicatePhoneNumber(request.getPhoneNumber(), request.getCountry());
   }
 
   private void validateCountry(String country) {
