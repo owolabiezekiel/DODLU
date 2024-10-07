@@ -1,0 +1,19 @@
+### Create Group Savings
+POST {{host}}/savings/group
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+{
+  "name": "Test group Savings",
+  "description": "I am very sure that this works"
+}
+
+### Get group saving by Id
+GET{{host}}/savings/group/df595e47-2c38-486b-b24c-27cecc08d293
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+### Get user's group savings
+GET{{host}}/savings/group?size=2&page=0
+Content-Type: application/json
+Authorization: {{customer_token}}

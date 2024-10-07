@@ -61,4 +61,21 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="1728331253330-1" author="tobilobaowolabi (generated)">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="group_savings" columnName="description"/>
+                <columnExists tableName="group_savings" columnName="url"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="group_savings">
+            <column name="description" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="group_savings">
+            <column name="url" type="VARCHAR(250)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

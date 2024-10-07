@@ -6,4 +6,9 @@ import lombok.Builder;
 
 @Builder
 public record GroupSavingModel(
-    String id, String name, CustomerProfileModel admin, Set<CustomerProfileModel> members) {}
+    String id,
+    String name,
+    String description,
+    CustomerProfileModel admin,
+    String url,
+    Set<CustomerProfileModel> members) {}

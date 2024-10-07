@@ -32,6 +32,11 @@ public class GroupSaving extends BaseEntity {
   @Column(nullable = false)
   private String name;
 
+  @Column(nullable = false)
+  private String description;
+
+  private String url;
+
   @ManyToOne
   @Fetch(FetchMode.JOIN)
   @JoinColumn(name = "admin_customer_profile_id", referencedColumnName = "id")
@@ -63,6 +68,8 @@ public class GroupSaving extends BaseEntity {
     return GroupSavingModel.builder()
         .id(id)
         .name(name)
+        .description(description)
+        .url(url)
         .admin(admin.toModel())
         .members(
             emptyIfNull(members).stream().map(CustomerProfile::toModel).collect(Collectors.toSet()))
