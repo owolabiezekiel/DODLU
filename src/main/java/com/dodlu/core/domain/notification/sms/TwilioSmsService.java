@@ -13,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 public class TwilioSmsService implements SmsService {
   private final TwilioConfiguration twilioConfiguration;
   private final SmsRepository smsRepository;
+  private final TransactionTemplate transactionTemplate;
 
   @Override
   public CompletableFuture<Void> send(SmsRequest request) {
@@ -33,7 +35,8 @@ public class TwilioSmsService implements SmsService {
               Message.creator(to, from, request.getMessage())
                   .setStatusCallback(URI.create(twilioConfiguration.getCallbackUrl()))
                   .create();
-          smsRepository.save(buildSms(message));
+          transactionTemplate.executeWithoutResult(status -> smsRepository.save(buildSms(message)));
+
           log.info("sms sent successfully to {}", to);
         });
   }

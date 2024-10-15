@@ -8,6 +8,7 @@ import static com.dodlu.core.domain.user.enums.TokenType.VERIFY_PHONE;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.*;
+import static com.dodlu.core.domain.utils.Constants.VERIFY_PHONE_STRING;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
 import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.runAsync;
@@ -117,32 +118,29 @@ public class DefaultAuthService implements AuthService {
                   .build();
           customerProfileRepository.save(customerProfile);
 
-          //          Token token =
-          //              Token.builder()
-          //                  .user(user)
-          //                  .code(passwordEncoder.encode(passcode))
-          //                  .type(VERIFY_PHONE)
-          //                  .createdAt(LocalDateTime.now())
-          //                  .expiresAt(LocalDateTime.now().plusMinutes(30))
-          //                  .build();
-          //
-          //          tokenRepository.save(token);
+          Token token =
+              Token.builder()
+                  .user(user)
+                  .code(passwordEncoder.encode(passcode))
+                  .type(VERIFY_PHONE)
+                  .createdAt(LocalDateTime.now())
+                  .expiresAt(LocalDateTime.now().plusMinutes(30))
+                  .build();
 
-          //          CompletableFuture.runAsync(
-          //              () -> {
-          //                var smsRequest =
-          //                    SmsRequest.builder()
-          //                        .message(
-          //                            format(VERIFY_PHONE_STRING, customerProfile.getFirstName(),
-          // passcode))
-          //                        .number(
-          //                            country.getPhoneExtensionCode()
-          //                                +
-          // StringUtilities.extractLastDigits(request.getPhoneNumber(), 10))
-          //                        .build();
-          //                smsService.send(smsRequest);
-          //              });
-          //          return CustomerSignupResponse.builder().passcode(passcode).build();
+          tokenRepository.save(token);
+
+          CompletableFuture.runAsync(
+              () -> {
+                var smsRequest =
+                    SmsRequest.builder()
+                        .message(
+                            format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), passcode))
+                        .number(
+                            country.getPhoneExtensionCode()
+                                + StringUtilities.extractLastDigits(request.getPhoneNumber(), 10))
+                        .build();
+                smsService.send(smsRequest);
+              });
         });
   }
 
