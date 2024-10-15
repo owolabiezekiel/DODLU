@@ -5,7 +5,11 @@ Authorization: {{customer_token}}
 
 {
   "name": "Test group Savings",
-  "description": "I am very sure that this works"
+  "description": "I am very sure that this works",
+  "savingAmount": 200,
+  "savingFrequency": "BI_WEEKLY",
+  "meetingLocation": "Somewhere in the desert",
+  "currency": "NGN"
 }
 
 ### Get group saving by Id

@@ -78,4 +78,30 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="1728984502844-1" author="tobilobaowolabi (generated)">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="group_savings" columnName="least_saving_amount"/>
+                <columnExists tableName="group_savings" columnName="saving_frequency"/>
+                <columnExists tableName="group_savings" columnName="meeting_location"/>
+                <columnExists tableName="group_savings" columnName="currency"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="group_savings">
+            <column name="least_saving_amount" type="DECIMAL" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="saving_frequency" type="VARCHAR(30)" defaultValue="WEEKLY">
+                <constraints nullable="false"/>
+            </column>
+            <column name="meeting_location" type="TEXT" defaultValue="remote">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(5)" defaultValue="NGN">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

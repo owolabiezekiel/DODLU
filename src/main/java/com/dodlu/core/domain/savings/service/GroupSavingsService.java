@@ -48,6 +48,11 @@ public class GroupSavingsService {
               GroupSaving.builder()
                   .name(request.getName())
                   .description(request.getDescription())
+                  .url(request.getImageUrl())
+                  .leastSavingAmount(request.getSavingAmount())
+                  .savingFrequency(request.getSavingFrequency())
+                  .meetingLocation(request.getMeetingLocation())
+                  .currency(request.getCurrency())
                   .admin(customerProfile)
                   .build();
 

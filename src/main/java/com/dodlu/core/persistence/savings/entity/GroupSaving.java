@@ -2,10 +2,13 @@ package com.dodlu.core.persistence.savings.entity;
 
 import static com.dodlu.core.app.utils.StringUtilities.emptyIfNull;
 
+import com.dodlu.core.domain.savings.enums.Currency;
+import com.dodlu.core.domain.savings.enums.SavingFrequency;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import com.dodlu.core.persistence.user.entity.CustomerProfile;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,6 +39,20 @@ public class GroupSaving extends BaseEntity {
   private String description;
 
   private String url;
+
+  @Column(nullable = false)
+  private BigDecimal leastSavingAmount;
+
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private SavingFrequency savingFrequency;
+
+  @Column(nullable = false)
+  private String meetingLocation;
+
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Currency currency;
 
   @ManyToOne
   @Fetch(FetchMode.JOIN)
@@ -70,6 +87,10 @@ public class GroupSaving extends BaseEntity {
         .name(name)
         .description(description)
         .url(url)
+        .leastSavingAmount(leastSavingAmount)
+        .savingFrequency(savingFrequency.name())
+        .meetingLocation(meetingLocation)
+        .currency(currency.name())
         .admin(admin.toModel())
         .members(
             emptyIfNull(members).stream().map(CustomerProfile::toModel).collect(Collectors.toSet()))
