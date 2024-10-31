@@ -41,4 +41,5 @@
     <include file="changelog/016_tokens_migration.xml"/>
     <include file="changelog/017_savings_migration.xml"/>
     <include file="changelog/018_group_balance_migration.xml"/>
+    <include file="changelog/019_transaction_migration.xml"/>
 </databaseChangeLog>

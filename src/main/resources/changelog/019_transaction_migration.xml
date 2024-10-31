@@ -1,0 +1,66 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="create_transaction_table" author="tobilobaowolabi (generated)">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="transactions"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="transactions">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true" primaryKeyName="pk_transactions"/>
+            </column>
+
+            <column name="sender_id" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sender_name" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sender_type" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="receiver_id" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="receiver_name" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="receiver_type" type="VARCHAR(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="currency" type="VARCHAR(5)">
+                <constraints nullable="false" />
+            </column>
+            <column name="amount" type="DECIMAL">
+                <constraints nullable="false" />
+            </column>
+            <column name="reference" type="DECIMAL">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(150)" />
+            <column name="status" type="VARCHAR(20)" />
+            <column name="failure_reason" type="VARCHAR(150)" />
+            <column name="type" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="transaction_date_time" type="TIMESTAMP WITHOUT TIME ZONE" defaultValue="NOW()">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
