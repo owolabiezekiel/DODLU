@@ -1,22 +1,31 @@
 package com.dodlu.core.domain.savings.service;
 
+import static com.dodlu.core.app.utils.StringUtilities.extractFirstChars;
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.savings.CreateGroupSavingRequest;
+import com.dodlu.core.app.model.request.savings.GroupTransactionRequest;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
+import com.dodlu.core.domain.transaction.enums.EntityType;
+import com.dodlu.core.domain.transaction.enums.TransactionType;
 import com.dodlu.core.persistence.savings.entity.GroupSaving;
 import com.dodlu.core.persistence.savings.entity.GroupSavingUser;
 import com.dodlu.core.persistence.savings.repository.GroupSavingRepository;
 import com.dodlu.core.persistence.savings.repository.GroupSavingUsersRepository;
 import com.dodlu.core.persistence.transaction.entity.GroupBalance;
+import com.dodlu.core.persistence.transaction.entity.Transaction;
 import com.dodlu.core.persistence.transaction.repository.GroupBalanceRepository;
+import com.dodlu.core.persistence.transaction.repository.TransactionRepository;
 import com.dodlu.core.persistence.user.entity.CustomerProfile;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.CustomerProfileRepository;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +44,7 @@ public class GroupSavingsService {
   private final CustomerProfileRepository customerProfileRepository;
   private final CoreExceptionService exceptionService;
   private final GroupBalanceRepository groupBalanceRepository;
+  private final TransactionRepository transactionRepository;
 
   public CompletableFuture<GroupSavingModel> createGroupSaving(
       User user, CreateGroupSavingRequest request) {
@@ -118,6 +128,62 @@ public class GroupSavingsService {
                   .distinct()
                   .collect(Collectors.toList());
           return new PageImpl<>(groupSavingModels, page, groupSavingUserPage.getTotalElements());
+        });
+  }
+
+  public CompletableFuture<Void> recordGroupTransaction(
+      User user, String groupSavingId, GroupTransactionRequest request) {
+    return runAsync(
+        () -> {
+          CustomerProfile customerProfile =
+              customerProfileRepository
+                  .findByEmailEqualsIgnoreCase(user.getEmail())
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateBadRequest(
+                              "Customer profile does not exist"));
+
+          GroupSaving groupSaving =
+              groupSavingRepository
+                  .findById(groupSavingId)
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateNotFoundException("Group saving not found"));
+
+          if (!customerProfile.getId().equals(groupSaving.getAdmin().getId())) {
+            throw exceptionService.handleCreateUnAuthorized("Unauthorized!");
+          }
+
+          CustomerProfile member =
+              groupSaving.getMembers().stream()
+                  .filter(c -> c.getId().equals(request.getMemberId()))
+                  .findFirst()
+                  .orElse(null);
+          if (member == null) {
+            throw exceptionService.handleCreateBadRequest("Member not part of group");
+          }
+
+          Transaction transaction =
+              Transaction.builder()
+                  .senderId(request.getMemberId())
+                  .senderName(extractFirstChars(customerProfile.getFullName(), 250))
+                  .senderType(EntityType.INDIVIDUAL)
+                  .receiverId(groupSavingId)
+                  .receiverName(extractFirstChars(groupSaving.getName(), 250))
+                  .receiverType(EntityType.GROUP)
+                  .currency(groupSaving.getCurrency())
+                  .amount(request.getAmount())
+                  .reference("CTG-" + UUID.randomUUID())
+                  .description(request.getDescription())
+                  .status("Completed")
+                  .type(TransactionType.CUSTOMER_TO_GROUP)
+                  .transactionDateTime(LocalDateTime.now())
+                  .build();
+          transactionRepository.save(transaction);
+
+          GroupBalance balance = groupSaving.getBalance();
+          balance.setAvailableBalance(balance.getAvailableBalance().add(transaction.getAmount()));
+          groupBalanceRepository.save(balance);
         });
   }
 }

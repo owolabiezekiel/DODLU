@@ -63,4 +63,11 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="modify_reference_column_type" author="tobilobaowolabi (generated)">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="transactions" columnName="reference"/>
+        </preConditions>
+        <modifyDataType tableName="transactions" columnName="reference" newDataType="VARCHAR(50)" />
+    </changeSet>
 </databaseChangeLog>

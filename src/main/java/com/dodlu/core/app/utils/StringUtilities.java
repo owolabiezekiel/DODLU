@@ -48,4 +48,11 @@ public class StringUtilities {
     }
     return input.substring(input.length() - length);
   }
+
+  public static String extractFirstChars(String input, int stopLength) {
+    if (input.length() <= stopLength) {
+      return input;
+    }
+    return input.substring(0, stopLength);
+  }
 }

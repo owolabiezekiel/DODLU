@@ -3,6 +3,7 @@ package com.dodlu.core.app.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.request.savings.CreateGroupSavingRequest;
+import com.dodlu.core.app.model.request.savings.GroupTransactionRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.domain.savings.service.GroupSavingsService;
@@ -56,5 +57,16 @@ public class SavingController {
       @AuthenticationPrincipal User user, @PageableDefault Pageable pageable) {
     var groupSaving = groupSavingsService.getUserGroupSavings(user, pageable).join();
     return new ResponseModel<>(groupSaving);
+  }
+
+  @PostMapping("/group/record-transaction/{groupSavingId}")
+  @Operation(description = "Add transaction to group saving")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> recordGroupTransaction(
+      @AuthenticationPrincipal User user,
+      @PathVariable("groupSavingId") String groupSavingId,
+      @Valid @RequestBody GroupTransactionRequest request) {
+    groupSavingsService.recordGroupTransaction(user, groupSavingId, request).join();
+    return new ResponseModel<>(null);
   }
 }

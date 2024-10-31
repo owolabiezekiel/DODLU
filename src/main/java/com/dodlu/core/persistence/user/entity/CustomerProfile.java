@@ -92,4 +92,8 @@ public class CustomerProfile extends BaseEntity {
         .country(country.toModel())
         .build();
   }
+
+  public String getFullName() {
+    return firstName + " " + lastName;
+  }
 }

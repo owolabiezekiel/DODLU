@@ -21,3 +21,14 @@ Authorization: {{customer_token}}
 GET{{host}}/savings/group?size=2&page=0
 Content-Type: application/json
 Authorization: {{customer_token}}
+
+### Create Group Savings Transaction
+POST {{host}}/savings/group/record-transaction/4e07052f-4bd0-4f2d-ac80-53d776c9e49b
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+{
+  "amount": 500.35,
+  "description": "Testing group transactions",
+  "memberId": "054a080c-453e-44cc-8476-119e5f9765c6"
+}
