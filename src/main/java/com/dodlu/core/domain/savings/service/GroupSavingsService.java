@@ -9,9 +9,12 @@ import com.dodlu.core.persistence.savings.entity.GroupSaving;
 import com.dodlu.core.persistence.savings.entity.GroupSavingUser;
 import com.dodlu.core.persistence.savings.repository.GroupSavingRepository;
 import com.dodlu.core.persistence.savings.repository.GroupSavingUsersRepository;
+import com.dodlu.core.persistence.transaction.entity.GroupBalance;
+import com.dodlu.core.persistence.transaction.repository.GroupBalanceRepository;
 import com.dodlu.core.persistence.user.entity.CustomerProfile;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.CustomerProfileRepository;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +34,7 @@ public class GroupSavingsService {
   private final GroupSavingUsersRepository groupSavingUsersRepository;
   private final CustomerProfileRepository customerProfileRepository;
   private final CoreExceptionService exceptionService;
+  private final GroupBalanceRepository groupBalanceRepository;
 
   public CompletableFuture<GroupSavingModel> createGroupSaving(
       User user, CreateGroupSavingRequest request) {
@@ -63,9 +67,21 @@ public class GroupSavingsService {
 
           groupSavingUsersRepository.save(groupSavingUser);
 
+          GroupBalance groupBalance = generateEmptyGroupBalance(groupSaving);
+
+          groupBalance = groupBalanceRepository.save(groupBalance);
+
           groupSaving.setMembers(Set.of(customerProfile));
+          groupSaving.setBalance(groupBalance);
           return groupSaving.toModel();
         });
+  }
+
+  private GroupBalance generateEmptyGroupBalance(GroupSaving groupSaving) {
+    return GroupBalance.builder()
+        .groupSavings(groupSaving)
+        .availableBalance(BigDecimal.ZERO)
+        .build();
   }
 
   public CompletableFuture<GroupSavingModel> getGroupSaving(User user, String id) {

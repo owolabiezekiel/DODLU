@@ -1,5 +1,6 @@
 package com.dodlu.core.domain.savings.model;
 
+import com.dodlu.core.domain.transaction.model.GroupBalanceModel;
 import com.dodlu.core.domain.user.model.CustomerProfileModel;
 import jakarta.persistence.Column;
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ public record GroupSavingModel(
     String description,
     CustomerProfileModel admin,
     String url,
+    GroupBalanceModel balance,
     Set<CustomerProfileModel> members,
     @Column(nullable = false) BigDecimal leastSavingAmount,
     String savingFrequency,

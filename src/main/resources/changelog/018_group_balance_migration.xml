@@ -1,0 +1,40 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="create_group_balance_table" author="tobilobaowolabi (generated)">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="group_balance"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="group_balance">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true" primaryKeyName="pk_balance"/>
+            </column>
+
+            <column name="available_balance" type="DECIMAL" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_savings_id" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="idx_balance_group_savings_id"
+                     tableName="group_balance">
+            <column name="group_savings_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

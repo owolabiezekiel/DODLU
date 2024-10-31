@@ -6,6 +6,7 @@ import com.dodlu.core.domain.savings.enums.Currency;
 import com.dodlu.core.domain.savings.enums.SavingFrequency;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.persistence.base.BaseEntity;
+import com.dodlu.core.persistence.transaction.entity.GroupBalance;
 import com.dodlu.core.persistence.user.entity.CustomerProfile;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -67,6 +68,10 @@ public class GroupSaving extends BaseEntity {
       inverseJoinColumns = @JoinColumn(name = "member_profile_id", referencedColumnName = "id"))
   private Set<CustomerProfile> members;
 
+  @OneToOne(mappedBy = "groupSavings", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @ToString.Exclude
+  private GroupBalance balance;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -94,6 +99,7 @@ public class GroupSaving extends BaseEntity {
         .admin(admin.toModel())
         .members(
             emptyIfNull(members).stream().map(CustomerProfile::toModel).collect(Collectors.toSet()))
+        .balance(balance == null ? null : balance.toModel())
         .build();
   }
 }
