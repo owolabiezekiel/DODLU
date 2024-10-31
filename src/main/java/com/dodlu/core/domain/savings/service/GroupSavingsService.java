@@ -176,7 +176,7 @@ public class GroupSavingsService {
                   .reference("CTG-" + UUID.randomUUID())
                   .description(request.getDescription())
                   .status("Completed")
-                  .type(TransactionType.CUSTOMER_TO_GROUP)
+                  .type(TransactionType.GROUP_CONTRIBUTION)
                   .transactionDateTime(LocalDateTime.now())
                   .build();
           transactionRepository.save(transaction);
