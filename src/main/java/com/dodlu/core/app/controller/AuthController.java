@@ -5,7 +5,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.dodlu.core.app.model.request.user.*;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
-import com.dodlu.core.domain.user.model.UserModel;
 import com.dodlu.core.domain.user.service.abstracts.AuthService;
 import com.dodlu.core.persistence.user.entity.User;
 import io.swagger.annotations.ApiResponse;
@@ -54,13 +53,13 @@ public class AuthController {
     return authService.completePasswordReset(request).thenApply(ResponseModel::new).join();
   }
 
-  @PostMapping(value = "/employer/register", consumes = APPLICATION_JSON_VALUE)
-  @Operation(description = "Endpoint for employers to register")
-  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
-  public ResponseModel<UserModel> employerRegister(
-      @Valid @RequestBody RegisterEmployerRequest request) {
-    return authService.registerEmployer(request).thenApply(ResponseModel::new).join();
-  }
+  //  @PostMapping(value = "/employer/register", consumes = APPLICATION_JSON_VALUE)
+  //  @Operation(description = "Endpoint for employers to register")
+  //  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
+  //  public ResponseModel<UserModel> employerRegister(
+  //      @Valid @RequestBody RegisterEmployerRequest request) {
+  //    return authService.registerEmployer(request).thenApply(ResponseModel::new).join();
+  //  }
 
   @PostMapping(value = "/login", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint to login")

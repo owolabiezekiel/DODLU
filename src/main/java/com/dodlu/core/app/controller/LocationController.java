@@ -89,13 +89,4 @@ public class LocationController {
     Set<StateModel> states = locationService.getAllStates().join();
     return new ResponseModel<>(states);
   }
-  //
-  //  @GetMapping(value = "/{id}")
-  //  @Operation(description = "get single department")
-  //  @ApiResponses({@ApiResponse(code = 200, message = "Success", response =
-  // DepartmentModel.class)})
-  //  public ResponseModel<DepartmentModel> getDepartment(@PathVariable("id") String id) {
-  //    DepartmentModel department = departmentService.getDepartmentById(id).join();
-  //    return new ResponseModel<>(department);
-  //  }
 }
