@@ -12,8 +12,10 @@ import com.dodlu.core.domain.transaction.enums.EntityType;
 import com.dodlu.core.domain.transaction.enums.TransactionType;
 import com.dodlu.core.persistence.savings.entity.GroupSaving;
 import com.dodlu.core.persistence.savings.entity.GroupSavingUser;
+import com.dodlu.core.persistence.savings.entity.GroupSetting;
 import com.dodlu.core.persistence.savings.repository.GroupSavingRepository;
 import com.dodlu.core.persistence.savings.repository.GroupSavingUsersRepository;
+import com.dodlu.core.persistence.savings.repository.GroupSettingRepository;
 import com.dodlu.core.persistence.transaction.entity.GroupBalance;
 import com.dodlu.core.persistence.transaction.entity.Transaction;
 import com.dodlu.core.persistence.transaction.repository.GroupBalanceRepository;
@@ -34,6 +36,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,8 +47,10 @@ public class GroupSavingsService {
   private final CustomerProfileRepository customerProfileRepository;
   private final CoreExceptionService exceptionService;
   private final GroupBalanceRepository groupBalanceRepository;
+  private final GroupSettingRepository groupSettingRepository;
   private final TransactionRepository transactionRepository;
 
+  @Transactional
   public CompletableFuture<GroupSavingModel> createGroupSaving(
       User user, CreateGroupSavingRequest request) {
     return supplyAsync(
@@ -78,11 +83,19 @@ public class GroupSavingsService {
           groupSavingUsersRepository.save(groupSavingUser);
 
           GroupBalance groupBalance = generateEmptyGroupBalance(groupSaving);
-
           groupBalance = groupBalanceRepository.save(groupBalance);
+
+          GroupSetting groupSetting =
+              GroupSetting.builder()
+                  .groupSavings(groupSaving)
+                  .minimumSavingAmount(request.getSavingAmount())
+                  .savingFrequency(request.getSavingFrequency())
+                  .build();
+          groupSetting = groupSettingRepository.save(groupSetting);
 
           groupSaving.setMembers(Set.of(customerProfile));
           groupSaving.setBalance(groupBalance);
+          groupSaving.setSetting(groupSetting);
           return groupSaving.toModel();
         });
   }

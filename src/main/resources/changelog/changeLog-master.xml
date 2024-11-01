@@ -42,4 +42,5 @@
     <include file="changelog/017_savings_migration.xml"/>
     <include file="changelog/018_group_balance_migration.xml"/>
     <include file="changelog/019_transaction_migration.xml"/>
+    <include file="changelog/020_group_setting_migration.xml"/>
 </databaseChangeLog>

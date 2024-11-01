@@ -72,6 +72,10 @@ public class GroupSaving extends BaseEntity {
   @ToString.Exclude
   private GroupBalance balance;
 
+  @OneToOne(mappedBy = "groupSavings", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @ToString.Exclude
+  private GroupSetting setting;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -100,6 +104,7 @@ public class GroupSaving extends BaseEntity {
         .members(
             emptyIfNull(members).stream().map(CustomerProfile::toModel).collect(Collectors.toSet()))
         .balance(balance == null ? null : balance.toModel())
+        .settings(setting == null ? null : setting.toModel())
         .build();
   }
 }

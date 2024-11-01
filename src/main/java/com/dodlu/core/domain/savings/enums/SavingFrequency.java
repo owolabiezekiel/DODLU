@@ -11,7 +11,8 @@ public enum SavingFrequency {
   BI_WEEKLY("Bi weekly"),
   MONTHLY("Monthly"),
   QUARTERLY("Quarterly"),
-  YEARLY("Yearly");
+  YEARLY("Yearly"),
+  ANY("Any");
 
   private final String name;
 
@@ -28,6 +29,6 @@ public enum SavingFrequency {
     return Stream.of(SavingFrequency.values())
         .filter(s -> s.name().equalsIgnoreCase(value) || s.name.equalsIgnoreCase(value))
         .findFirst()
-        .orElse(WEEKLY);
+        .orElse(ANY);
   }
 }

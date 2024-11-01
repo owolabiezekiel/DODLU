@@ -1,0 +1,44 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="create_group_setting_table" author="tobilobaowolabi (generated)">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="group_setting"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="group_setting">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true" primaryKeyName="pk_group_setting"/>
+            </column>
+
+            <column name="group_savings_id" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+
+
+            <column name="minimum_saving_amount" type="DECIMAL"/>
+            <column name="saving_frequency" type="VARCHAR(15)" defaultValue="ANY"/>
+            <column name="months_before_loan" type="INT"/>
+            <column name="highest_loan_percent" type="DECIMAL"/>
+            <column name="loan_interest_percent" type="DECIMAL"/>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="idx_setting_group_savings_id"
+                     tableName="group_setting">
+            <column name="group_savings_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

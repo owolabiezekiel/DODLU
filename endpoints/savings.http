@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: {{customer_token}}
 
 {
-  "name": "Test2 group Savings",
+  "name": "Test3 group Savings",
   "description": "I am very sure that this works",
   "savingAmount": 200,
   "savingFrequency": "BI_WEEKLY",
