@@ -41,4 +41,14 @@
             <column name="group_savings_id"/>
         </createIndex>
     </changeSet>
+
+    <changeSet id="add_foreign_key_constraint_on_savings_settings_table" author="tobilobaowolabi (generated)">
+        <addForeignKeyConstraint baseTableName="group_setting"
+                                 baseColumnNames="group_savings_id"
+                                 constraintName="fk_group_saving_settings"
+                                 referencedTableName="group_savings"
+                                 referencedColumnNames="id"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
+    </changeSet>
 </databaseChangeLog>
