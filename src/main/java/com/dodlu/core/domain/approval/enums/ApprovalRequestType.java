@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 public enum ApprovalRequestType {
   LOAN("Loan"),
+  GROUP_INVITE("Group Invite"),
   UNKNOWN("Unknown");
 
   private final String name;

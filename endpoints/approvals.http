@@ -1,0 +1,9 @@
+### Get customer approval requests - Initiated
+GET{{host}}/approvals-requests/my-request
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+### Get customer approval requests - To be approved
+GET{{host}}/approvals-requests/my-approvals
+Content-Type: application/json
+Authorization: {{customer_token}}

@@ -55,4 +55,8 @@ public class StringUtilities {
     }
     return input.substring(0, stopLength);
   }
+
+  public static boolean stringsMatch(String s1, String s2) {
+    return s1.equalsIgnoreCase(s2);
+  }
 }
