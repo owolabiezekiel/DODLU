@@ -1,15 +1,20 @@
 package com.dodlu.core.domain.savings.service;
 
 import static com.dodlu.core.app.utils.StringUtilities.extractFirstChars;
+import static com.dodlu.core.domain.approval.enums.ApprovalRequestType.GROUP_INVITE;
+import static com.dodlu.core.domain.approval.enums.ApprovalStatus.PENDING_USER_APPROVAL;
+import static com.dodlu.core.domain.approval.enums.WorkflowType.INDIVIDUAL;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.savings.CreateGroupSavingRequest;
 import com.dodlu.core.app.model.request.savings.GroupTransactionRequest;
+import com.dodlu.core.domain.approval.service.ApprovalService;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.domain.transaction.enums.EntityType;
 import com.dodlu.core.domain.transaction.enums.TransactionType;
+import com.dodlu.core.persistence.approval.entity.ApprovalRequest;
 import com.dodlu.core.persistence.savings.entity.GroupSaving;
 import com.dodlu.core.persistence.savings.entity.GroupSavingUser;
 import com.dodlu.core.persistence.savings.entity.GroupSetting;
@@ -23,6 +28,7 @@ import com.dodlu.core.persistence.transaction.repository.TransactionRepository;
 import com.dodlu.core.persistence.user.entity.CustomerProfile;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.CustomerProfileRepository;
+import com.google.gson.Gson;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +55,8 @@ public class GroupSavingsService {
   private final GroupBalanceRepository groupBalanceRepository;
   private final GroupSettingRepository groupSettingRepository;
   private final TransactionRepository transactionRepository;
+  private final ApprovalService approvalService;
+  private final Gson gson;
 
   @Transactional
   public CompletableFuture<GroupSavingModel> createGroupSaving(
@@ -100,13 +108,7 @@ public class GroupSavingsService {
         });
   }
 
-  private GroupBalance generateEmptyGroupBalance(GroupSaving groupSaving) {
-    return GroupBalance.builder()
-        .groupSavings(groupSaving)
-        .availableBalance(BigDecimal.ZERO)
-        .build();
-  }
-
+  @Transactional
   public CompletableFuture<GroupSavingModel> getGroupSaving(User user, String id) {
     return supplyAsync(
         () -> {
@@ -130,6 +132,7 @@ public class GroupSavingsService {
         });
   }
 
+  @Transactional
   public CompletableFuture<Page<GroupSavingModel>> getUserGroupSavings(User user, Pageable page) {
     return supplyAsync(
         () -> {
@@ -144,6 +147,7 @@ public class GroupSavingsService {
         });
   }
 
+  @Transactional
   public CompletableFuture<Void> recordGroupTransaction(
       User user, String groupSavingId, GroupTransactionRequest request) {
     return runAsync(
@@ -198,5 +202,60 @@ public class GroupSavingsService {
           balance.setAvailableBalance(balance.getAvailableBalance().add(transaction.getAmount()));
           groupBalanceRepository.save(balance);
         });
+  }
+
+  @Transactional
+  public CompletableFuture<Void> inviteUserToGroup(User user, String groupId, String inviteeId) {
+    return runAsync(
+        () -> {
+          GroupSaving groupSaving =
+              groupSavingRepository
+                  .findById(groupId)
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateNotFoundException("Group saving not found"));
+
+          if (!groupSaving.getAdmin().getEmail().equalsIgnoreCase(user.getEmail())) {
+            log.info(
+                "Unauthorized! User wants to invite someone to group but user is not group admin");
+            throw exceptionService.handleCreateUnAuthorized("Unauthorized");
+          }
+
+          CustomerProfile customerProfile =
+              customerProfileRepository
+                  .findByUsernameOrEmailOrId(inviteeId)
+                  .orElseThrow(
+                      () ->
+                          exceptionService.handleCreateNotFoundException(
+                              "Customer profile not found"));
+
+          String adminId = groupSaving.getAdmin().getId();
+          Set<String> memberIds =
+              groupSaving.getMembers().stream()
+                  .map(CustomerProfile::getId)
+                  .collect(Collectors.toSet());
+          if (memberIds.contains(customerProfile.getId())) {
+            throw exceptionService.handleCreateBadRequest("User is already a member of this group");
+          }
+
+          ApprovalRequest approvalRequest =
+              ApprovalRequest.builder()
+                  .requesterId(adminId)
+                  .approverId(customerProfile.getId())
+                  .status(PENDING_USER_APPROVAL)
+                  .type(GROUP_INVITE)
+                  .workflowType(INDIVIDUAL)
+                  .classPath(GroupSaving.class.getName())
+                  .requestObject(gson.toJson(GroupSaving.builder().id(groupSaving.getId()).build()))
+                  .build();
+          approvalService.create(approvalRequest).join();
+        });
+  }
+
+  private GroupBalance generateEmptyGroupBalance(GroupSaving groupSaving) {
+    return GroupBalance.builder()
+        .groupSavings(groupSaving)
+        .availableBalance(BigDecimal.ZERO)
+        .build();
   }
 }

@@ -38,7 +38,7 @@ POST {{host}}/auth/customer/register
 Content-Type: application/json
 
 {
-  "email": "owo.obaseki@gmail.com",
+  "email": "owo.ezekiel@gmail.com",
   "password": "password",
   "confirmPassword": "password",
   "firstName": "Babatunde",

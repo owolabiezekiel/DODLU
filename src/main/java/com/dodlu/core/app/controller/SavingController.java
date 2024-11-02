@@ -69,4 +69,15 @@ public class SavingController {
     groupSavingsService.recordGroupTransaction(user, groupSavingId, request).join();
     return new ResponseModel<>(null);
   }
+
+  @PostMapping("/group/invite/{groupSavingId}/{userId}")
+  @Operation(description = "Invite a user to group saving")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> inviteUserToGroupSaving(
+      @AuthenticationPrincipal User user,
+      @PathVariable("groupSavingId") String groupSavingId,
+      @PathVariable("userId") String userId) {
+    groupSavingsService.inviteUserToGroup(user, groupSavingId, userId).join();
+    return new ResponseModel<>(null);
+  }
 }

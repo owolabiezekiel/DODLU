@@ -1,10 +1,13 @@
 package com.dodlu.core.app.configuration;
 
 import com.dodlu.core.persistence.user.repository.UserRepository;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +45,13 @@ public class AppConfiguration {
   @Bean
   public AuditorAware<String> auditorAware() {
     return new AuditorAwareImpl();
+  }
+
+  @Bean
+  public Gson gson() {
+    return new GsonBuilder()
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+        .create();
   }
 
   @Bean
