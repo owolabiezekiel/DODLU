@@ -81,8 +81,8 @@ public class AwsStorageService implements StorageService {
           } catch (MaxUploadSizeExceededException e) {
             throw exceptionService.handleCreateBadRequest("File too large");
           } catch (Exception e) {
-            throw exceptionService.handleCreateException(
-                format("An unknown error has occurred: %s", e.getMessage()), e.getCause());
+            throw exceptionService.handleCreateBadRequest(
+                format("An unknown error has occurred: %s", e.getMessage()));
           }
 
           return format("https://%s.s3.%s.amazonaws.com/%s", awsBucketName, region, key);
