@@ -45,12 +45,13 @@ public class RestControllerAdvice<T> {
   }
 
   @ExceptionHandler(value = {CompletionException.class})
-  public ResponseEntity<ResponseModel<T>> handleCompletionException(
-      CompletionException ex, HttpServletResponse response) throws IOException {
+  public void handleCompletionException(CompletionException ex, HttpServletResponse response)
+      throws IOException {
     if (ex.getCause() instanceof CoreException) {
-      return handleDomainException((CoreException) ex.getCause(), response);
+      handleDomainException((CoreException) ex.getCause(), response);
+    } else {
+      handleException(ex, response);
     }
-    return handleException(ex);
   }
 
   @ExceptionHandler(value = {AccessDeniedException.class})
@@ -66,8 +67,8 @@ public class RestControllerAdvice<T> {
   }
 
   @ExceptionHandler(value = {CoreException.class})
-  public ResponseEntity<ResponseModel<T>> handleDomainException(
-      CoreException ex, HttpServletResponse response) throws IOException {
+  public void handleDomainException(CoreException ex, HttpServletResponse response)
+      throws IOException {
     log.error("CoreException encountered: {}", ex.getMessage(), ex);
 
     ResponseModel<?> responseModel =
@@ -77,12 +78,11 @@ public class RestControllerAdvice<T> {
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(ex.getCode());
     response.getWriter().write(objectMapper.writeValueAsString(responseModel));
-    return null;
   }
 
   @ExceptionHandler(value = {NoResourceFoundException.class})
-  public ResponseEntity<ResponseModel<T>> handleNoResourceFound(
-      NoResourceFoundException ex, HttpServletResponse response) throws IOException {
+  public void handleNoResourceFound(NoResourceFoundException ex, HttpServletResponse response)
+      throws IOException {
     log.error("No resource found exception encountered: {}", ex.getMessage());
 
     ResponseModel<?> responseModel =
@@ -92,7 +92,6 @@ public class RestControllerAdvice<T> {
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(BAD_REQUEST.value());
     response.getWriter().write(objectMapper.writeValueAsString(responseModel));
-    return null;
   }
 
   @ExceptionHandler(value = {ConstraintViolationException.class})
@@ -149,30 +148,42 @@ public class RestControllerAdvice<T> {
   }
 
   @ExceptionHandler(value = {IllegalArgumentException.class})
-  public ResponseEntity<ResponseModel<T>> handleIllegalArgumentException(
-      IllegalArgumentException ex) {
+  public void handleIllegalArgumentException(
+      IllegalArgumentException ex, HttpServletResponse response) throws IOException {
     log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
-    return new ResponseEntity<>(
-        new ResponseModel<>(null, "", singletonList(ex.getMessage()), BAD_REQUEST.value()),
-        BAD_REQUEST);
+    ResponseModel<?> responseModel =
+        new ResponseModel<>(
+            null, ex.getMessage(), Collections.singletonList(ex.getMessage()), BAD_REQUEST.value());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(BAD_REQUEST.value());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
   }
 
   @ExceptionHandler(value = {Throwable.class})
-  public ResponseEntity<ResponseModel<T>> handleException(Throwable ex) {
+  public void handleException(Throwable ex, HttpServletResponse response) throws IOException {
     log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
-    return new ResponseEntity<>(
+
+    ResponseModel<?> responseModel =
         new ResponseModel<>(
-            null, "", singletonList(ex.getMessage()), INTERNAL_SERVER_ERROR.value()),
-        INTERNAL_SERVER_ERROR);
+            null,
+            ex.getMessage(),
+            Collections.singletonList(ex.getMessage()),
+            INTERNAL_SERVER_ERROR.value());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(INTERNAL_SERVER_ERROR.value());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-  public ResponseEntity<ResponseModel<T>> handleConverterErrors(
-      MethodArgumentTypeMismatchException ex) {
+  public void handleConverterErrors(
+      MethodArgumentTypeMismatchException ex, HttpServletResponse response) throws IOException {
     if (ex.getCause() instanceof IllegalArgumentException) {
-      return handleIllegalArgumentException((IllegalArgumentException) ex.getCause());
+      handleIllegalArgumentException((IllegalArgumentException) ex.getCause(), response);
+    } else {
+      handleException(ex, response);
     }
-    return handleException(ex);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
