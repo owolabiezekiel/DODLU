@@ -416,6 +416,11 @@ public class DefaultUserService {
                       coordinatorProfileRepository, exceptionService, user.getUsername())
                   .toGeneralProfileModel();
             }
+            case CUSTOMER -> {
+              return getCustomerByEmail(
+                      customerProfileRepository, exceptionService, user.getEmail())
+                  .toGeneralProfileModel();
+            }
             case ADMIN -> {
               AdminProfile adminProfile =
                   adminProfileRepository.findByUsernameIgnoreCase(user.getUsername()).orElse(null);
