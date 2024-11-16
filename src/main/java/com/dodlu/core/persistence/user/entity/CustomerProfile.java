@@ -6,6 +6,7 @@ import com.dodlu.core.domain.user.model.GeneralProfileModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import com.dodlu.core.persistence.location.entity.Country;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,8 @@ public class CustomerProfile extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Gender gender;
 
+  private LocalDate dateOfBirth;
+
   @ManyToOne
   @JoinColumn(name = "country_id", referencedColumnName = "id")
   private Country country;
@@ -75,6 +78,7 @@ public class CustomerProfile extends BaseEntity {
         .gender(gender)
         .profileImageUrl(getProfileImageUrl())
         .country(country.toModel())
+        .dateOfBirth(getDateOfBirth())
         .build();
   }
 
@@ -90,6 +94,7 @@ public class CustomerProfile extends BaseEntity {
         .profileImageUrl(getProfileImageUrl())
         .middleName(middleName)
         .country(country.toModel())
+        .dateOfBirth(getDateOfBirth())
         .build();
   }
 

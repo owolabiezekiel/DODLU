@@ -277,4 +277,16 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="1731754226973-1" author="owolabiezekiel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="customer_profiles" columnName="date_of_birth"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="customer_profiles">
+            <column name="date_of_birth" type="DATE"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

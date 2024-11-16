@@ -6,6 +6,7 @@ import com.dodlu.core.domain.user.enums.Gender;
 import com.dodlu.core.domain.user.enums.Level;
 import com.dodlu.core.domain.user.enums.Programme;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,4 +39,5 @@ public class GeneralProfileModel {
   private Level level;
   private EmployerProfileModel employer;
   private CountryModel country;
+  private LocalDate dateOfBirth;
 }

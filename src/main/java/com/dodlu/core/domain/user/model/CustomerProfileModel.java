@@ -2,6 +2,7 @@ package com.dodlu.core.domain.user.model;
 
 import com.dodlu.core.domain.location.model.CountryModel;
 import com.dodlu.core.domain.user.enums.Gender;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,4 +25,5 @@ public class CustomerProfileModel {
   private Gender gender;
   private String profileImageUrl;
   private CountryModel country;
+  private LocalDate dateOfBirth;
 }
