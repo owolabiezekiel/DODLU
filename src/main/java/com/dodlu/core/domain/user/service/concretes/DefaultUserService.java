@@ -11,6 +11,7 @@ import static com.dodlu.core.domain.user.enums.Programme.UNDERGRADUATE;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.*;
 import static com.dodlu.core.domain.utils.CoordinatorProfileUtils.getCoordinatorByUsername;
+import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByEmail;
 import static com.dodlu.core.domain.utils.DepartmentUtils.getDepartmentById;
 import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUsername;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
@@ -72,6 +73,7 @@ public class DefaultUserService {
   private final UserRepository userRepository;
   private final RoleRepository roleRepository;
   private final EmployerProfileRepository employerProfileRepository;
+  private final CustomerProfileRepository customerProfileRepository;
   private final LogbookRepository logbookRepository;
   private final StorageService storageService;
   private final JmsEmailService emailService;
@@ -289,6 +291,18 @@ public class DefaultUserService {
   }
 
   @Transactional
+  public CompletableFuture<CustomerProfileModel> updateCustomerDisplayPicture(
+      User user, MultipartFile file) {
+    return supplyAsync(
+        () -> {
+          CustomerProfile customerProfile =
+              getCustomerByEmail(customerProfileRepository, exceptionService, user.getEmail());
+          return updateCustomerProfileImage(customerProfile, customerProfileRepository, file)
+              .toModel();
+        });
+  }
+
+  @Transactional
   public CompletableFuture<? extends UserProfile> updateDisplayPicture(
       User user, MultipartFile file) {
     return supplyAsync(
@@ -461,6 +475,25 @@ public class DefaultUserService {
   }
 
   @Transactional
+  public CompletableFuture<CustomerProfileModel> updateCustomerProfile(
+      User user, UpdateCustomerProfileRequest request) {
+    return supplyAsync(
+        () -> {
+          CustomerProfile customerProfile =
+              getCustomerByEmail(customerProfileRepository, exceptionService, user.getEmail());
+
+          if (!isNullOrBlank(request.getFirstName()))
+            customerProfile.setFirstName(request.getFirstName());
+          if (!isNullOrBlank(request.getLastName()))
+            customerProfile.setLastName(request.getLastName());
+          if (!isNullOrBlank(request.getMiddleName()))
+            customerProfile.setMiddleName(request.getMiddleName());
+
+          return customerProfileRepository.save(customerProfile).toModel();
+        });
+  }
+
+  @Transactional
   public CompletableFuture<EmployerProfileModel> employerUpdateProfile(
       User user, UpdateEmployerRequest request) {
     return supplyAsync(
@@ -585,6 +618,22 @@ public class DefaultUserService {
       String newImageUrl = storageService.uploadImage(file).join();
       userProfile.setProfileImageUrl(newImageUrl);
       return repository.save(userProfile);
+    } catch (Exception e) {
+      throw exceptionService.handleCreateException(e.getMessage(), INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  private CustomerProfile updateCustomerProfileImage(
+      CustomerProfile customerProfile, CustomerProfileRepository repository, MultipartFile file) {
+    try {
+      if (!isNullOrBlank(customerProfile.getProfileImageUrl())) {
+        ImageDownloadRequest request =
+            new ImageDownloadRequest().setImageUrl(customerProfile.getProfileImageUrl());
+        storageService.deleteFile(request).join();
+      }
+      String newImageUrl = storageService.uploadImage(file).join();
+      customerProfile.setProfileImageUrl(newImageUrl);
+      return repository.save(customerProfile);
     } catch (Exception e) {
       throw exceptionService.handleCreateException(e.getMessage(), INTERNAL_SERVER_ERROR);
     }

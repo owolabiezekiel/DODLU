@@ -84,6 +84,19 @@ public class UserController {
     return new ResponseModel<>(userProfile);
   }
 
+  @PutMapping(value = "/profile-image/customer", consumes = MULTIPART_FORM_DATA_VALUE)
+  @Operation(description = "Update customer display picture")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = CustomerProfileModel.class)
+  })
+  @PreAuthorize("hasAnyAuthority('CUSTOMER')")
+  public ResponseModel<CustomerProfileModel> updateCustomerDisplayPicture(
+      @AuthenticationPrincipal User user, @RequestParam("file") MultipartFile file) {
+    CustomerProfileModel customerProfile =
+        userService.updateCustomerDisplayPicture(user, file).join();
+    return new ResponseModel<>(customerProfile);
+  }
+
   @GetMapping(value = "/profile")
   @Operation(description = "Get logged in user profile")
   @ApiResponses({
@@ -104,6 +117,19 @@ public class UserController {
   public ResponseModel<StudentProfileModel> updateStudentProfile(
       @AuthenticationPrincipal User user, @Valid @RequestBody UpdateStudentProfileRequest request) {
     StudentProfileModel userProfile = userService.updateStudentProfile(user, request).join();
+    return new ResponseModel<>(userProfile);
+  }
+
+  @PutMapping(value = "/profile_update/customer")
+  @Operation(description = "Customer update profile")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = CustomerProfileModel.class)
+  })
+  @PreAuthorize("hasAnyAuthority('CUSTOMER')")
+  public ResponseModel<CustomerProfileModel> updateCustomerProfile(
+      @AuthenticationPrincipal User user,
+      @Valid @RequestBody UpdateCustomerProfileRequest request) {
+    CustomerProfileModel userProfile = userService.updateCustomerProfile(user, request).join();
     return new ResponseModel<>(userProfile);
   }
 
