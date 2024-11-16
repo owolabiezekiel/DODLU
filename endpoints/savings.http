@@ -34,5 +34,5 @@ Authorization: {{customer_token}}
 }
 
 ### Invite user to group saving
-POST {{host}}/savings/group/invite/4e07052f-4bd0-4f2d-ac80-53d776c9e49b/054a080c-453e-44cc-8476-119e5f9765c6
+POST {{host}}/savings/group/invite/4e07052f-4bd0-4f2d-ac80-53d776c9e49b/81f85c2a-61a4-4a99-84a5-ee2b8155cced
 Authorization: {{customer_token}}

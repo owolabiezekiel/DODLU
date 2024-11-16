@@ -4,6 +4,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.request.savings.CreateGroupSavingRequest;
 import com.dodlu.core.app.model.request.savings.GroupTransactionRequest;
+import com.dodlu.core.app.model.request.savings.InviteToGroupRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.domain.savings.service.GroupSavingsService;
@@ -70,14 +71,14 @@ public class SavingController {
     return new ResponseModel<>(null);
   }
 
-  @PostMapping("/group/invite/{groupSavingId}/{userId}")
+  @PostMapping("/group/invite")
   @Operation(description = "Invite a user to group saving")
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
   public ResponseModel<Void> inviteUserToGroupSaving(
-      @AuthenticationPrincipal User user,
-      @PathVariable("groupSavingId") String groupSavingId,
-      @PathVariable("userId") String userId) {
-    groupSavingsService.inviteUserToGroup(user, groupSavingId, userId).join();
+      @AuthenticationPrincipal User user, @Valid @RequestBody InviteToGroupRequest request) {
+    groupSavingsService
+        .inviteUserToGroup(user, request.getGroupId(), request.getInviteeId())
+        .join();
     return new ResponseModel<>(null);
   }
 }
