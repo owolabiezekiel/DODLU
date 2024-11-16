@@ -1,6 +1,6 @@
 ### Upload Image File
 POST {{host}}/file/image-upload
-Authorization: {{token}}
+Authorization: {{customer_token}}
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
@@ -12,7 +12,7 @@ Content-Disposition: form-data; name="file"; filename="20220906_094414.jpg"
 
 ### Upload Document File
 POST {{host}}/file/document-upload
-Authorization: {{token}}
+Authorization: {{customer_token}}
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary

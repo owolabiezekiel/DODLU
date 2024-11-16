@@ -488,6 +488,8 @@ public class DefaultUserService {
             customerProfile.setLastName(request.getLastName());
           if (!isNullOrBlank(request.getMiddleName()))
             customerProfile.setMiddleName(request.getMiddleName());
+          if (request.getDateOfBirth() != null)
+            customerProfile.setDateOfBirth(request.getDateOfBirth());
 
           return customerProfileRepository.save(customerProfile).toModel();
         });

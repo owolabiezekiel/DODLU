@@ -46,6 +46,18 @@ Authorization: {{coord_token}}
   "title": "Mr."
 }
 
+### Update Customer Profile
+PUT {{host}}/user/profile_update/customer
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+{
+  "dateOfBirth": "1994-11-22",
+  "firstName": "Updated First",
+  "lastName": "Updated Last",
+  "phoneNumber": "09006723810"
+}
+
 ### Update user profile image
 POST {{host}}/user/profile-image
 Authorization: {{employer_token}}

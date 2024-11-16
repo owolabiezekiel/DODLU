@@ -1,5 +1,7 @@
 package com.dodlu.core.app.model.request.user;
 
+import jakarta.validation.constraints.Past;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,6 @@ public class UpdateCustomerProfileRequest {
   protected String lastName;
   private String middleName;
 
-  //  @Past(message = "date of birth must be in the past")
-  //  private LocalDate dateOfBirth;
+  @Past(message = "date of birth must be in the past")
+  private LocalDate dateOfBirth;
 }
