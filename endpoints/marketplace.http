@@ -1,0 +1,9 @@
+### Get all market posts
+GET {{host}}/market/posts/all
+Authorization: {{customer_token}}
+
+
+### Getlogged in customer's market posts
+GET {{host}}/market/posts/me
+Authorization: {{customer_token}}
+

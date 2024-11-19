@@ -1,0 +1,63 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet author="tobiowolabi" id="market_post_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="market_posts"/>
+            </not>
+        </preConditions>
+        <createTable tableName="market_posts">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_market_posts"/>
+            </column>
+
+            <column name="title" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="photo_url" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="available_unit" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="marketer_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="idx_market_posts_marketer_id"
+                     tableName="market_posts">
+            <column name="marketer_id"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableName="market_posts"
+                                     baseColumnNames="marketer_id"
+                                     constraintName="fk_customer_market_posts"
+                                     referencedTableName="customer_profiles"
+                                     referencedColumnNames="id"
+                                     onDelete="RESTRICT"
+                                     onUpdate="RESTRICT"/>
+    </changeSet>
+
+</databaseChangeLog>
