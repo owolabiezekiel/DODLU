@@ -1,9 +1,12 @@
 package com.dodlu.core.domain.marketplace.service;
 
+import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByUsername;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
+import com.dodlu.core.app.model.request.marketplace.CreateMarketPostRequest;
+import com.dodlu.core.app.model.request.marketplace.UpdateMarketPostRequest;
 import com.dodlu.core.domain.marketplace.model.MarketPostModel;
 import com.dodlu.core.persistence.marketplace.entity.MarketPost;
 import com.dodlu.core.persistence.marketplace.repository.MarketPostRepository;
@@ -44,6 +47,67 @@ public class DefaultMarketPlaceService {
                   customerProfileRepository, exceptionService, user.getUsername());
           return getPosts(customerProfile, pageable);
         });
+  }
+
+  @Transactional
+  public CompletableFuture<MarketPostModel> create(User user, CreateMarketPostRequest request) {
+    return supplyAsync(
+        () -> {
+          CustomerProfile customerProfile =
+              getCustomerByUsername(
+                  customerProfileRepository, exceptionService, user.getUsername());
+
+          MarketPost marketPost =
+              MarketPost.builder()
+                  .title(request.getTitle())
+                  .photoUrl(request.getPhotoUrl())
+                  .price(request.getPrice())
+                  .description(request.getDescription())
+                  .availableUnit(request.getAvailableUnit())
+                  .category(request.getCategory())
+                  .marketer(customerProfile)
+                  .build();
+
+          return marketPostRepository.save(marketPost).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<MarketPostModel> update(
+      User user, long id, UpdateMarketPostRequest request) {
+    return supplyAsync(
+        () -> {
+          MarketPost marketPost =
+              marketPostRepository
+                  .findById(id)
+                  .orElseThrow(
+                      () -> exceptionService.handleCreateNotFoundException("post does not exist"));
+
+          if (!user.getUsername().equalsIgnoreCase(marketPost.getMarketer().getUsername())) {
+            throw exceptionService.handleCreateUnAuthorized("Unauthorized!");
+          }
+
+          if (request.getCategory() != null) marketPost.setCategory(request.getCategory());
+          if (!isNullOrBlank(request.getTitle())) marketPost.setTitle(request.getTitle());
+          if (!isNullOrBlank(request.getPhotoUrl())) marketPost.setPhotoUrl(request.getPhotoUrl());
+          if (!isNullOrBlank(request.getDescription()))
+            marketPost.setDescription(request.getDescription());
+          if (!isNullOrBlank(request.getAvailableUnit()))
+            marketPost.setAvailableUnit(request.getAvailableUnit());
+
+          return marketPostRepository.save(marketPost).toModel();
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<MarketPostModel> get(long id) {
+    return supplyAsync(
+        () ->
+            marketPostRepository
+                .findById(id)
+                .orElseThrow(
+                    () -> exceptionService.handleCreateNotFoundException("post does not exist"))
+                .toModel());
   }
 
   private Page<MarketPostModel> getPosts(CustomerProfile marketer, Pageable pageable) {

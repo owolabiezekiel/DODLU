@@ -1,9 +1,36 @@
 ### Get all market posts
-GET {{host}}/market/posts/all
+GET {{host}}/market/items/all
 Authorization: {{customer_token}}
 
 
 ### Getlogged in customer's market posts
-GET {{host}}/market/posts/me
+GET {{host}}/market/items/me
 Authorization: {{customer_token}}
 
+### Create Market Post
+POST {{host}}/market/items
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+{
+  "title": "Yellow garri",
+  "category": "FOODSTUFFS",
+  "availableUnit": "8 bags",
+  "photoUrl": "https://www.google.com",
+  "price": 50000,
+  "description": "This is correct Akwa Ibom yellow garri"
+}
+
+### Update Market Post
+PUT {{host}}/market/items/3
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+{
+  "title": "Yellow garri - Updated"
+}
+
+
+### Get market posts by Id
+GET {{host}}/market/items/3
+Authorization: {{customer_token}}
