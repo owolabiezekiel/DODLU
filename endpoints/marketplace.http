@@ -2,6 +2,9 @@
 GET {{host}}/market/items/all
 Authorization: {{customer_token}}
 
+### Get all market posts and filter
+GET {{host}}/market/items/all?title=yellow
+Authorization: {{customer_token}}
 
 ### Getlogged in customer's market posts
 GET {{host}}/market/items/me

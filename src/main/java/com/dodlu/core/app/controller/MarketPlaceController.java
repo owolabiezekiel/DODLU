@@ -2,6 +2,7 @@ package com.dodlu.core.app.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.dodlu.core.app.model.filters.MarketPostFilter;
 import com.dodlu.core.app.model.request.marketplace.CreateMarketPostRequest;
 import com.dodlu.core.app.model.request.marketplace.UpdateMarketPostRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
@@ -29,8 +30,9 @@ public class MarketPlaceController {
   @GetMapping(value = "/items/all")
   @Operation(description = "Get market posts")
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = MarketPostModel.class)})
-  public ResponseModel<Page<MarketPostModel>> getMarketPosts(@PageableDefault Pageable pageable) {
-    var posts = marketPlaceService.getMarketPosts(pageable).join();
+  public ResponseModel<Page<MarketPostModel>> getMarketPosts(
+      @PageableDefault Pageable pageable, @ModelAttribute MarketPostFilter filter) {
+    var posts = marketPlaceService.getMarketPosts(pageable, filter).join();
     return new ResponseModel<>(posts);
   }
 

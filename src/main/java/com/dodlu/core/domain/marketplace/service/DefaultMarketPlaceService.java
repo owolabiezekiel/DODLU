@@ -5,6 +5,7 @@ import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByUser
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
+import com.dodlu.core.app.model.filters.MarketPostFilter;
 import com.dodlu.core.app.model.request.marketplace.CreateMarketPostRequest;
 import com.dodlu.core.app.model.request.marketplace.UpdateMarketPostRequest;
 import com.dodlu.core.domain.marketplace.model.MarketPostModel;
@@ -34,8 +35,9 @@ public class DefaultMarketPlaceService {
   private final CoreExceptionService exceptionService;
 
   @Transactional
-  public CompletableFuture<Page<MarketPostModel>> getMarketPosts(Pageable pageable) {
-    return supplyAsync(() -> getPosts(null, pageable));
+  public CompletableFuture<Page<MarketPostModel>> getMarketPosts(
+      Pageable pageable, MarketPostFilter filter) {
+    return supplyAsync(() -> getPosts(null, pageable, filter));
   }
 
   @Transactional
@@ -45,7 +47,7 @@ public class DefaultMarketPlaceService {
           CustomerProfile customerProfile =
               getCustomerByUsername(
                   customerProfileRepository, exceptionService, user.getUsername());
-          return getPosts(customerProfile, pageable);
+          return getPosts(customerProfile, pageable, null);
         });
   }
 
@@ -111,12 +113,13 @@ public class DefaultMarketPlaceService {
                 .toModel());
   }
 
-  private Page<MarketPostModel> getPosts(CustomerProfile marketer, Pageable pageable) {
+  private Page<MarketPostModel> getPosts(
+      CustomerProfile marketer, Pageable pageable, MarketPostFilter filter) {
     Page<MarketPost> marketPostPage;
 
     marketPostPage =
         Objects.isNull(marketer)
-            ? marketPostRepository.findAll(pageable)
+            ? marketPostRepository.findAll(pageable, filter)
             : marketPostRepository.findAllByMarketer(marketer, pageable);
 
     List<MarketPostModel> marketPosts =
