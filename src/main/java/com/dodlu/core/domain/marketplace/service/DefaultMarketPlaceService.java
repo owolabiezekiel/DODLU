@@ -88,6 +88,7 @@ public class DefaultMarketPlaceService {
           }
 
           if (request.getCategory() != null) marketPost.setCategory(request.getCategory());
+          if (request.getPrice() != null) marketPost.setPrice(request.getPrice());
           if (!isNullOrBlank(request.getTitle())) marketPost.setTitle(request.getTitle());
           if (!isNullOrBlank(request.getPhotoUrl())) marketPost.setPhotoUrl(request.getPhotoUrl());
           if (!isNullOrBlank(request.getDescription()))
