@@ -1,0 +1,86 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet author="tobiowolabi" id="group_saving_loan_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="group_saving_loans"/>
+            </not>
+        </preConditions>
+        <createTable tableName="group_saving_loans">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true" primaryKeyName="pk_group_saving_loans"/>
+            </column>
+
+            <column name="lending_group_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="borrower_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="loan_status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repayment_status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="approval_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="amount" type="DECIMAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="interest" type="DECIMAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repayment_amount" type="DECIMAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount_repaid" type="DECIMAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="interest_percent" type="DECIMAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment" type="TEXT"/>
+
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="idx_loan_lender_group_id"
+                     tableName="group_saving_loans">
+            <column name="lending_group_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_loan_borrower_id"
+                     tableName="group_saving_loans">
+            <column name="borrower_id"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableName="group_saving_loans"
+                                     baseColumnNames="lending_group_id"
+                                     constraintName="fk_group_loan_lender"
+                                     referencedTableName="group_savings"
+                                     referencedColumnNames="id"
+                                     onDelete="RESTRICT"
+                                     onUpdate="RESTRICT"/>
+
+        <addForeignKeyConstraint baseTableName="group_saving_loans"
+                                 baseColumnNames="borrower_id"
+                                 constraintName="fk_group_loan_borrower"
+                                 referencedTableName="customer_profiles"
+                                 referencedColumnNames="id"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -36,3 +36,21 @@ Authorization: {{customer_token}}
 ### Invite user to group saving
 POST {{host}}/savings/group/invite/4e07052f-4bd0-4f2d-ac80-53d776c9e49b/81f85c2a-61a4-4a99-84a5-ee2b8155cced
 Authorization: {{customer_token}}
+
+### User request loan
+POST {{host}}/savings/group/loans/request
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+{
+  "groupId": "1a915c0e-9afe-4400-9e68-49c3915e8904",
+  "amount": 200
+}
+
+### Get all loans for group by ID
+GET {{host}}/savings/group/1a915c0e-9afe-4400-9e68-49c3915e8904/loans
+Authorization: {{customer_token}}
+
+### Get group loans by ID
+GET {{host}}/savings/group/loans/11fec02f-2f45-4afb-a6f9-30ce7487c277
+Authorization: {{customer_token}}

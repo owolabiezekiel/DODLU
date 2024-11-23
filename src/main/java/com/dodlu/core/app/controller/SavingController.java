@@ -3,9 +3,11 @@ package com.dodlu.core.app.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.dodlu.core.app.model.request.savings.CreateGroupSavingRequest;
+import com.dodlu.core.app.model.request.savings.GroupLoanRequest;
 import com.dodlu.core.app.model.request.savings.GroupTransactionRequest;
 import com.dodlu.core.app.model.request.savings.InviteToGroupRequest;
 import com.dodlu.core.app.model.response.ResponseModel;
+import com.dodlu.core.domain.savings.model.GroupSavingLoanModel;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.domain.savings.service.GroupSavingsService;
 import com.dodlu.core.persistence.user.entity.User;
@@ -80,5 +82,40 @@ public class SavingController {
         .inviteUserToGroup(user, request.getGroupId(), request.getInviteeId())
         .join();
     return new ResponseModel<>(null);
+  }
+
+  @PostMapping("/group/loans/request")
+  @Operation(description = "User requests group loan")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> requestGroupLoan(
+      @AuthenticationPrincipal User user, @Valid @RequestBody GroupLoanRequest request) {
+    groupSavingsService.requestLoan(user, request).join();
+    return new ResponseModel<>(null);
+  }
+
+  @GetMapping("/group/{groupSavingId}/loans")
+  @Operation(description = "Get all group loans")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = GroupSavingModel.class,
+        responseContainer = "Page")
+  })
+  public ResponseModel<Page<GroupSavingLoanModel>> getGroupLoans(
+      @AuthenticationPrincipal User user,
+      @PathVariable("groupSavingId") String groupSavingId,
+      @PageableDefault Pageable pageable) {
+    var loans = groupSavingsService.getGroupLoans(user, groupSavingId, pageable).join();
+    return new ResponseModel<>(loans);
+  }
+
+  @GetMapping("/group/loans/{groupLoanId}")
+  @Operation(description = "Get group loan by Id")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = GroupSavingModel.class)})
+  public ResponseModel<GroupSavingLoanModel> getGroupLoan(
+      @AuthenticationPrincipal User user, @PathVariable("groupLoanId") String groupLoanId) {
+    var loan = groupSavingsService.getGroupLoanById(user, groupLoanId).join();
+    return new ResponseModel<>(loan);
   }
 }

@@ -1,23 +1,32 @@
 package com.dodlu.core.domain.savings.service;
 
 import static com.dodlu.core.app.utils.StringUtilities.extractFirstChars;
+import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.domain.approval.enums.ApprovalRequestType.GROUP_INVITE;
 import static com.dodlu.core.domain.approval.enums.ApprovalStatus.PENDING_USER_APPROVAL;
 import static com.dodlu.core.domain.approval.enums.WorkflowType.INDIVIDUAL;
+import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByEmail;
+import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByUsername;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.request.savings.CreateGroupSavingRequest;
+import com.dodlu.core.app.model.request.savings.GroupLoanRequest;
 import com.dodlu.core.app.model.request.savings.GroupTransactionRequest;
 import com.dodlu.core.domain.approval.service.ApprovalService;
+import com.dodlu.core.domain.savings.enums.LoanStatus;
+import com.dodlu.core.domain.savings.enums.RepaymentStatus;
+import com.dodlu.core.domain.savings.model.GroupSavingLoanModel;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.domain.transaction.enums.EntityType;
 import com.dodlu.core.domain.transaction.enums.TransactionType;
 import com.dodlu.core.persistence.approval.entity.ApprovalRequest;
 import com.dodlu.core.persistence.savings.entity.GroupSaving;
+import com.dodlu.core.persistence.savings.entity.GroupSavingLoan;
 import com.dodlu.core.persistence.savings.entity.GroupSavingUser;
 import com.dodlu.core.persistence.savings.entity.GroupSetting;
+import com.dodlu.core.persistence.savings.repository.GroupSavingLoanRepository;
 import com.dodlu.core.persistence.savings.repository.GroupSavingRepository;
 import com.dodlu.core.persistence.savings.repository.GroupSavingUsersRepository;
 import com.dodlu.core.persistence.savings.repository.GroupSettingRepository;
@@ -32,6 +41,7 @@ import com.google.gson.Gson;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -54,6 +64,7 @@ public class GroupSavingsService {
   private final CoreExceptionService exceptionService;
   private final GroupBalanceRepository groupBalanceRepository;
   private final GroupSettingRepository groupSettingRepository;
+  private final GroupSavingLoanRepository groupLoanRepository;
   private final TransactionRepository transactionRepository;
   private final ApprovalService approvalService;
   private final Gson gson;
@@ -252,10 +263,109 @@ public class GroupSavingsService {
         });
   }
 
+  @Transactional
+  public CompletableFuture<Void> requestLoan(User user, GroupLoanRequest request) {
+    return runAsync(
+        () -> {
+          GroupSaving groupSaving = getGroupSaving(request.getGroupId());
+          CustomerProfile customerProfile = getCustomer(user.getEmail(), null);
+
+          GroupSetting groupSetting = groupSaving.getSetting();
+          if (Objects.isNull(groupSetting)) {
+            throw exceptionService.handleCreateBadRequest(
+                "Loan settings for this group does not exist. Please contact group administrator to update group settings");
+          }
+
+          Set<String> memberEmails = extractMemberEmails(groupSaving);
+          if (!memberEmails.contains(customerProfile.getEmail())) {
+            throw exceptionService.handleCreateBadRequest("User is not a member of this group");
+          }
+
+          BigDecimal highestAmount =
+              calculatePercent(groupSaving.getBalance().getAvailableBalance(), 20.0F);
+          if (request.getAmount().compareTo(highestAmount) > 0) {
+            throw exceptionService.handleCreateBadRequest("Amount exceeds group loan limit");
+          }
+
+          Float interestPercent = groupSetting.getLoanInterestPercent();
+          if (Objects.isNull(interestPercent)) {
+            throw exceptionService.handleCreateBadRequest(
+                "Interest percent missing on group setting. Please contact group administrator to update group settings");
+          }
+          BigDecimal interest = calculatePercent(request.getAmount(), interestPercent);
+          GroupSavingLoan groupSavingLoan =
+              GroupSavingLoan.builder()
+                  .lendingGroup(groupSaving)
+                  .borrower(customerProfile)
+                  .loanStatus(LoanStatus.PENDING)
+                  .repaymentStatus(RepaymentStatus.PENDING)
+                  .amount(request.getAmount())
+                  .interest(interest)
+                  .repaymentAmount(request.getAmount().add(interest))
+                  .amountRepaid(BigDecimal.ZERO)
+                  .interestPercent(interestPercent)
+                  .build();
+
+          groupLoanRepository.save(groupSavingLoan);
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Page<GroupSavingLoanModel>> getGroupLoans(
+      User user, String groupId, Pageable page) {
+    return supplyAsync(
+        () -> {
+          GroupSaving groupSaving = getGroupSaving(groupId);
+
+          Page<GroupSavingLoan> loanPage =
+              groupLoanRepository.findAllByLendingGroup(groupSaving, page);
+          List<GroupSavingLoanModel> loanModels =
+              loanPage.getContent().stream()
+                  .map(GroupSavingLoan::toModel)
+                  .collect(Collectors.toList());
+          return new PageImpl<>(loanModels, page, loanPage.getTotalElements());
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<GroupSavingLoanModel> getGroupLoanById(User user, String groupLoanId) {
+    return supplyAsync(
+        () ->
+            groupLoanRepository
+                .findById(groupLoanId)
+                .orElseThrow(
+                    () ->
+                        exceptionService.handleCreateNotFoundException("Group loan does not exist"))
+                .toModel());
+  }
+
   private GroupBalance generateEmptyGroupBalance(GroupSaving groupSaving) {
     return GroupBalance.builder()
         .groupSavings(groupSaving)
         .availableBalance(BigDecimal.ZERO)
         .build();
+  }
+
+  private Set<String> extractMemberEmails(GroupSaving groupSaving) {
+    return groupSaving.getMembers().stream()
+        .map(CustomerProfile::getEmail)
+        .collect(Collectors.toSet());
+  }
+
+  private BigDecimal calculatePercent(BigDecimal value, Float percent) {
+    return value.multiply(BigDecimal.valueOf(percent)).divide(BigDecimal.valueOf(100.0));
+  }
+
+  private CustomerProfile getCustomer(String email, String username) {
+    return !isNullOrBlank(email)
+        ? getCustomerByEmail(customerProfileRepository, exceptionService, email)
+        : getCustomerByUsername(customerProfileRepository, exceptionService, username);
+  }
+
+  private GroupSaving getGroupSaving(String groupId) {
+    return groupSavingRepository
+        .findById(groupId)
+        .orElseThrow(
+            () -> exceptionService.handleCreateNotFoundException("Group saving does not exist"));
   }
 }
