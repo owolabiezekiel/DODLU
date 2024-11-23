@@ -51,4 +51,34 @@
                                  onDelete="RESTRICT"
                                  onUpdate="RESTRICT"/>
     </changeSet>
+
+    <changeSet id="1732327578016-1" author="owolabiezekiel">
+        <preConditions>
+            <columnExists tableName="group_setting" columnName="saving_frequency"/>
+        </preConditions>
+        <update tableName="group_setting">
+            <column name="saving_frequency" value="DAILY" />
+            <where>saving_frequency = '0'</where>
+        </update>
+        <update tableName="group_setting">
+            <column name="saving_frequency" value="WEEKLY" />
+            <where>saving_frequency = '1'</where>
+        </update>
+        <update tableName="group_setting">
+            <column name="saving_frequency" value="BI_WEEKLY" />
+            <where>saving_frequency = '2'</where>
+        </update>
+        <update tableName="group_setting">
+            <column name="saving_frequency" value="MONTHLY" />
+            <where>saving_frequency = '3'</where>
+        </update>
+        <update tableName="group_setting">
+            <column name="saving_frequency" value="QUARTERLY" />
+            <where>saving_frequency = '4'</where>
+        </update>
+        <update tableName="group_setting">
+            <column name="saving_frequency" value="YEARLY" />
+            <where>saving_frequency = '5'</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>

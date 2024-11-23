@@ -30,7 +30,10 @@ public class GroupSetting extends BaseEntity {
   private GroupSaving groupSavings;
 
   private BigDecimal minimumSavingAmount;
+
+  @Enumerated(EnumType.STRING)
   private SavingFrequency savingFrequency;
+
   private Integer monthsBeforeLoan;
   private Float highestLoanPercent;
   private Float loanInterestPercent;
