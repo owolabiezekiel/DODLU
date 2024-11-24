@@ -2,12 +2,15 @@ package com.dodlu.core.domain.marketplace.service;
 
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByUsername;
+import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.app.model.filters.MarketPostFilter;
+import com.dodlu.core.app.model.request.file.ImageDownloadRequest;
 import com.dodlu.core.app.model.request.marketplace.CreateMarketPostRequest;
 import com.dodlu.core.app.model.request.marketplace.UpdateMarketPostRequest;
+import com.dodlu.core.domain.file.service.abstracts.StorageService;
 import com.dodlu.core.domain.marketplace.model.MarketPostModel;
 import com.dodlu.core.persistence.marketplace.entity.MarketPost;
 import com.dodlu.core.persistence.marketplace.repository.MarketPostRepository;
@@ -33,6 +36,7 @@ public class DefaultMarketPlaceService {
   private final MarketPostRepository marketPostRepository;
   private final CustomerProfileRepository customerProfileRepository;
   private final CoreExceptionService exceptionService;
+  private final StorageService storageService;
 
   @Transactional
   public CompletableFuture<Page<MarketPostModel>> getMarketPosts(
@@ -104,13 +108,18 @@ public class DefaultMarketPlaceService {
 
   @Transactional
   public CompletableFuture<MarketPostModel> get(long id) {
-    return supplyAsync(
-        () ->
-            marketPostRepository
-                .findById(id)
-                .orElseThrow(
-                    () -> exceptionService.handleCreateNotFoundException("post does not exist"))
-                .toModel());
+    return supplyAsync(() -> getPost(id).toModel());
+  }
+
+  @Transactional
+  public CompletableFuture<Void> delete(long id) {
+    return runAsync(
+        () -> {
+          MarketPost item = getPost(id);
+          ImageDownloadRequest req = new ImageDownloadRequest().setImageUrl(item.getPhotoUrl());
+          storageService.deleteFile(req);
+          marketPostRepository.deleteById(id);
+        });
   }
 
   private Page<MarketPostModel> getPosts(
@@ -128,5 +137,11 @@ public class DefaultMarketPlaceService {
             .distinct()
             .collect(Collectors.toList());
     return new PageImpl<>(marketPosts, pageable, marketPostPage.getTotalElements());
+  }
+
+  private MarketPost getPost(long id) {
+    return marketPostRepository
+        .findById(id)
+        .orElseThrow(() -> exceptionService.handleCreateNotFoundException("post does not exist"));
   }
 }

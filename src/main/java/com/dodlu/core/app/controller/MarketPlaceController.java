@@ -75,4 +75,12 @@ public class MarketPlaceController {
     var post = marketPlaceService.get(itemId).join();
     return new ResponseModel<>(post);
   }
+
+  @DeleteMapping(value = "/items/{itemId}")
+  @Operation(description = "Delete a market post by Id")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<MarketPostModel> delete(@PathVariable("itemId") long itemId) {
+    marketPlaceService.delete(itemId).join();
+    return new ResponseModel<>(null);
+  }
 }
