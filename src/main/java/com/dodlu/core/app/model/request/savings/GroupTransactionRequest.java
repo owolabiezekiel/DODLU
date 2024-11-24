@@ -1,5 +1,7 @@
 package com.dodlu.core.app.model.request.savings;
 
+import com.dodlu.core.app.utils.validators.ValidEnum;
+import com.dodlu.core.domain.transaction.enums.TransactionType;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
@@ -24,7 +26,9 @@ public class GroupTransactionRequest {
   @NotEmpty(message = "memberId is required")
   private String memberId;
 
-  //  @NotNull(message = "category is required")
-  //  @ValidEnum(message = "invalid category")
-  //  private TransactionCategory category;
+  @NotNull(message = "category is required")
+  @ValidEnum(message = "invalid category")
+  private TransactionType type;
+
+  private String loanId;
 }

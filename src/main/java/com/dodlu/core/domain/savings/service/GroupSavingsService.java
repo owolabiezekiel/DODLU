@@ -193,27 +193,19 @@ public class GroupSavingsService {
             throw exceptionService.handleCreateBadRequest("Member not part of group");
           }
 
-          Transaction transaction =
-              Transaction.builder()
-                  .senderId(request.getMemberId())
-                  .senderName(extractFirstChars(customerProfile.getFullName(), 250))
-                  .senderType(EntityType.INDIVIDUAL)
-                  .receiverId(groupSavingId)
-                  .receiverName(extractFirstChars(groupSaving.getName(), 250))
-                  .receiverType(EntityType.GROUP)
-                  .currency(groupSaving.getCurrency())
-                  .amount(request.getAmount())
-                  .reference("CTG-" + UUID.randomUUID())
-                  .description(request.getDescription())
-                  .status("Completed")
-                  .type(TransactionType.GROUP_CONTRIBUTION)
-                  .transactionDateTime(LocalDateTime.now())
-                  .build();
-          transactionRepository.save(transaction);
-
-          GroupBalance balance = groupSaving.getBalance();
-          balance.setAvailableBalance(balance.getAvailableBalance().add(transaction.getAmount()));
-          groupBalanceRepository.save(balance);
+          switch (request.getType()) {
+            case LOAN_REPAYMENT:
+              saveLoanRepaymentTransaction(request);
+              break;
+            case GROUP_CONTRIBUTION:
+              saveGroupContributionTransaction(request, groupSaving, customerProfile);
+              break;
+            case LOAN_DISBURSEMENT:
+              saveLoanDisbursementTransaction(request, groupSaving, customerProfile);
+              break;
+            default:
+              throw exceptionService.handleCreateBadRequest("Unknown transaction type");
+          }
         });
   }
 
@@ -459,5 +451,103 @@ public class GroupSavingsService {
         .findById(loanId)
         .orElseThrow(
             () -> exceptionService.handleCreateNotFoundException("Group loan does not exist"));
+  }
+
+  private void saveLoanDisbursementTransaction(
+      GroupTransactionRequest request, GroupSaving groupSaving, CustomerProfile customerProfile) {
+    Transaction transaction =
+        Transaction.builder()
+            .senderId(groupSaving.getId())
+            .senderName(extractFirstChars(groupSaving.getName(), 250))
+            .senderType(EntityType.GROUP)
+            .receiverId(customerProfile.getId())
+            .receiverName(extractFirstChars(customerProfile.getFullName(), 250))
+            .receiverType(EntityType.INDIVIDUAL)
+            .currency(groupSaving.getCurrency())
+            .amount(request.getAmount())
+            .reference("GTC-" + UUID.randomUUID())
+            .description(request.getDescription())
+            .status("Completed")
+            .type(request.getType())
+            .transactionDateTime(LocalDateTime.now())
+            .build();
+
+    GroupBalance balance = groupSaving.getBalance();
+    balance.setAvailableBalance(balance.getAvailableBalance().subtract(transaction.getAmount()));
+    groupBalanceRepository.save(balance);
+
+    transactionTemplate.executeWithoutResult(
+        (n) -> {
+          transactionRepository.save(transaction);
+          groupBalanceRepository.save(balance);
+        });
+  }
+
+  private void saveGroupContributionTransaction(
+      GroupTransactionRequest request, GroupSaving groupSaving, CustomerProfile customerProfile) {
+    Transaction transaction =
+        Transaction.builder()
+            .senderId(request.getMemberId())
+            .senderName(extractFirstChars(customerProfile.getFullName(), 250))
+            .senderType(EntityType.INDIVIDUAL)
+            .receiverId(groupSaving.getId())
+            .receiverName(extractFirstChars(groupSaving.getName(), 250))
+            .receiverType(EntityType.GROUP)
+            .currency(groupSaving.getCurrency())
+            .amount(request.getAmount())
+            .reference("CTG-" + UUID.randomUUID())
+            .description(request.getDescription())
+            .status("Completed")
+            .type(request.getType())
+            .transactionDateTime(LocalDateTime.now())
+            .build();
+
+    GroupBalance balance = groupSaving.getBalance();
+    balance.setAvailableBalance(balance.getAvailableBalance().add(transaction.getAmount()));
+    groupBalanceRepository.save(balance);
+
+    transactionTemplate.executeWithoutResult(
+        (n) -> {
+          transactionRepository.save(transaction);
+          groupBalanceRepository.save(balance);
+        });
+  }
+
+  private void saveLoanRepaymentTransaction(GroupTransactionRequest request) {
+    if (isNullOrBlank(request.getLoanId())) {
+      throw exceptionService.handleCreateBadRequest("Loan Id is required");
+    }
+
+    GroupSavingLoan loan = getGroupSavingLoan(request.getLoanId());
+    GroupSaving groupSaving = loan.getLendingGroup();
+    CustomerProfile customer = loan.getBorrower();
+    GroupBalance balance = groupSaving.getBalance();
+
+    loan.setAmountRepaid(loan.getAmountRepaid().add(request.getAmount()));
+    balance.setAvailableBalance(balance.getAvailableBalance().add(request.getAmount()));
+
+    Transaction transaction =
+        Transaction.builder()
+            .senderId(customer.getId())
+            .senderName(extractFirstChars(customer.getFullName(), 250))
+            .senderType(EntityType.INDIVIDUAL)
+            .receiverId(groupSaving.getId())
+            .receiverName(extractFirstChars(groupSaving.getName(), 250))
+            .receiverType(EntityType.GROUP)
+            .currency(groupSaving.getCurrency())
+            .amount(request.getAmount())
+            .reference("CTG-" + UUID.randomUUID())
+            .description(request.getDescription())
+            .status("Completed")
+            .type(request.getType())
+            .transactionDateTime(LocalDateTime.now())
+            .build();
+
+    transactionTemplate.executeWithoutResult(
+        (n) -> {
+          transactionRepository.save(transaction);
+          groupBalanceRepository.save(balance);
+          groupLoanRepository.save(loan);
+        });
   }
 }
