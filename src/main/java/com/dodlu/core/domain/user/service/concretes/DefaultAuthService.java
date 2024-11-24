@@ -45,6 +45,7 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -70,6 +71,7 @@ public class DefaultAuthService implements AuthService {
   private final CountryRepository countryRepository;
   private final JwtService jwtService;
   private final SmsService smsService;
+  private final DefaultUserService userService;
   private final CoreExceptionService exceptionService;
 
   @Override
@@ -188,12 +190,19 @@ public class DefaultAuthService implements AuthService {
               throw exceptionService.handleCreateUnAuthorized("Account inactive or disabled");
             }
             String token = jwtService.generateToken(user);
-            return LoginResponseModel.builder().user(user.toModel()).accessToken(token).build();
+            var profile = userService.getCurrentUserProfile(user).get();
+            return LoginResponseModel.builder()
+                .user(user.toModel())
+                .accessToken(token)
+                .profile(profile)
+                .build();
           } catch (BadCredentialsException ex) {
             throw new CustomBadCredentialsException(
                 "Invalid username / password combination", response);
           } catch (InternalAuthenticationServiceException ex) {
             throw new CustomBadCredentialsException("User does not exist", response);
+          } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
           }
         });
   }
