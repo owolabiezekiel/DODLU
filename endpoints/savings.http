@@ -1,3 +1,12 @@
+#### Customer login
+#POST {{host}}/auth/login
+#Content-Type: application/json
+#
+#{
+#  "username": "owo.obaseki@gmail.com",
+#  "password": "password"
+#}
+
 ### Create Group Savings
 POST {{host}}/savings/group
 Content-Type: application/json
@@ -51,6 +60,14 @@ Authorization: {{customer_token}}
 GET {{host}}/savings/group/1a915c0e-9afe-4400-9e68-49c3915e8904/loans
 Authorization: {{customer_token}}
 
-### Get group loans by ID
+### Get group loan by ID
 GET {{host}}/savings/group/loans/11fec02f-2f45-4afb-a6f9-30ce7487c277
+Authorization: {{customer_token}}
+
+### Approve group loan by ID
+POST {{host}}/savings/group/loans/11fec02f-2f45-4afb-a6f9-30ce7487c277/approve
+Authorization: {{customer_token}}
+
+### Reject group loan by ID
+POST {{host}}/savings/group/loans/30fcb6e2-5b33-4367-a5b8-7969a8544a9c/reject
 Authorization: {{customer_token}}

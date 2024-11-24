@@ -118,4 +118,22 @@ public class SavingController {
     var loan = groupSavingsService.getGroupLoanById(user, groupLoanId).join();
     return new ResponseModel<>(loan);
   }
+
+  @PostMapping("/group/loans/{groupLoanId}/approve")
+  @Operation(description = "Approve group loan by Id")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> approveGroupLoan(
+      @AuthenticationPrincipal User user, @PathVariable("groupLoanId") String groupLoanId) {
+    groupSavingsService.approveLoan(user, groupLoanId).join();
+    return new ResponseModel<>(null);
+  }
+
+  @PostMapping("/group/loans/{groupLoanId}/reject")
+  @Operation(description = "Reject group loan by Id")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> rejectGroupLoan(
+      @AuthenticationPrincipal User user, @PathVariable("groupLoanId") String groupLoanId) {
+    groupSavingsService.rejectLoan(user, groupLoanId).join();
+    return new ResponseModel<>(null);
+  }
 }

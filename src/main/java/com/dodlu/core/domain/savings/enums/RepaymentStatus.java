@@ -9,6 +9,7 @@ public enum RepaymentStatus {
   PENDING("Pending"),
   IN_PROGRESS("In Progress"),
   COMPLETED("Completed"),
+  NOT_APPLICABLE("Not Applicable"),
   UNKNOWN("Unknown");
 
   private final String name;

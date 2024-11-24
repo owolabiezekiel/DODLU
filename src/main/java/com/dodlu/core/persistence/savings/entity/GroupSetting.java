@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Accessors(chain = true)
@@ -23,6 +24,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @ToString
 @SuperBuilder
 @RequiredArgsConstructor
+@DynamicUpdate
 public class GroupSetting extends BaseEntity {
   @OneToOne(optional = false)
   @JoinColumn(name = "group_savings_id", nullable = false, unique = true)

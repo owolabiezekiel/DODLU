@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -21,6 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @ToString
 @SuperBuilder
 @RequiredArgsConstructor
+@DynamicUpdate
 public class GroupSavingLoan extends BaseEntity {
   @ManyToOne(optional = false)
   @JoinColumn(name = "lending_group_id", referencedColumnName = "id")

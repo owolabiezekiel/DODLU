@@ -53,6 +53,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +69,7 @@ public class GroupSavingsService {
   private final TransactionRepository transactionRepository;
   private final ApprovalService approvalService;
   private final Gson gson;
+  private final TransactionTemplate transactionTemplate;
 
   @Transactional
   public CompletableFuture<GroupSavingModel> createGroupSaving(
@@ -339,6 +341,89 @@ public class GroupSavingsService {
                 .toModel());
   }
 
+  @Transactional
+  public CompletableFuture<Void> approveLoan(User user, String groupLoanId) {
+    return runAsync(
+        () -> {
+          GroupSavingLoan loan = getGroupSavingLoan(groupLoanId);
+
+          if (!loan.getLendingGroup().getAdmin().getEmail().equalsIgnoreCase(user.getEmail())) {
+            throw exceptionService.handleCreateUnAuthorized("Unauthorized");
+          }
+
+          if (loan.getLoanStatus() != LoanStatus.PENDING) {
+            throw exceptionService.handleCreateBadRequest(
+                "Action has been taken on this loan request. Please consider submitting another loan request");
+          }
+
+          GroupSaving groupSaving = loan.getLendingGroup();
+          GroupBalance groupBalance = groupSaving.getBalance();
+          CustomerProfile borrower = loan.getBorrower();
+
+          BigDecimal highestAmount = calculatePercent(groupBalance.getAvailableBalance(), 20.0F);
+          if (loan.getAmount().compareTo(highestAmount) > 0) {
+            throw exceptionService.handleCreateBadRequest(
+                "Amount exceeds group loan limit at this time");
+          }
+
+          Transaction transaction =
+              Transaction.builder()
+                  .senderId(groupSaving.getId())
+                  .senderName(extractFirstChars(groupSaving.getName(), 250))
+                  .senderType(EntityType.GROUP)
+                  .receiverId(borrower.getId())
+                  .receiverName(extractFirstChars(borrower.getFullName(), 250))
+                  .receiverType(EntityType.INDIVIDUAL)
+                  .currency(groupSaving.getCurrency())
+                  .amount(loan.getAmount())
+                  .reference("GTC-" + UUID.randomUUID())
+                  .description("Loan disbursement")
+                  .status("Completed")
+                  .type(TransactionType.LOAN_DISBURSEMENT)
+                  .transactionDateTime(LocalDateTime.now())
+                  .build();
+
+          BigDecimal newGroupBalance =
+              groupBalance.getAvailableBalance().subtract(loan.getAmount());
+          groupBalance.setAvailableBalance(newGroupBalance);
+
+          loan.setLoanStatus(LoanStatus.APPROVED);
+          loan.setApprovalDate(LocalDateTime.now());
+          loan.setRepaymentStatus(RepaymentStatus.IN_PROGRESS);
+
+          // TODO: Credit customer to be completed later
+          log.info("Auto Customer credit not enabled at this time. Please disburse manually");
+
+          transactionTemplate.executeWithoutResult(
+              (n) -> {
+                transactionRepository.save(transaction);
+                groupBalanceRepository.save(groupBalance);
+                groupLoanRepository.save(loan);
+              });
+        });
+  }
+
+  @Transactional
+  public CompletableFuture<Void> rejectLoan(User user, String groupLoanId) {
+    return runAsync(
+        () -> {
+          GroupSavingLoan loan = getGroupSavingLoan(groupLoanId);
+
+          if (!loan.getLendingGroup().getAdmin().getEmail().equalsIgnoreCase(user.getEmail())) {
+            throw exceptionService.handleCreateUnAuthorized("Unauthorized");
+          }
+          if (loan.getLoanStatus() != LoanStatus.PENDING) {
+            throw exceptionService.handleCreateBadRequest(
+                "Action has been taken on this loan request. Please consider submitting another loan request");
+          }
+
+          loan.setLoanStatus(LoanStatus.REJECTED);
+          loan.setRepaymentStatus(RepaymentStatus.NOT_APPLICABLE);
+          loan.setApprovalDate(LocalDateTime.now());
+          transactionTemplate.executeWithoutResult((n) -> groupLoanRepository.save(loan));
+        });
+  }
+
   private GroupBalance generateEmptyGroupBalance(GroupSaving groupSaving) {
     return GroupBalance.builder()
         .groupSavings(groupSaving)
@@ -367,5 +452,12 @@ public class GroupSavingsService {
         .findById(groupId)
         .orElseThrow(
             () -> exceptionService.handleCreateNotFoundException("Group saving does not exist"));
+  }
+
+  private GroupSavingLoan getGroupSavingLoan(String loanId) {
+    return groupLoanRepository
+        .findById(loanId)
+        .orElseThrow(
+            () -> exceptionService.handleCreateNotFoundException("Group loan does not exist"));
   }
 }
