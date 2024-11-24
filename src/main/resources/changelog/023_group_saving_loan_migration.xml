@@ -83,4 +83,16 @@
                                  onUpdate="RESTRICT"/>
     </changeSet>
 
+    <changeSet id="1732439086341-1" author="owolabiezekiel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="group_saving_loans" columnName="rejection_date"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="group_saving_loans">
+            <column name="rejection_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

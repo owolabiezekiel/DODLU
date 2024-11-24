@@ -16,6 +16,7 @@ public record GroupSavingLoanModel(
     LoanStatus loanStatus,
     RepaymentStatus repaymentStatus,
     LocalDateTime approvalDate,
+    LocalDateTime rejectionDate,
     BigDecimal amount,
     BigDecimal interest,
     BigDecimal repaymentAmount,

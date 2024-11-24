@@ -43,6 +43,7 @@ public class GroupSavingLoan extends BaseEntity {
   private RepaymentStatus repaymentStatus;
 
   private LocalDateTime approvalDate;
+  private LocalDateTime rejectionDate;
 
   @Column(nullable = false)
   private BigDecimal amount;

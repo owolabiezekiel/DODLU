@@ -419,7 +419,7 @@ public class GroupSavingsService {
 
           loan.setLoanStatus(LoanStatus.REJECTED);
           loan.setRepaymentStatus(RepaymentStatus.NOT_APPLICABLE);
-          loan.setApprovalDate(LocalDateTime.now());
+          loan.setRejectionDate(LocalDateTime.now());
           transactionTemplate.executeWithoutResult((n) -> groupLoanRepository.save(loan));
         });
   }
