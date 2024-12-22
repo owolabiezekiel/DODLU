@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 public class UserModel {
   private String id;
   private String email;
+  private String phoneNumber;
   private String username;
   private UserType type;
   private LocalDateTime lastLoginDate;

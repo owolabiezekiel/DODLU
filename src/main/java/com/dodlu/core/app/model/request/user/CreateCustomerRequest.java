@@ -22,7 +22,6 @@ import lombok.experimental.Accessors;
 public class CreateCustomerRequest {
   private String username;
 
-  @NotBlank(message = "email is required")
   @Email(message = "email not valid")
   private String email;
 

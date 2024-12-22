@@ -39,6 +39,9 @@ public class User extends BaseEntity implements UserDetails {
   @Column(unique = true)
   private String username;
 
+  @Column(unique = true)
+  private String phoneNumber;
+
   @Enumerated(EnumType.STRING)
   private UserType type;
 
@@ -66,6 +69,7 @@ public class User extends BaseEntity implements UserDetails {
         .setId(getId())
         .setEmail(getEmail())
         .setUsername(getUsername())
+        .setPhoneNumber(getPhoneNumber())
         .setType(getType())
         .setLastLoginDate(getLastLoginDate())
         .setStatus(getStatus())
@@ -73,7 +77,12 @@ public class User extends BaseEntity implements UserDetails {
   }
 
   public GeneralProfileModel toGeneralProfileModel() {
-    return GeneralProfileModel.builder().id(id).email(getEmail()).username(getUsername()).build();
+    return GeneralProfileModel.builder()
+        .id(id)
+        .email(getEmail())
+        .phoneNumber(getPhoneNumber())
+        .username(getUsername())
+        .build();
   }
 
   @Override

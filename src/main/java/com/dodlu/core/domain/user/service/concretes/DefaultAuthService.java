@@ -2,7 +2,6 @@ package com.dodlu.core.domain.user.service.concretes;
 
 import static com.dodlu.core.app.utils.Constants.*;
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
-import static com.dodlu.core.app.utils.UserUtilities.generateUsername;
 import static com.dodlu.core.domain.user.enums.TokenType.RESET_PASSWORD;
 import static com.dodlu.core.domain.user.enums.TokenType.VERIFY_PHONE;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
@@ -82,7 +81,7 @@ public class DefaultAuthService implements AuthService {
           Role role = getRoleByName(roleRepository, exceptionService, STUDENT_ROLE_NAME_STRING);
 
           User user =
-              buildUser(request.getUsername(), request.getEmail(), request.getPassword(), role);
+              buildUser(request.getUsername(), request.getEmail(), request.getPassword(), "", role);
           user.setStatus(INACTIVE).setType(STUDENT);
           user = userRepository.save(user);
 
@@ -97,15 +96,20 @@ public class DefaultAuthService implements AuthService {
           doCreateCustomerValidation(request);
 
           Role role = getRoleByName(roleRepository, exceptionService, CUSTUMER_ROLE_NAME_STRING);
+          var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
+          String phoneNumber = country.getPhoneExtensionCode() + request.getPhoneNumber();
           User user =
-              buildUser(request.getUsername(), request.getEmail(), request.getPassword(), role);
+              buildUser(
+                  request.getUsername(),
+                  request.getEmail(),
+                  request.getPassword(),
+                  phoneNumber,
+                  role);
           user.setStatus(ACTIVE)
               .setType(CUSTOMER); // to-do: set back to INACTIVE when we start phone validation
           userRepository.save(user);
 
           String passcode = UserUtilities.generateRandomDigits(4);
-
-          var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
 
           var customerProfile =
               CustomerProfile.builder()
@@ -155,7 +159,7 @@ public class DefaultAuthService implements AuthService {
           Role role = getRoleByName(roleRepository, exceptionService, EMPLOYER_ROLE_NAME_STRING);
 
           User user =
-              buildUser(request.getEmail(), request.getEmail(), request.getPassword(), role);
+              buildUser(request.getEmail(), request.getEmail(), request.getPassword(), "", role);
           user.setStatus(ACTIVE).setType(EMPLOYER);
           user = userRepository.save(user);
 
@@ -355,14 +359,13 @@ public class DefaultAuthService implements AuthService {
         });
   }
 
-  private User buildUser(String username, String email, String password, Role role) {
+  private User buildUser(
+      String username, String email, String password, String phoneNumber, Role role) {
     return User.builder()
-        .username(
-            isNullOrBlank(username)
-                ? generateUsername(email.toLowerCase().strip())
-                : username.toLowerCase().strip())
-        .email(email.strip())
+        .username(isNullOrBlank(username) ? phoneNumber.strip() : username.toLowerCase().strip())
+        .email(isNullOrBlank(email) ? null : email.strip())
         .password(passwordEncoder.encode(password.strip()))
+        .phoneNumber(phoneNumber.strip())
         .roles(Set.of(role))
         .status(ACTIVE)
         .build();
@@ -418,7 +421,9 @@ public class DefaultAuthService implements AuthService {
     if (!isNullOrBlank(request.getUsername())) {
       checkForDuplicateUsername(request.getUsername());
     }
-    checkForDuplicateEmail(request.getEmail());
+    if (!isNullOrBlank(request.getEmail())) {
+      checkForDuplicateEmail(request.getEmail());
+    }
     validateCountry(request.getCountry());
     checkForDuplicatePhoneNumber(request.getPhoneNumber(), request.getCountry());
   }

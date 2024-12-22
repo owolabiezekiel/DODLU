@@ -34,7 +34,15 @@ public class AppConfiguration {
     return username ->
         userRepository
             .findByUsernameEqualsIgnoreCase(username)
-            .orElseGet(() -> userRepository.findByEmailEqualsIgnoreCase(username).orElse(null));
+            .orElseGet(
+                () ->
+                    userRepository
+                        .findByEmailEqualsIgnoreCase(username)
+                        .orElseGet(
+                            () ->
+                                userRepository
+                                    .findByPhoneNumberEqualsIgnoreCase(username)
+                                    .orElse(null)));
   }
 
   @Bean

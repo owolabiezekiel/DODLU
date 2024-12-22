@@ -9,6 +9,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 
   Optional<User> findByEmailEqualsIgnoreCase(String email);
 
+  Optional<User> findByPhoneNumberEqualsIgnoreCase(String phoneNumber);
+
   boolean existsByUsernameEqualsIgnoreCase(String username);
 
   boolean existsByEmailEqualsIgnoreCase(String email);

@@ -74,4 +74,18 @@
             <column name="user_id"/>
         </createIndex>
     </changeSet>
+
+    <changeSet id="1734885137656-1" author="owolabiezekiel">
+        <preConditions>
+            <not>
+                <columnExists tableName="users" columnName="phone_number"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="users">
+            <column name="phone_number" type="VARCHAR(30)">
+                <constraints nullable="true" unique="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
