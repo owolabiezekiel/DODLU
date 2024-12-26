@@ -52,6 +52,10 @@ public class CustomerProfile extends BaseEntity {
   @JoinColumn(name = "country_id", referencedColumnName = "id")
   private Country country;
 
+  @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+  @ToString.Exclude
+  private CustomerVerification verification;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

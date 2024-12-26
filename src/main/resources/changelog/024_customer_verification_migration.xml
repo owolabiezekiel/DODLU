@@ -1,0 +1,55 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet author="tobiowolabi" id="customer_verifications_migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="customer_verifications"/>
+            </not>
+        </preConditions>
+        <createTable tableName="customer_verifications">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_customer_verifications"/>
+            </column>
+
+            <column name="customer_id" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="isbvnverified" type="BOOLEAN" defaultValue="false"/>
+            <column name="isninverified" type="BOOLEAN" defaultValue="false"/>
+            <column name="is_driver_license_verified" type="BOOLEAN" defaultValue="false"/>
+            <column name="is_passport_verified" type="BOOLEAN" defaultValue="false"/>
+
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="idx_cust_verif_cust_id"
+                     tableName="customer_verifications">
+            <column name="customer_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="add_foreign_key_constraint_on_customer_verification_table" author="tobilobaowolabi (generated)">
+        <addForeignKeyConstraint baseTableName="customer_verifications"
+                                 baseColumnNames="customer_id"
+                                 constraintName="fk_customer_verifications"
+                                 referencedTableName="customer_profiles"
+                                 referencedColumnNames="id"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
+    </changeSet>
+
+
+
+</databaseChangeLog>
