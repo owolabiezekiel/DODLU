@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,7 +24,7 @@ public class ImmunizationCron {
   private final ImmunizationRecordRepository immunizationRecordRepository;
   private final SmsService smsService;
 
-  @Scheduled(cron = "0 0 0 * * *") // Runs every day at 12 AM
+  // @Scheduled(cron = "0 0 0 * * *") // Runs every day at 12 AM
   // @Scheduled(cron = "0 * * * * *") // Runs every minute -- Testing purposes only
   public void notifyParentsOfDueVaccine() {
     log.info("fetching all immunization that are due for today");
