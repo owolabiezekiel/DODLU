@@ -1,6 +1,7 @@
 package com.dodlu.core.domain.user.service.concretes;
 
 import static com.dodlu.core.app.utils.Constants.*;
+import static com.dodlu.core.app.utils.StringUtilities.extractLastDigits;
 import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.domain.user.enums.TokenType.RESET_PASSWORD;
 import static com.dodlu.core.domain.user.enums.TokenType.VERIFY_PHONE;
@@ -19,7 +20,6 @@ import com.dodlu.core.app.exceptions.CustomBadCredentialsException;
 import com.dodlu.core.app.model.request.notification.SmsRequest;
 import com.dodlu.core.app.model.request.user.*;
 import com.dodlu.core.app.model.response.user.LoginResponseModel;
-import com.dodlu.core.app.utils.StringUtilities;
 import com.dodlu.core.app.utils.UserUtilities;
 import com.dodlu.core.domain.notification.sms.SmsService;
 import com.dodlu.core.domain.user.enums.Gender;
@@ -97,7 +97,8 @@ public class DefaultAuthService implements AuthService {
 
           Role role = getRoleByName(roleRepository, exceptionService, CUSTUMER_ROLE_NAME_STRING);
           var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
-          String phoneNumber = country.getPhoneExtensionCode() + request.getPhoneNumber();
+          String phoneNumber =
+              country.getPhoneExtensionCode() + extractLastDigits(request.getPhoneNumber(), 10);
           User user =
               buildUser(
                   request.getUsername(),
@@ -105,7 +106,7 @@ public class DefaultAuthService implements AuthService {
                   request.getPassword(),
                   phoneNumber,
                   role);
-          user.setStatus(ACTIVE)
+          user.setStatus(INACTIVE)
               .setType(CUSTOMER); // to-do: set back to INACTIVE when we start phone validation
           userRepository.save(user);
 
@@ -141,9 +142,7 @@ public class DefaultAuthService implements AuthService {
                     SmsRequest.builder()
                         .message(
                             format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), passcode))
-                        .number(
-                            country.getPhoneExtensionCode()
-                                + StringUtilities.extractLastDigits(request.getPhoneNumber(), 10))
+                        .number(phoneNumber)
                         .build();
                 smsService.send(smsRequest);
               });
@@ -313,8 +312,7 @@ public class DefaultAuthService implements AuthService {
                         .message(passcode)
                         .number(
                             customerProfile.getCountry().getPhoneExtensionCode()
-                                + StringUtilities.extractLastDigits(
-                                    customerProfile.getPhoneNumber(), 10))
+                                + extractLastDigits(customerProfile.getPhoneNumber(), 10))
                         .build();
                 smsService.send(smsRequest);
               });
