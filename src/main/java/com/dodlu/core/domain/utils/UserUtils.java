@@ -19,7 +19,18 @@ public class UserUtils {
         .orElseThrow(() -> exceptionService.handleCreateNotFoundException("user does not exist"));
   }
 
-  public static User getUser(
+  public static User getUserByPhoneNumber(
+      UserRepository repository, CoreExceptionService exceptionService, String phoneNumber) {
+    return repository
+        .findByPhoneNumberEqualsIgnoreCase(phoneNumber)
+        .orElseThrow(
+            () -> {
+              log.info("User with phone number {} does not exist", phoneNumber);
+              return exceptionService.handleCreateBadRequest("User does not exisr");
+            });
+  }
+
+  public static User rgetUser(
       UserRepository userRepository, String id, Supplier<RuntimeException> errorSupplier) {
     return userRepository.findById(id).orElseThrow(errorSupplier);
   }

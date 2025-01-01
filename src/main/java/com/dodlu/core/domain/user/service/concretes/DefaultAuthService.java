@@ -9,7 +9,9 @@ import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.*;
 import static com.dodlu.core.domain.utils.Constants.VERIFY_PHONE_STRING;
+import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByPhoneNumber;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
+import static com.dodlu.core.domain.utils.UserUtils.getUserByPhoneNumber;
 import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -136,16 +138,8 @@ public class DefaultAuthService implements AuthService {
 
           tokenRepository.save(token);
 
-          CompletableFuture.runAsync(
-              () -> {
-                var smsRequest =
-                    SmsRequest.builder()
-                        .message(
-                            format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), passcode))
-                        .number(phoneNumber)
-                        .build();
-                smsService.send(smsRequest);
-              });
+          sendSMS(
+              format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), passcode), phoneNumber);
         });
   }
 
@@ -357,6 +351,43 @@ public class DefaultAuthService implements AuthService {
         });
   }
 
+  @Override
+  public CompletableFuture<Void> resendPhoneVerification(ResendPhoneVerificationRequest request) {
+    return runAsync(
+        () -> {
+          var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
+          String phoneNumber =
+              country.getPhoneExtensionCode() + extractLastDigits(request.getPhoneNumber(), 10);
+
+          User user = getUserByPhoneNumber(userRepository, exceptionService, phoneNumber);
+
+          if (user.isEnabled()) {
+            throw exceptionService.handleCreateBadRequest("User account is already active");
+          }
+
+          var existingToken = tokenRepository.findByUserAndType(user, RESET_PASSWORD);
+          existingToken.ifPresent(tokenRepository::delete);
+
+          CustomerProfile customerProfile =
+              getCustomerByPhoneNumber(customerProfileRepository, exceptionService, phoneNumber);
+
+          String newTokenString = UserUtilities.generateRandomDigits(4);
+          Token token =
+              Token.builder()
+                  .user(user)
+                  .code(passwordEncoder.encode(newTokenString))
+                  .type(VERIFY_PHONE)
+                  .createdAt(LocalDateTime.now())
+                  .expiresAt(LocalDateTime.now().plusMinutes(30))
+                  .build();
+
+          tokenRepository.save(token);
+          sendSMS(
+              format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), newTokenString),
+              phoneNumber);
+        });
+  }
+
   private User buildUser(
       String username, String email, String password, String phoneNumber, Role role) {
     return User.builder()
@@ -432,5 +463,13 @@ public class DefaultAuthService implements AuthService {
       throw exceptionService.handleCreateBadRequest(
           format("We currently do not support registration from %s", country));
     }
+  }
+
+  private void sendSMS(String message, String phoneNumber) {
+    CompletableFuture.runAsync(
+        () -> {
+          var smsRequest = SmsRequest.builder().message(message).number(phoneNumber).build();
+          smsService.send(smsRequest);
+        });
   }
 }

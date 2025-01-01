@@ -31,6 +31,14 @@ public class AuthController {
     return authService.registerCustomer(request).thenApply(ResponseModel::new).join();
   }
 
+  @PostMapping(value = "/customer/resend-otp", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Endpoint for customers to request OTP resend")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> resendPhoneVerification(
+      @Valid @RequestBody ResendPhoneVerificationRequest request) {
+    return authService.resendPhoneVerification(request).thenApply(ResponseModel::new).join();
+  }
+
   @PostMapping(value = "/customer/verify-phone", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint for customers to verify phone number")
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})

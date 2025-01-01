@@ -25,4 +25,17 @@ public class CustomerProfileUtils {
         .findByUsernameEqualsIgnoreCase(username)
         .orElseThrow(() -> exceptionService.handleCreateBadRequest("Customer does not exist"));
   }
+
+  public static CustomerProfile getCustomerByPhoneNumber(
+      CustomerProfileRepository repository,
+      CoreExceptionService exceptionService,
+      String phoneNumber) {
+    return repository
+        .findByPhoneNumber(phoneNumber)
+        .orElseThrow(
+            () -> {
+              log.info("Customer with phone number {} does not exist", phoneNumber);
+              return exceptionService.handleCreateBadRequest("Could not fetch customer details");
+            });
+  }
 }
