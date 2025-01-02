@@ -8,6 +8,7 @@ import static com.dodlu.core.domain.user.enums.TokenType.VERIFY_PHONE;
 import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.EntityStatus.INACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.*;
+import static com.dodlu.core.domain.utils.Constants.PASSWORD_RESET_STRING;
 import static com.dodlu.core.domain.utils.Constants.VERIFY_PHONE_STRING;
 import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByPhoneNumber;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
@@ -262,32 +263,21 @@ public class DefaultAuthService implements AuthService {
   }
 
   @Override
-  public CompletableFuture<Void> requestPasswordReset(String email) {
+  public CompletableFuture<Void> requestPasswordReset(SendPhoneOtpRequest request) {
     return runAsync(
         () -> {
-          CustomerProfile customerProfile =
-              customerProfileRepository
-                  .findByEmailEqualsIgnoreCase(email)
-                  .orElseThrow(
-                      () -> {
-                        log.info("Customer with email {} does not exist", email);
-                        return exceptionService.handleCreateBadRequest("User does not exist");
-                      });
+          var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
+          String phoneNumber =
+              country.getPhoneExtensionCode() + extractLastDigits(request.getPhoneNumber(), 10);
 
-          User user =
-              userRepository
-                  .findByEmailEqualsIgnoreCase(email)
-                  .orElseThrow(
-                      () -> {
-                        log.info("User with email {} does not exist", email);
-                        return exceptionService.handleCreateBadRequest("User does not exist");
-                      });
+          CustomerProfile customerProfile =
+              getCustomerByPhoneNumber(customerProfileRepository, exceptionService, phoneNumber);
+          User user = getUserByPhoneNumber(userRepository, exceptionService, phoneNumber);
 
           var existingToken = tokenRepository.findByUserAndType(user, RESET_PASSWORD);
           existingToken.ifPresent(tokenRepository::delete);
 
           String passcode = UserUtilities.generateRandomDigits(6);
-          log.info("Passcode generated was {}", passcode);
 
           Token token =
               Token.builder()
@@ -299,17 +289,8 @@ public class DefaultAuthService implements AuthService {
                   .build();
           tokenRepository.save(token);
 
-          CompletableFuture.runAsync(
-              () -> {
-                var smsRequest =
-                    SmsRequest.builder()
-                        .message(passcode)
-                        .number(
-                            customerProfile.getCountry().getPhoneExtensionCode()
-                                + extractLastDigits(customerProfile.getPhoneNumber(), 10))
-                        .build();
-                smsService.send(smsRequest);
-              });
+          sendSMS(
+              format(PASSWORD_RESET_STRING, customerProfile.getFirstName(), passcode), phoneNumber);
         });
   }
 
@@ -317,14 +298,10 @@ public class DefaultAuthService implements AuthService {
   public CompletableFuture<Void> completePasswordReset(ResetPasswordRequest request) {
     return runAsync(
         () -> {
-          User user =
-              userRepository
-                  .findByEmailEqualsIgnoreCase(request.getEmail())
-                  .orElseThrow(
-                      () -> {
-                        log.info("User with email {} does not exist", request.getEmail());
-                        return exceptionService.handleCreateBadRequest("User does not exist");
-                      });
+          var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
+          String phoneNumber =
+              country.getPhoneExtensionCode() + extractLastDigits(request.getPhoneNumber(), 10);
+          User user = getUserByPhoneNumber(userRepository, exceptionService, phoneNumber);
 
           var existingToken = tokenRepository.findByUserAndType(user, RESET_PASSWORD);
           if (existingToken.isEmpty()) {
@@ -352,7 +329,7 @@ public class DefaultAuthService implements AuthService {
   }
 
   @Override
-  public CompletableFuture<Void> resendPhoneVerification(ResendPhoneVerificationRequest request) {
+  public CompletableFuture<Void> resendPhoneVerification(SendPhoneOtpRequest request) {
     return runAsync(
         () -> {
           var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();

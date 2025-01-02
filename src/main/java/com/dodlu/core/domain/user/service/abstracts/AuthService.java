@@ -21,9 +21,9 @@ public interface AuthService {
 
   CompletableFuture<Void> verifyPhone(VerifyPhoneRequest request);
 
-  CompletableFuture<Void> requestPasswordReset(String email);
+  CompletableFuture<Void> requestPasswordReset(SendPhoneOtpRequest request);
 
   CompletableFuture<Void> completePasswordReset(ResetPasswordRequest request);
 
-  CompletableFuture<Void> resendPhoneVerification(ResendPhoneVerificationRequest request);
+  CompletableFuture<Void> resendPhoneVerification(SendPhoneOtpRequest request);
 }

@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Accessors(chain = true)
 @Builder
-public class ResendPhoneVerificationRequest {
+public class SendPhoneOtpRequest {
   @NotBlank(message = "phoneNumber is required")
   @Size(min = 10, message = "phoneNumber must be at least 10 characters")
   private String phoneNumber;

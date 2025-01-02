@@ -35,7 +35,7 @@ public class AuthController {
   @Operation(description = "Endpoint for customers to request OTP resend")
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
   public ResponseModel<Void> resendPhoneVerification(
-      @Valid @RequestBody ResendPhoneVerificationRequest request) {
+      @Valid @RequestBody SendPhoneOtpRequest request) {
     return authService.resendPhoneVerification(request).thenApply(ResponseModel::new).join();
   }
 
@@ -49,8 +49,9 @@ public class AuthController {
   @PostMapping(value = "/customer/request-password-reset")
   @Operation(description = "Endpoint for customers to request password reset")
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
-  public ResponseModel<Void> customerRequestPasswordReset(@RequestParam() String email) {
-    return authService.requestPasswordReset(email).thenApply(ResponseModel::new).join();
+  public ResponseModel<Void> customerRequestPasswordReset(
+      @Valid @RequestBody SendPhoneOtpRequest request) {
+    return authService.requestPasswordReset(request).thenApply(ResponseModel::new).join();
   }
 
   @PostMapping(value = "/customer/complete-password-reset", consumes = APPLICATION_JSON_VALUE)
