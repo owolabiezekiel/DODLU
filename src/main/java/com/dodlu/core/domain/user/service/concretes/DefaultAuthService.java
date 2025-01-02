@@ -209,7 +209,6 @@ public class DefaultAuthService implements AuthService {
   public CompletableFuture<Void> changePassword(User user, ChangePasswordRequest request) {
     return runAsync(
         () -> {
-          log.info("{}", user.getPassword());
           if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw exceptionService.handleCreateBadRequest("Old password incorrect");
           }
@@ -269,6 +268,8 @@ public class DefaultAuthService implements AuthService {
           var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
           String phoneNumber =
               country.getPhoneExtensionCode() + extractLastDigits(request.getPhoneNumber(), 10);
+
+          log.info("Phone number is {}", phoneNumber);
 
           CustomerProfile customerProfile =
               getCustomerByPhoneNumber(customerProfileRepository, exceptionService, phoneNumber);
@@ -362,6 +363,34 @@ public class DefaultAuthService implements AuthService {
           sendSMS(
               format(VERIFY_PHONE_STRING, customerProfile.getFirstName(), newTokenString),
               phoneNumber);
+        });
+  }
+
+  @Override
+  public CompletableFuture<Void> verifyOtp(VerifyOtpRequest request) {
+    return runAsync(
+        () -> {
+          var country = countryRepository.findByNameEqualsIgnoreCase(request.getCountry()).get();
+          String phoneNumber =
+              country.getPhoneExtensionCode() + extractLastDigits(request.getPhoneNumber(), 10);
+
+          User user = getUserByPhoneNumber(userRepository, exceptionService, phoneNumber);
+          var existingToken = tokenRepository.findByUserAndType(user, request.getTokenType());
+
+          if (existingToken.isEmpty()) {
+            log.info("OTP not found");
+            throw exceptionService.handleCreateBadRequest("Invalid OTP");
+          }
+
+          if (existingToken.get().getExpiresAt().isBefore(LocalDateTime.now())) {
+            log.info("OTP has expired");
+            throw exceptionService.handleCreateBadRequest("Expired OTP supplied");
+          }
+
+          if (!passwordEncoder.matches(request.getPasscode(), existingToken.get().getCode())) {
+            log.info("OTP does not match");
+            throw exceptionService.handleCreateBadRequest("Invalid OTP");
+          }
         });
   }
 

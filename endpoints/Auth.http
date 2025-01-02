@@ -157,3 +157,22 @@ Authorization: {{student_token}}
   "confirmNewPassword": "password"
 }
 
+### Verify OTP
+POST {{host}}/auth/verify-otp
+Content-Type: application/json
+
+{
+  "country": "Nigeria",
+  "passcode": "162578",
+  "phoneNumber": "08106723916",
+  "tokenType": "RESET_PASSWORD"
+}
+
+### Initiate Password reset
+POST {{host}}/auth/customer/request-password-reset
+Content-Type: application/json
+
+{
+  "country": "Nigeria",
+  "phoneNumber": "08106723916"
+}

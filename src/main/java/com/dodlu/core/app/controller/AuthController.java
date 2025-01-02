@@ -62,13 +62,12 @@ public class AuthController {
     return authService.completePasswordReset(request).thenApply(ResponseModel::new).join();
   }
 
-  //  @PostMapping(value = "/employer/register", consumes = APPLICATION_JSON_VALUE)
-  //  @Operation(description = "Endpoint for employers to register")
-  //  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = UserModel.class)})
-  //  public ResponseModel<UserModel> employerRegister(
-  //      @Valid @RequestBody RegisterEmployerRequest request) {
-  //    return authService.registerEmployer(request).thenApply(ResponseModel::new).join();
-  //  }
+  @PostMapping(value = "/verify-otp", consumes = APPLICATION_JSON_VALUE)
+  @Operation(description = "Endpoint to verify OTPs")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public ResponseModel<Void> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+    return authService.verifyOtp(request).thenApply(ResponseModel::new).join();
+  }
 
   @PostMapping(value = "/login", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint to login")
