@@ -116,3 +116,14 @@ sms:
       phone-number: ${TWILIO_PHONE_NUMBER:sample-phone-number}
       auth-token: ${TWILIO_AUTH_TOKEN:sample-auth-token}
       callback-url: ${TWILIO_CALLBACK_URL:https://7e36-105-113-27-175.ngrok-free.app/v1/webhook/twilio/sms-update}
+
+verification:
+  active-provider: ${VERIFICATION_PROVIDER_NAME:youverify}
+  providers:
+    you-verify:
+      api-key: ${YOU_VERIFY_API_KEY:oyRQexWE.o9eQ3yiBmNRUJ5Nrmy4CaLoOb3ZD4nmqN1zu}
+      base-url: ${YOU_VERIFY_BASE_URL:https://api.sandbox.youverify.co}
+      bvn-url: ${YOU_VERIFY_BASE_URL}/v2/api/identity/ng/bvn
+      nin-url: ${YOU_VERIFY_BASE_URL}/v2/api/identity/ng/nin
+    prembly:
+      api-key: sample-api-key

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.models.info.License;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -18,6 +19,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @AllArgsConstructor
@@ -62,6 +64,11 @@ public class AppConfiguration {
         .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
         .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
         .create();
+  }
+
+  @Bean
+  public RestTemplate restTemplate() {
+    return new RestTemplateBuilder().build();
   }
 
   @Bean

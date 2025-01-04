@@ -1,0 +1,14 @@
+package com.dodlu.core.domain.kyc.service;
+
+import com.dodlu.core.app.exceptions.CoreExceptionService;
+import java.util.concurrent.CompletableFuture;
+
+public interface KycService {
+  default CompletableFuture<Void> verifyBVN() {
+    throw new CoreExceptionService().handleCreateNotImplementedException("Not Implemented");
+  }
+
+  default CompletableFuture<Void> verifyNIN() {
+    throw new CoreExceptionService().handleCreateNotImplementedException("Not Implemented");
+  }
+}
