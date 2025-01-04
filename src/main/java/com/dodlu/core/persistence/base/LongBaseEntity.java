@@ -1,9 +1,7 @@
 package com.dodlu.core.persistence.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -24,7 +22,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SuperBuilder
 @AllArgsConstructor
 public class LongBaseEntity implements Serializable {
-  @Id protected Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  protected Long id;
 
   @JsonIgnore @CreationTimestamp LocalDateTime createdAt;
   @JsonIgnore @UpdateTimestamp LocalDateTime updatedAt;

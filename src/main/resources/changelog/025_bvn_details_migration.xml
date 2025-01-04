@@ -1,0 +1,95 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="tobiowolabi" id="create-bvn-details-table">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="bvn_details"/>
+            </not>
+        </preConditions>
+        <createTable tableName="bvn_details">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true" primaryKeyName="pk_bvn_details"/>
+            </column>
+
+            <column name="user_id" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="bvn" type="VARCHAR(11)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="parent_id" type="VARCHAR(50)"/>
+            <column name="status" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reason" type="VARCHAR(100)"/>
+            <column name="data_validation" type="${boolean}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="selfie_validation" type="${boolean}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="middle_name" type="VARCHAR(100)"/>
+            <column name="last_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enrollment_branch" type="VARCHAR(100)"/>
+            <column name="enrollment_institution" type="VARCHAR(100)"/>
+            <column name="mobile" type="VARCHAR(11)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="date_of_birth" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_consent" type="${boolean}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_number" type="VARCHAR(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nin" type="VARCHAR(11)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="business_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gender" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requested_by_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_at" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
+

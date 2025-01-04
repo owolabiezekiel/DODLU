@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.CompletionException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
@@ -35,9 +36,26 @@ public class RestControllerAdvice<T> {
     this.objectMapper = objectMapper;
   }
 
+  @ExceptionHandler(value = {DataIntegrityViolationException.class})
+  public void handleDataIntegrityViolationException(
+      DataIntegrityViolationException ex, HttpServletResponse response) throws IOException {
+    log.error("Data integrity violation error encountered: {}", ex.getLocalizedMessage());
+
+    ResponseModel<?> responseModel =
+        new ResponseModel<>(
+            null,
+            ex.getLocalizedMessage(),
+            Collections.singletonList(ex.getLocalizedMessage()),
+            BAD_REQUEST.value());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(BAD_REQUEST.value());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
+  }
+
   @ExceptionHandler(value = {FileUploadException.class, NoSuchElementException.class})
   public ResponseEntity<ResponseModel<T>> handleUploadException(Exception ex) {
-    log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
+    log.error("Upload exception encountered: {}", ex.getMessage());
     return new ResponseEntity<>(
         new ResponseModel<>(
             null, "", singletonList(ex.getMessage()), INTERNAL_SERVER_ERROR.value()),
@@ -49,6 +67,9 @@ public class RestControllerAdvice<T> {
       throws IOException {
     if (ex.getCause() instanceof CoreException) {
       handleDomainException((CoreException) ex.getCause(), response);
+    } else if (ex.getCause() instanceof DataIntegrityViolationException) {
+      handleDataIntegrityViolationException(
+          (DataIntegrityViolationException) ex.getCause(), response);
     } else {
       handleException(ex, response);
     }
@@ -57,7 +78,7 @@ public class RestControllerAdvice<T> {
   @ExceptionHandler(value = {AccessDeniedException.class})
   public void handleAccessDeniedException(AccessDeniedException ex, HttpServletResponse response)
       throws IOException {
-    log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
+    log.error("Access denied exception encountered: {}", ex.getMessage());
     ResponseModel<?> responseModel =
         new ResponseModel<>(
             null, ex.getMessage(), Collections.singletonList(ex.getMessage()), FORBIDDEN.value());
@@ -69,7 +90,7 @@ public class RestControllerAdvice<T> {
   @ExceptionHandler(value = {CoreException.class})
   public void handleDomainException(CoreException ex, HttpServletResponse response)
       throws IOException {
-    log.error("CoreException encountered: {}", ex.getMessage(), ex);
+    log.error("Domain encountered: {}", ex.getMessage());
 
     ResponseModel<?> responseModel =
         new ResponseModel<>(
@@ -97,7 +118,7 @@ public class RestControllerAdvice<T> {
   @ExceptionHandler(value = {ConstraintViolationException.class})
   public ResponseEntity<ResponseModel<T>> handleConstraintViolation(
       ConstraintViolationException ex) {
-    log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
+    log.error("Constraint violation exception encountered: {}", ex.getMessage());
     return new ResponseEntity<>(
         new ResponseModel<>(
             null, "", ErrorFormatter.format(ex.getConstraintViolations()), BAD_REQUEST.value()),
@@ -131,7 +152,7 @@ public class RestControllerAdvice<T> {
   @ExceptionHandler(value = {MultipartException.class})
   public ResponseEntity<ResponseModel<T>> handleBadRequestException(
       Exception ex, WebRequest request) {
-    log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
+    log.error("Unhandled exception encountered: {}", ex.getMessage());
     String msg =
         String.format(
             "Exception message [%s] %n Metadata [%s]",
@@ -150,7 +171,7 @@ public class RestControllerAdvice<T> {
   @ExceptionHandler(value = {IllegalArgumentException.class})
   public void handleIllegalArgumentException(
       IllegalArgumentException ex, HttpServletResponse response) throws IOException {
-    log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
+    log.error("Unhandled exception encountered: {}", ex.getMessage());
     ResponseModel<?> responseModel =
         new ResponseModel<>(
             null, ex.getMessage(), Collections.singletonList(ex.getMessage()), BAD_REQUEST.value());
@@ -162,13 +183,13 @@ public class RestControllerAdvice<T> {
 
   @ExceptionHandler(value = {Throwable.class})
   public void handleException(Throwable ex, HttpServletResponse response) throws IOException {
-    log.error("Unhandled exception encountered: {}", ex.getMessage(), ex);
+    log.error("Unhandled exception encountered: {}", ex.getLocalizedMessage());
 
     ResponseModel<?> responseModel =
         new ResponseModel<>(
             null,
-            ex.getMessage(),
-            Collections.singletonList(ex.getMessage()),
+            ex.getLocalizedMessage(),
+            Collections.singletonList(ex.getLocalizedMessage()),
             INTERNAL_SERVER_ERROR.value());
 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -202,7 +223,7 @@ public class RestControllerAdvice<T> {
   @ExceptionHandler(Exception.class)
   public void handleGenericException(Exception ex, HttpServletResponse response)
       throws IOException {
-    log.error("Unexpected exception encountered: {}", ex.getMessage(), ex);
+    log.error("Unexpected exception encountered: {}", ex.getMessage());
 
     ResponseModel<?> responseModel =
         new ResponseModel<>(
