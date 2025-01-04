@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "verification.provider.you-verify")
+@ConfigurationProperties(prefix = "verification.providers.you-verify")
 @Data
 public class YouVerifyConfig {
   private String apiKey;

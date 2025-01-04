@@ -19,11 +19,12 @@ import org.springframework.web.bind.annotation.*;
 public class KycController {
   private final KycService kycService;
 
-  @PostMapping(value = "/verify-bvn", consumes = APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/verify-bvn/{bvn}", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Endpoint for users to Verify their BVN")
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
-  public ResponseModel<Void> verifyBvn(@AuthenticationPrincipal User user) {
-    kycService.verifyBVN().join();
-    return new ResponseModel<>(null);
+  public ResponseModel<Object> verifyBvn(
+      @AuthenticationPrincipal User user, @PathVariable("bvn") String bvn) {
+    var res = kycService.verifyBVN(user, bvn).join();
+    return new ResponseModel<>(res);
   }
 }

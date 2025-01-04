@@ -123,7 +123,7 @@ verification:
     you-verify:
       api-key: ${YOU_VERIFY_API_KEY:oyRQexWE.o9eQ3yiBmNRUJ5Nrmy4CaLoOb3ZD4nmqN1zu}
       base-url: ${YOU_VERIFY_BASE_URL:https://api.sandbox.youverify.co}
-      bvn-url: ${YOU_VERIFY_BASE_URL}/v2/api/identity/ng/bvn
-      nin-url: ${YOU_VERIFY_BASE_URL}/v2/api/identity/ng/nin
+      bvn-url: ${YOU_VERIFY_BVN_URL:${YOU_VERIFY_BASE_URL:https://api.sandbox.youverify.co}/v2/api/identity/ng/bvn}
+      nin-url: ${YOU_VERIFY_NIN_URL:${YOU_VERIFY_BASE_URL:https://api.sandbox.youverify.co}/v2/api/identity/ng/nin}
     prembly:
       api-key: sample-api-key

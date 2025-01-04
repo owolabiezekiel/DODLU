@@ -1,5 +1,5 @@
 ### Verify BVN
-POST {{host}}/kyc/verify-bvn
+POST {{host}}/kyc/verify-bvn/11111111111
 Content-Type: application/json
 Authorization: {{customer_token}}
 

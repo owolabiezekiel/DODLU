@@ -1,0 +1,35 @@
+package com.dodlu.core.domain.kyc.model;
+
+import java.util.Map;
+
+public record BvnData(
+    String id,
+    String parentId,
+    String status,
+    String reason,
+    boolean dataValidation,
+    boolean selfieValidation,
+    String firstName,
+    String middleName,
+    String lastName,
+    String image,
+    String enrollmentBranch,
+    String enrollmentInstitution,
+    String mobile,
+    String dateOfBirth,
+    boolean isConsent,
+    String idNumber,
+    String nin,
+    boolean shouldRetrivedNin,
+    String businessId,
+    String type,
+    boolean allValidationPassed,
+    String gender,
+    String requestedAt,
+    String requestedById,
+    String country,
+    String createdAt,
+    String lastModifiedAt,
+    Object adverseMediaReport,
+    Object amlReport,
+    Map<String, Object> metadata) {}
