@@ -13,19 +13,19 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface GroupSavingUsersRepository
     extends JpaRepository<GroupSavingUser, String>, QuerydslPredicateExecutor<GroupSavingUser> {
-  default Page<GroupSavingUser> getUserGroupSavings(String email, Pageable pageable) {
+  default Page<GroupSavingUser> getUserGroupSavings(String phoneNumber, Pageable pageable) {
     BooleanExpression predicate =
         groupSavingUser
             .group
             .admin
-            .email
-            .equalsIgnoreCase(email)
+            .phoneNumber
+            .equalsIgnoreCase(phoneNumber)
             .or(
                 JPAExpressions.selectFrom(customerProfile)
                     .where(
                         customerProfile
-                            .email
-                            .equalsIgnoreCase(email)
+                            .phoneNumber
+                            .equalsIgnoreCase(phoneNumber)
                             .and(customerProfile.in(groupSavingUser.group.members)))
                     .exists());
 

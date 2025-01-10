@@ -13,8 +13,8 @@ public interface CustomerProfileRepository extends JpaRepository<CustomerProfile
   Optional<CustomerProfile> findByUsernameEqualsIgnoreCase(String username);
 
   @Query(
-      "SELECT c FROM CustomerProfile c WHERE LOWER(c.username) = LOWER(?1) OR LOWER(c.email) = LOWER(?1) OR c.id = ?1")
-  Optional<CustomerProfile> findByUsernameOrEmailOrId(String inviteeId);
+      "SELECT c FROM CustomerProfile c WHERE LOWER(c.username) = LOWER(?1) OR LOWER(c.email) = LOWER(?1) OR c.id = ?1 OR c.phoneNumber = ?1")
+  Optional<CustomerProfile> findByUsernameOrEmailOrIdOrPhone(String inviteeId);
 
   boolean existsByPhoneNumberAndCountry_NameEqualsIgnoreCase(
       String phoneNumber, String countryName);

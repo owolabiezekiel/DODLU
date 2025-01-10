@@ -5,8 +5,7 @@ import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 import static com.dodlu.core.domain.approval.enums.ApprovalRequestType.GROUP_INVITE;
 import static com.dodlu.core.domain.approval.enums.ApprovalStatus.PENDING_USER_APPROVAL;
 import static com.dodlu.core.domain.approval.enums.WorkflowType.INDIVIDUAL;
-import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByEmail;
-import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByUsername;
+import static com.dodlu.core.domain.utils.CustomerProfileUtils.*;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -77,12 +76,8 @@ public class GroupSavingsService {
     return supplyAsync(
         () -> {
           CustomerProfile customerProfile =
-              customerProfileRepository
-                  .findByEmailEqualsIgnoreCase(user.getEmail())
-                  .orElseThrow(
-                      () ->
-                          exceptionService.handleCreateBadRequest(
-                              "Customer profile does not exist"));
+              getCustomerByPhoneNumber(
+                  customerProfileRepository, exceptionService, user.getPhoneNumber());
 
           GroupSaving groupSaving =
               GroupSaving.builder()
@@ -166,12 +161,8 @@ public class GroupSavingsService {
     return runAsync(
         () -> {
           CustomerProfile customerProfile =
-              customerProfileRepository
-                  .findByEmailEqualsIgnoreCase(user.getEmail())
-                  .orElseThrow(
-                      () ->
-                          exceptionService.handleCreateBadRequest(
-                              "Customer profile does not exist"));
+              getCustomerByPhoneNumber(
+                  customerProfileRepository, exceptionService, user.getPhoneNumber());
 
           GroupSaving groupSaving =
               groupSavingRepository
@@ -228,7 +219,7 @@ public class GroupSavingsService {
 
           CustomerProfile customerProfile =
               customerProfileRepository
-                  .findByUsernameOrEmailOrId(inviteeId)
+                  .findByUsernameOrEmailOrIdOrPhone(inviteeId)
                   .orElseThrow(
                       () ->
                           exceptionService.handleCreateNotFoundException(
@@ -262,7 +253,9 @@ public class GroupSavingsService {
     return runAsync(
         () -> {
           GroupSaving groupSaving = getGroupSaving(request.getGroupId());
-          CustomerProfile customerProfile = getCustomer(user.getEmail(), null);
+          CustomerProfile customerProfile =
+              getCustomerByPhoneNumber(
+                  customerProfileRepository, exceptionService, user.getPhoneNumber());
 
           GroupSetting groupSetting = groupSaving.getSetting();
           if (Objects.isNull(groupSetting)) {
@@ -270,8 +263,8 @@ public class GroupSavingsService {
                 "Loan settings for this group does not exist. Please contact group administrator to update group settings");
           }
 
-          Set<String> memberEmails = extractMemberEmails(groupSaving);
-          if (!memberEmails.contains(customerProfile.getEmail())) {
+          Set<String> memberPhones = extractMemberPhones(groupSaving);
+          if (!memberPhones.contains(customerProfile.getPhoneNumber())) {
             throw exceptionService.handleCreateBadRequest("User is not a member of this group");
           }
 
@@ -423,9 +416,9 @@ public class GroupSavingsService {
         .build();
   }
 
-  private Set<String> extractMemberEmails(GroupSaving groupSaving) {
+  private Set<String> extractMemberPhones(GroupSaving groupSaving) {
     return groupSaving.getMembers().stream()
-        .map(CustomerProfile::getEmail)
+        .map(CustomerProfile::getPhoneNumber)
         .collect(Collectors.toSet());
   }
 
