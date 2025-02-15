@@ -73,6 +73,15 @@ Content-Type: application/json
 }
 
 
+### customer login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "owo.obaseki@gmail.com",
+  "password": "password"
+}
+
 ### employer login
 POST {{host}}/auth/login
 Content-Type: application/json
