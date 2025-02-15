@@ -38,10 +38,25 @@ public class GroupSaving extends BaseEntity {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false)
-  private String description;
-
   private String url;
+
+  @Column(nullable = false)
+  private String goals;
+
+  @Column(nullable = false)
+  private String vision;
+
+  @Column(nullable = false)
+  private String mission;
+
+  @Column(nullable = false)
+  private String rulesAndRegulations;
+
+  @Column(nullable = false)
+  private String membershipRequirements;
+
+  @Column(nullable = false)
+  private boolean loanSupport;
 
   @Column(nullable = false)
   private BigDecimal leastSavingAmount;
@@ -49,9 +64,6 @@ public class GroupSaving extends BaseEntity {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private SavingFrequency savingFrequency;
-
-  @Column(nullable = false)
-  private String meetingLocation;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -96,11 +108,15 @@ public class GroupSaving extends BaseEntity {
     return GroupSavingModel.builder()
         .id(id)
         .name(name)
-        .description(description)
         .url(url)
+        .goals(goals)
+        .vision(vision)
+        .mission(mission)
+        .rulesAndRegulations(rulesAndRegulations)
+        .membershipRequirements(membershipRequirements)
+        .loanSupport(loanSupport)
         .leastSavingAmount(leastSavingAmount)
         .savingFrequency(savingFrequency.name())
-        .meetingLocation(meetingLocation)
         .currency(currency.name())
         .admin(admin.toModel())
         .members(

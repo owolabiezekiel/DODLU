@@ -103,5 +103,41 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="1739611201428-1" author="owolabiezekiel">
+        <preConditions>
+            <columnExists tableName="group_savings" columnName="description"/>
+            <columnExists tableName="group_savings" columnName="meeting_location"/>
+        </preConditions>
+
+        <dropColumn tableName="group_savings" columnName="description"/>
+        <dropColumn tableName="group_savings" columnName="meeting_location"/>
+    </changeSet>
+
+    <changeSet id="1739611915919-1" author="owolabiezekiel">
+        <preConditions>
+            <not>
+                <columnExists tableName="group_savings" columnName="goals"/>
+                <columnExists tableName="group_savings" columnName="vision"/>
+                <columnExists tableName="group_savings" columnName="mission"/>
+                <columnExists tableName="group_savings" columnName="rules_and_regulations"/>
+                <columnExists tableName="group_savings" columnName="membership_requirements"/>
+                <columnExists tableName="group_savings" columnName="loan_available"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="group_savings">
+            <column name = "goals" type="TEXT"/>
+            <column name = "vision" type="TEXT"/>
+            <column name = "mission" type="TEXT"/>
+            <column name = "rules_and_regulations" type="TEXT"/>
+            <column name = "membership_requirements" type="TEXT"/>
+            <column name = "loan_support" type="BOOLEAN" defaultValue="false"/>
+        </addColumn>
+
+        <createIndex tableName="group_savings" indexName="group_savings_loan_support_index">
+            <column name="loan_support"/>
+        </createIndex>
+    </changeSet>
 
 </databaseChangeLog>

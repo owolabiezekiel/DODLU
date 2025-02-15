@@ -79,14 +79,23 @@ public class GroupSavingsService {
               getCustomerByPhoneNumber(
                   customerProfileRepository, exceptionService, user.getPhoneNumber());
 
+          if (groupSavingRepository.existsByAdminAndName(customerProfile, request.getName())) {
+            throw exceptionService.handleCreateBadRequest(
+                "A group with this name created by you already exists");
+          }
+
           GroupSaving groupSaving =
               GroupSaving.builder()
                   .name(request.getName())
-                  .description(request.getDescription())
+                  .goals(request.getGoals())
+                  .vision(request.getVision())
+                  .mission(request.getMission())
+                  .rulesAndRegulations(request.getRulesAndRegulations())
+                  .membershipRequirements(request.getMembershipRequirements())
+                  .loanSupport(request.isLoanSupport())
                   .url(request.getImageUrl())
                   .leastSavingAmount(request.getSavingAmount())
                   .savingFrequency(request.getSavingFrequency())
-                  .meetingLocation(request.getMeetingLocation())
                   .currency(request.getCurrency())
                   .admin(customerProfile)
                   .build();
@@ -127,12 +136,12 @@ public class GroupSavingsService {
                       () ->
                           exceptionService.handleCreateNotFoundException("Group saving not found"));
 
-          Set<String> memberEmails =
+          Set<String> memberPhones =
               groupSaving.getMembers().stream()
-                  .map(CustomerProfile::getEmail)
+                  .map(CustomerProfile::getPhoneNumber)
                   .collect(Collectors.toSet());
-          if (user.getEmail().equalsIgnoreCase(groupSaving.getAdmin().getEmail())
-              || memberEmails.contains(user.getEmail())) {
+          if (user.getPhoneNumber().equalsIgnoreCase(groupSaving.getAdmin().getPhoneNumber())
+              || memberPhones.contains(user.getPhoneNumber())) {
             return groupSaving.toModel();
           } else {
             return null;
@@ -145,7 +154,7 @@ public class GroupSavingsService {
     return supplyAsync(
         () -> {
           Page<GroupSavingUser> groupSavingUserPage =
-              groupSavingUsersRepository.getUserGroupSavings(user.getEmail(), page);
+              groupSavingUsersRepository.getUserGroupSavings(user.getPhoneNumber(), page);
           List<GroupSavingModel> groupSavingModels =
               groupSavingUserPage.getContent().stream()
                   .map(g -> g.getGroup().toModel())

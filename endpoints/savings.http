@@ -13,8 +13,12 @@ Content-Type: application/json
 Authorization: {{customer_token}}
 
 {
-  "name": "Test3 group Savings",
-  "description": "I am very sure that this works",
+  "name": "Test5 group Savings",
+  "goals": "I am very sure that this works",
+  "mission": "some mission",
+  "vision": "some vision",
+  "membershipRequirements": "some requirements",
+  "rulesAndRegulations": "some rules and regulation",
   "savingAmount": 200,
   "savingFrequency": "BI_WEEKLY",
   "meetingLocation": "Somewhere in the desert",
@@ -27,7 +31,7 @@ Content-Type: application/json
 Authorization: {{customer_token}}
 
 ### Get user's group savings
-GET{{host}}/savings/group?size=2&page=0
+GET{{host}}/savings/group?size=20&page=0
 Content-Type: application/json
 Authorization: {{customer_token}}
 

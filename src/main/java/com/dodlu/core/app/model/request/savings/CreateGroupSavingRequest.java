@@ -6,7 +6,6 @@ import com.dodlu.core.domain.savings.enums.SavingFrequency;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,8 +23,22 @@ public class CreateGroupSavingRequest {
   @NotBlank(message = "name cannot be blank")
   private String name;
 
-  @NotBlank(message = "description cannot be blank")
-  private String description;
+  @NotBlank(message = "goals cannot be blank")
+  private String goals;
+
+  @NotBlank(message = "vision cannot be blank")
+  private String vision;
+
+  @NotBlank(message = "mission cannot be blank")
+  private String mission;
+
+  @NotBlank(message = "rules and regulations cannot be blank")
+  private String rulesAndRegulations;
+
+  @NotBlank(message = "membership requirements cannot be blank")
+  private String membershipRequirements;
+
+  private boolean loanSupport;
 
   @URL(message = "invalid group image url format")
   private String imageUrl;
@@ -37,10 +50,6 @@ public class CreateGroupSavingRequest {
   @Positive(message = "saving amount must be greater than zero")
   @NotNull(message = "savingAmount is required")
   private BigDecimal savingAmount;
-
-  @NotBlank(message = "meetingLocation is required")
-  @Size(min = 3, message = "meeting location size must be greater than 3")
-  private String meetingLocation;
 
   @NotNull(message = "currency is required")
   @ValidEnum(message = "invalid saving currency")
