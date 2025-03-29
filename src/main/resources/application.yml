@@ -42,17 +42,43 @@ spring:
 
 
 management:
-  auditevents:
-    enabled: true
-  endpoint:
-    logfile:
-      enabled: true
-    health:
-      show-details: always
   endpoints:
     web:
       exposure:
         include: "*"
+
+  prometheus:
+    metrics:
+      export:
+        step: 5s
+        enabled: true
+
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    enable:
+      all: true
+    distribution:
+      percentiles-histogram:
+        all: true
+
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+
+  auditevents:
+    enabled: true
+
+  endpoint:
+    prometheus:
+      enabled: true
+    logfile:
+      enabled: true
+    health:
+      show-details: always
+
 max:
   text:
     message:
@@ -73,6 +99,8 @@ springdoc:
   packagesToScan: com.dodlu
 logging:
   level:
+    org.springframework.boot.actuate: DEBUG
+    io.micrometer: DEBUG
     root: INFO
     com:
       dodlu: INFO

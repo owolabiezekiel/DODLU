@@ -9,7 +9,9 @@ import static com.dodlu.core.domain.utils.CustomerProfileUtils.*;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
+import com.dodlu.core.app.exceptions.BadRequestException;
 import com.dodlu.core.app.exceptions.CoreExceptionService;
+import com.dodlu.core.app.exceptions.ResourceNotFoundException;
 import com.dodlu.core.app.model.request.savings.CreateGroupSavingRequest;
 import com.dodlu.core.app.model.request.savings.GroupLoanRequest;
 import com.dodlu.core.app.model.request.savings.GroupTransactionRequest;
@@ -416,6 +418,25 @@ public class GroupSavingsService {
           loan.setRejectionDate(LocalDateTime.now());
           transactionTemplate.executeWithoutResult((n) -> groupLoanRepository.save(loan));
         });
+  }
+
+  @Transactional
+  public void requestToJoinGroup(User user, String groupId) {
+    CustomerProfile customerProfile =
+        customerProfileRepository
+            .findByPhoneNumber(user.getPhoneNumber())
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Cusromer profile does not exist for user"));
+    GroupSaving groupSaving =
+        groupSavingRepository
+            .findById(groupId)
+            .orElseThrow(() -> new BadRequestException("Savings group not found"));
+
+    Set<String> memberIds =
+        groupSaving.getMembers().stream().map(CustomerProfile::getId).collect(Collectors.toSet());
+    if (memberIds.contains(customerProfile.getId())) {
+      throw exceptionService.handleCreateBadRequest("User is already a member of this group");
+    }
   }
 
   private GroupBalance generateEmptyGroupBalance(GroupSaving groupSaving) {

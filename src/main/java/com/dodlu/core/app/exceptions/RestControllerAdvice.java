@@ -220,6 +220,33 @@ public class RestControllerAdvice<T> {
     response.getWriter().write(objectMapper.writeValueAsString(responseModel));
   }
 
+  @ExceptionHandler(BadRequestException.class)
+  public void handleBadRequestException(BadRequestException ex, HttpServletResponse response)
+      throws IOException {
+    ResponseModel<?> responseModel =
+        new ResponseModel<>(
+            null,
+            ex.getMessage(),
+            Collections.singletonList(ex.getMessage()),
+            HttpStatus.BAD_REQUEST.value());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(HttpStatus.BAD_REQUEST.value());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
+  }
+
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public void handleResourceNotFoundException(
+      ResourceNotFoundException ex, HttpServletResponse response) throws IOException {
+    ResponseModel<?> responseModel =
+        new ResponseModel<>(
+            null, ex.getMessage(), Collections.singletonList(ex.getMessage()), NOT_FOUND.value());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(NOT_FOUND.value());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
+  }
+
   @ExceptionHandler(Exception.class)
   public void handleGenericException(Exception ex, HttpServletResponse response)
       throws IOException {

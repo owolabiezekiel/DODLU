@@ -84,6 +84,14 @@ public class SavingController {
     return new ResponseModel<>(null);
   }
 
+  @PostMapping("/group/request-join/{groupSavingId}")
+  @Operation(description = "User requests to join group")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  public void userRequestsToJoiGroup(
+      @AuthenticationPrincipal User user, @PathVariable String groupSavingId) {
+    groupSavingsService.requestToJoinGroup(user, groupSavingId);
+  }
+
   @PostMapping("/group/loans/request")
   @Operation(description = "User requests group loan")
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})

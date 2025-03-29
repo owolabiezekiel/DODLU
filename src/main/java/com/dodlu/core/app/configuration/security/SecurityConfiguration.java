@@ -73,6 +73,7 @@ public class SecurityConfiguration {
               auth.requestMatchers(HttpMethod.GET, "/api/v1/location/country").permitAll();
               auth.requestMatchers("/v1/health").permitAll();
               auth.requestMatchers("/actuator").permitAll();
+              auth.requestMatchers("/actuator/prometheus").permitAll();
               auth.requestMatchers("/actuator/**").permitAll();
               auth.requestMatchers("/actuator/**").permitAll();
               auth.requestMatchers(HttpMethod.POST, "/v1/webhook/twilio/**").permitAll();

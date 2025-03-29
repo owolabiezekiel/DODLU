@@ -75,3 +75,8 @@ Authorization: {{customer_token}}
 ### Reject group loan by ID
 POST {{host}}/savings/group/loans/30fcb6e2-5b33-4367-a5b8-7969a8544a9c/reject
 Authorization: {{customer_token}}
+
+### User requests to join group
+POST{{host}}/savings/group/request-join/a9163b72-a06b-4be0-ba72-4a4898e0fb6f
+Content-Type: application/json
+Authorization: {{customer_token}}
