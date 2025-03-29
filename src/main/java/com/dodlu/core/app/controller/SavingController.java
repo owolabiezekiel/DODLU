@@ -34,7 +34,7 @@ public class SavingController {
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = GroupSavingModel.class)})
   public ResponseModel<GroupSavingModel> createGroupSavings(
       @AuthenticationPrincipal User user, @Valid @RequestBody CreateGroupSavingRequest request) {
-    GroupSavingModel groupSaving = groupSavingsService.createGroupSaving(user, request).join();
+    GroupSavingModel groupSaving = groupSavingsService.createGroupSaving(user, request);
     return new ResponseModel<>(groupSaving);
   }
 
@@ -43,7 +43,7 @@ public class SavingController {
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = GroupSavingModel.class)})
   public ResponseModel<GroupSavingModel> getGroupSavingById(
       @AuthenticationPrincipal User user, @PathVariable("savingsId") String savingsId) {
-    GroupSavingModel groupSaving = groupSavingsService.getGroupSaving(user, savingsId).join();
+    GroupSavingModel groupSaving = groupSavingsService.getGroupSaving(user, savingsId);
     return new ResponseModel<>(groupSaving);
   }
 
@@ -58,7 +58,7 @@ public class SavingController {
   })
   public ResponseModel<Page<GroupSavingModel>> getUserGroupSavings(
       @AuthenticationPrincipal User user, @PageableDefault Pageable pageable) {
-    var groupSaving = groupSavingsService.getUserGroupSavings(user, pageable).join();
+    var groupSaving = groupSavingsService.getUserGroupSavings(user, pageable);
     return new ResponseModel<>(groupSaving);
   }
 
@@ -69,7 +69,7 @@ public class SavingController {
       @AuthenticationPrincipal User user,
       @PathVariable("groupSavingId") String groupSavingId,
       @Valid @RequestBody GroupTransactionRequest request) {
-    groupSavingsService.recordGroupTransaction(user, groupSavingId, request).join();
+    groupSavingsService.recordGroupTransaction(user, groupSavingId, request);
     return new ResponseModel<>(null);
   }
 
@@ -78,9 +78,7 @@ public class SavingController {
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
   public ResponseModel<Void> inviteUserToGroupSaving(
       @AuthenticationPrincipal User user, @Valid @RequestBody InviteToGroupRequest request) {
-    groupSavingsService
-        .inviteUserToGroup(user, request.getGroupId(), request.getInviteeId())
-        .join();
+    groupSavingsService.inviteUserToGroup(user, request.getGroupId(), request.getInviteeId());
     return new ResponseModel<>(null);
   }
 
@@ -97,7 +95,7 @@ public class SavingController {
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
   public ResponseModel<Void> requestGroupLoan(
       @AuthenticationPrincipal User user, @Valid @RequestBody GroupLoanRequest request) {
-    groupSavingsService.requestLoan(user, request).join();
+    groupSavingsService.requestLoan(user, request);
     return new ResponseModel<>(null);
   }
 
@@ -114,7 +112,7 @@ public class SavingController {
       @AuthenticationPrincipal User user,
       @PathVariable("groupSavingId") String groupSavingId,
       @PageableDefault Pageable pageable) {
-    var loans = groupSavingsService.getGroupLoans(user, groupSavingId, pageable).join();
+    var loans = groupSavingsService.getGroupLoans(user, groupSavingId, pageable);
     return new ResponseModel<>(loans);
   }
 
@@ -123,7 +121,7 @@ public class SavingController {
   @ApiResponses({@ApiResponse(code = 200, message = "Success", response = GroupSavingModel.class)})
   public ResponseModel<GroupSavingLoanModel> getGroupLoan(
       @AuthenticationPrincipal User user, @PathVariable("groupLoanId") String groupLoanId) {
-    var loan = groupSavingsService.getGroupLoanById(user, groupLoanId).join();
+    var loan = groupSavingsService.getGroupLoanById(user, groupLoanId);
     return new ResponseModel<>(loan);
   }
 
@@ -132,7 +130,7 @@ public class SavingController {
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
   public ResponseModel<Void> approveGroupLoan(
       @AuthenticationPrincipal User user, @PathVariable("groupLoanId") String groupLoanId) {
-    groupSavingsService.approveLoan(user, groupLoanId).join();
+    groupSavingsService.approveLoan(user, groupLoanId);
     return new ResponseModel<>(null);
   }
 
@@ -141,7 +139,7 @@ public class SavingController {
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
   public ResponseModel<Void> rejectGroupLoan(
       @AuthenticationPrincipal User user, @PathVariable("groupLoanId") String groupLoanId) {
-    groupSavingsService.rejectLoan(user, groupLoanId).join();
+    groupSavingsService.rejectLoan(user, groupLoanId);
     return new ResponseModel<>(null);
   }
 }

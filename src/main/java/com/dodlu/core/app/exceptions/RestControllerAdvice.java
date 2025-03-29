@@ -247,6 +247,21 @@ public class RestControllerAdvice<T> {
     response.getWriter().write(objectMapper.writeValueAsString(responseModel));
   }
 
+  @ExceptionHandler(UnAuthorizedException.class)
+  public void handleUnAuthorizedException(
+      ResourceNotFoundException ex, HttpServletResponse response) throws IOException {
+    ResponseModel<?> responseModel =
+        new ResponseModel<>(
+            null,
+            ex.getMessage(),
+            Collections.singletonList(ex.getMessage()),
+            UNAUTHORIZED.value());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(UNAUTHORIZED.value());
+    response.getWriter().write(objectMapper.writeValueAsString(responseModel));
+  }
+
   @ExceptionHandler(Exception.class)
   public void handleGenericException(Exception ex, HttpServletResponse response)
       throws IOException {

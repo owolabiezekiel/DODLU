@@ -49,7 +49,7 @@ public class TransactionService {
       User user, String groupId, Pageable pageable) {
     return supplyAsync(
         () -> {
-          GroupSavingModel groupSaving = groupSavingsService.getGroupSaving(user, groupId).join();
+          GroupSavingModel groupSaving = groupSavingsService.getGroupSaving(user, groupId);
           if (groupSaving == null) {
             throw exceptionService.handleCreateBadRequest("Cannot fetch group transactions");
           }
