@@ -70,4 +70,25 @@
         </preConditions>
         <modifyDataType tableName="transactions" columnName="reference" newDataType="VARCHAR(50)" />
     </changeSet>
+
+    <changeSet id="1743447215513-1" author="owolabiezekiel">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="transactions" columnName="sender_id"/>
+            <columnExists tableName="transactions" columnName="receiver_id"/>
+        </preConditions>
+
+        <!-- Single indexes on the sender and receiver id column -->
+        <createIndex tableName="transactions" indexName="transactions_sender_id_idx">
+            <column name="sender_id"/>
+        </createIndex>
+        <createIndex tableName="transactions" indexName="transactions_receiver_id_idx">
+            <column name="receiver_id"/>
+        </createIndex>
+
+        <!-- Composite index on the sender and receiver id column -->
+        <createIndex tableName="transactions" indexName="transactions_sender_receiver_id_idx">
+            <column name="sender_id"/>
+            <column name="receiver_id"/>
+        </createIndex>
+    </changeSet>
 </databaseChangeLog>
