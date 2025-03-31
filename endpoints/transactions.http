@@ -7,3 +7,8 @@ Authorization: {{customer_token}}
 GET{{host}}/transactions/group/4e07052f-4bd0-4f2d-ac80-53d776c9e49b
 Content-Type: application/json
 Authorization: {{customer_token}}
+
+### Get user'sgroup transactions
+GET{{host}}/transactions/group/4e07052f-4bd0-4f2d-ac80-53d776c9e49b/customer/054a080c-453e-44cc-8476-119e5f9765c6
+Content-Type: application/json
+Authorization: {{customer_token}}

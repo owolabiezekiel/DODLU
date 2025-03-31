@@ -54,6 +54,26 @@ public class TransactionController {
     var transactions = transactionService.getGroupTransactions(user, groupId, pageable).join();
     return new ResponseModel<>(transactions);
   }
+
+  @GetMapping("/group/{groupId}/customer/{customerId}")
+  @Operation(description = "Get all of a users transaction in a group")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = TransactionModel.class,
+        responseContainer = "Page")
+  })
+  public ResponseModel<Page<TransactionModel>> getUserGroupTransactions(
+      @AuthenticationPrincipal User user,
+      @PathVariable("groupId") String groupId,
+      @PathVariable("customerId") String customerId,
+      @PageableDefault Pageable pageable) {
+    var transactions =
+        transactionService.getUserGroupTransactions(user, groupId, customerId, pageable);
+    return new ResponseModel<>(transactions);
+  }
+
   //
   //  @GetMapping("/group")
   //  @Operation(description = "Get user group savings")

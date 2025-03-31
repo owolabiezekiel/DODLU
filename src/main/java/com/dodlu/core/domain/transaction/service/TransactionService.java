@@ -2,6 +2,7 @@ package com.dodlu.core.domain.transaction.service;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
+import com.dodlu.core.app.exceptions.BadRequestException;
 import com.dodlu.core.app.exceptions.CoreExceptionService;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.domain.savings.service.GroupSavingsService;
@@ -11,13 +12,10 @@ import com.dodlu.core.persistence.transaction.repository.TransactionRepository;
 import com.dodlu.core.persistence.user.entity.CustomerProfile;
 import com.dodlu.core.persistence.user.entity.User;
 import com.dodlu.core.persistence.user.repository.CustomerProfileRepository;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -57,13 +55,25 @@ public class TransactionService {
         });
   }
 
+  //Gets all of a users transactions in a group
+  public Page<TransactionModel> getUserGroupTransactions(
+      User user, String groupId, String customerId, Pageable pageable) {
+    if (!customerProfileRepository.existsById(customerId)) {
+      throw new BadRequestException("Customer profile does not exist");
+    }
+
+    GroupSavingModel groupSaving = groupSavingsService.getGroupSaving(user, groupId);
+    if (groupSaving == null) {
+      throw new BadRequestException("Invalid group information");
+    }
+
+    Page<Transaction> transactionPage =
+        transactionRepository.findUserGroupTransactions(customerId, groupId, pageable);
+    return transactionPage.map(Transaction::toModel);
+  }
+
   private Page<TransactionModel> getTransactions(String entityId, Pageable pageable) {
     Page<Transaction> transactionsPage = transactionRepository.findAllForEntity(entityId, pageable);
-    List<TransactionModel> transactions =
-        transactionsPage.getContent().stream()
-            .map(Transaction::toModel)
-            .distinct()
-            .collect(Collectors.toList());
-    return new PageImpl<>(transactions, pageable, transactionsPage.getTotalElements());
+    return transactionsPage.map(Transaction::toModel);
   }
 }

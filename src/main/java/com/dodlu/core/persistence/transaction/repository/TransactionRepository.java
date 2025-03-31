@@ -10,4 +10,9 @@ import org.springframework.data.repository.query.Param;
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
   @Query("SELECT t FROM Transaction t WHERE t.senderId = :id OR t.receiverId = :id")
   Page<Transaction> findAllForEntity(@Param("id") String id, Pageable pageable);
+
+  @Query(
+      "SELECT t FROM Transaction t WHERE (t.senderId = :userId AND t.receiverId = :groupId) OR (t.senderId = :groupId AND t.receiverId = :userId)")
+  Page<Transaction> findUserGroupTransactions(
+      @Param("userId") String userId, @Param("groupId") String groupId, Pageable pageable);
 }
