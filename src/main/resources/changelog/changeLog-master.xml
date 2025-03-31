@@ -48,4 +48,5 @@
     <include file="changelog/023_group_saving_loan_migration.xml"/>
     <include file="changelog/024_customer_verification_migration.xml"/>
     <include file="changelog/025_bvn_details_migration.xml"/>
+    <include file="changelog/026_discussion_migration.xml"/>
 </databaseChangeLog>

@@ -1,0 +1,92 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="tobiowolabi" context="create-discussion-table" id="1743450463737-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="discussions"/>
+            </not>
+        </preConditions>
+        <createTable tableName="discussions">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true" primaryKeyName="pk_discussions"/>
+            </column>
+
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="body" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="group_id" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="discussions" indexName="discussion_author_idx">
+            <column name="author_id"/>
+        </createIndex>
+        <createIndex tableName="discussions" indexName="discussion_group_idx">
+            <column name="group_id"/>
+        </createIndex>
+        <createIndex tableName="discussions" indexName="discussion_group_title_idx">
+            <column name="group_id"/>
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="tobiowolabi" context="create-comments-table" id="1743450474115-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="comments"/>
+            </not>
+        </preConditions>
+        <createTable tableName="comments">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true" primaryKeyName="pk_comments"/>
+            </column>
+
+            <column name="comment" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="author_id" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="discussion_id" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="comments" indexName="comment_author_idx">
+            <column name="author_id"/>
+        </createIndex>
+        <createIndex tableName="comments" indexName="comment_discussion_idx">
+            <column name="discussion_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
+
