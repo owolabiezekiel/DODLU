@@ -40,6 +40,13 @@ public class Comment extends LongBaseEntity {
   }
 
   public CommentModel toModel() {
-    return CommentModel.builder().id(id).discussionId(discussion.getId()).comment(comment).build();
+    return CommentModel.builder()
+        .id(id)
+        .discussionId(discussion.getId())
+        .authorId(author.getId())
+        .authorName(author.getFullName())
+        .comment(comment)
+        .createdAt(getCreatedAt())
+        .build();
   }
 }

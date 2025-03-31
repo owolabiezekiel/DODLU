@@ -5,15 +5,30 @@ Authorization: {{customer_token}}
 
 {
   "groupId": "4e07052f-4bd0-4f2d-ac80-53d776c9e49b",
-  "title": "Lets get the savings started",
+  "title": "Lets get the savings started2",
   "body": "We really need to start saving hard guys. It is in the beginning of the year and we need to be sure of what to do with our lives"
 }
 
-#### Get group transactions
-#GET{{host}}/transactions/group/4e07052f-4bd0-4f2d-ac80-53d776c9e49b
-#Content-Type: application/json
-#Authorization: {{customer_token}}
-#
+### Get group discussions
+GET{{host}}/discussions/4e07052f-4bd0-4f2d-ac80-53d776c9e49b
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+### Get group discussions by id
+GET{{host}}/discussions/4e07052f-4bd0-4f2d-ac80-53d776c9e49b/1
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+### Create group discussion comment
+POST{{host}}/discussions/1
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+{
+  "groupId": "4e07052f-4bd0-4f2d-ac80-53d776c9e49b",
+  "comment": "first to comment"
+}
+
 #### Get user'sgroup transactions
 #GET{{host}}/transactions/group/4e07052f-4bd0-4f2d-ac80-53d776c9e49b/customer/054a080c-453e-44cc-8476-119e5f9765c6
 #Content-Type: application/json

@@ -88,5 +88,13 @@
             <column name="discussion_id"/>
         </createIndex>
     </changeSet>
+
+    <changeSet id="1743457675401-1" author="owolabiezekiel">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="comments" columnName="discussion_id"/>
+        </preConditions>
+
+        <modifyDataType tableName="comments" columnName="discussion_id" newDataType="bigint"/>
+    </changeSet>
 </databaseChangeLog>
 

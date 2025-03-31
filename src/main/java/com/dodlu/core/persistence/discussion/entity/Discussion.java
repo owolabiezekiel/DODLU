@@ -58,7 +58,10 @@ public class Discussion extends LongBaseEntity {
         .id(id)
         .title(title)
         .body(body)
+        .authorId(author.getId())
+        .authorName(author.getFullName())
         .comments(comments.stream().map(Comment::toModel).collect(Collectors.toSet()))
+        .createdAt(getCreatedAt())
         .build();
   }
 }
