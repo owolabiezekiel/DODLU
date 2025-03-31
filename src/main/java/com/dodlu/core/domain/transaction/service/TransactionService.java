@@ -55,7 +55,7 @@ public class TransactionService {
         });
   }
 
-  //Gets all of a users transactions in a group
+  // Gets all of a users transactions in a group
   public Page<TransactionModel> getUserGroupTransactions(
       User user, String groupId, String customerId, Pageable pageable) {
     if (!customerProfileRepository.existsById(customerId)) {
