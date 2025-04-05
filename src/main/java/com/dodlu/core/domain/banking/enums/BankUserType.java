@@ -1,11 +1,10 @@
 package com.dodlu.core.domain.banking.enums;
 
+import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.stream.Stream;
-
-import static com.dodlu.core.app.utils.StringUtilities.isNullOrBlank;
 
 public enum BankUserType {
   INDIVIDUAL("Individual"),

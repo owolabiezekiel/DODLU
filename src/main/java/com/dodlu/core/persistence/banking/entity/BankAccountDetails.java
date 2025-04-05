@@ -1,18 +1,15 @@
 package com.dodlu.core.persistence.banking.entity;
 
-
 import com.dodlu.core.domain.banking.enums.BankUserType;
 import com.dodlu.core.domain.banking.model.BankAccountDetailsModel;
 import com.dodlu.core.persistence.base.LongBaseEntity;
 import jakarta.persistence.*;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-
-import java.util.Objects;
-import java.util.Optional;
 
 @Accessors(chain = true)
 @Entity
@@ -105,31 +102,32 @@ public class BankAccountDetails extends LongBaseEntity {
     return Objects.hash(super.hashCode(), id);
   }
 
-//  public WalletDetails fromSubAccountResponse(
-//      CreateSubAccountResponse subAccountDetails,
-//      User user,
-//      VirtualNubanDetailsResponse virtualNubanDetails) {
-//    SubAccountResponseData subAccountData = subAccountDetails.getData();
-//    VirtualNubanAttributes virtualNubanAttributes = virtualNubanDetails.getData().getAttributes();
-//
-//    return WalletDetails.builder()
-//        .username(user.getUsername())
-//        .isActive(true)
-//        .parentAccountId(subAccountData.getRelationships().getParentAccount().getData().getId())
-//        .customerId(subAccountData.getRelationships().getCustomer().getData().getId())
-//        .subAccountId(subAccountData.getId())
-//        .subAccountType(subAccountData.getAttributes().getAccountType())
-//        .virtualNubanId(virtualNubanDetails.getData().getId())
-//        .virtualBankName(virtualNubanAttributes.getBank().getName())
-//        .virtualBankNipCode(virtualNubanAttributes.getBank().getNipCode())
-//        .virtualBankAccountName(virtualNubanAttributes.getAccountName())
-//        .virtualBankAccountNumber(virtualNubanAttributes.getAccountNumber())
-//        .currency(virtualNubanAttributes.getCurrency())
-//        .status(virtualNubanAttributes.getStatus())
-//        .blocked(false)
-//        .bvn(null)
-//        .build();
-//  }
+  //  public WalletDetails fromSubAccountResponse(
+  //      CreateSubAccountResponse subAccountDetails,
+  //      User user,
+  //      VirtualNubanDetailsResponse virtualNubanDetails) {
+  //    SubAccountResponseData subAccountData = subAccountDetails.getData();
+  //    VirtualNubanAttributes virtualNubanAttributes =
+  // virtualNubanDetails.getData().getAttributes();
+  //
+  //    return WalletDetails.builder()
+  //        .username(user.getUsername())
+  //        .isActive(true)
+  //        .parentAccountId(subAccountData.getRelationships().getParentAccount().getData().getId())
+  //        .customerId(subAccountData.getRelationships().getCustomer().getData().getId())
+  //        .subAccountId(subAccountData.getId())
+  //        .subAccountType(subAccountData.getAttributes().getAccountType())
+  //        .virtualNubanId(virtualNubanDetails.getData().getId())
+  //        .virtualBankName(virtualNubanAttributes.getBank().getName())
+  //        .virtualBankNipCode(virtualNubanAttributes.getBank().getNipCode())
+  //        .virtualBankAccountName(virtualNubanAttributes.getAccountName())
+  //        .virtualBankAccountNumber(virtualNubanAttributes.getAccountNumber())
+  //        .currency(virtualNubanAttributes.getCurrency())
+  //        .status(virtualNubanAttributes.getStatus())
+  //        .blocked(false)
+  //        .bvn(null)
+  //        .build();
+  //  }
 
   public BankAccountDetailsModel toModel() {
     return BankAccountDetailsModel.builder()

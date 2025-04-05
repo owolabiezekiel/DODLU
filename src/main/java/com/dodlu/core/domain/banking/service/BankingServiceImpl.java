@@ -19,7 +19,7 @@ public class BankingServiceImpl implements BankingService {
   public BankAccountDetailsModel activateBankAccount(
       User user, ActivateBankAccountRequest request) {
     checkActivationStatus();
-    //ensureNoWalletExistsForUser(user.getUsername());
+    // ensureNoWalletExistsForUser(user.getUsername());
     //
     //    HttpHeaders headers = setupRequestHeaders();
     //
