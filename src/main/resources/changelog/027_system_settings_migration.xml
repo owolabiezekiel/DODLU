@@ -1,0 +1,35 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="tobiowolabi" context="create-system-settings-table" id="1743842762819-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="system_settings"/>
+            </not>
+        </preConditions>
+        <createTable tableName="system_settings">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true" primaryKeyName="pk_systemsettings"/>
+            </column>
+
+            <column name="max_wrong_pin_attempts" type="INTEGER" defaultValue="5"/>
+            <column name="min_transfer_amount" type="BIGINT" defaultValue="5000"/>
+            <column name="withdrawal_enabled" type="BOOLEAN" defaultValue="true"/>
+            <column name="withdrawal_fee_charge_amount" type="BIGINT" defaultValue="5000"/>
+            <column name="daily_withdrawal_limit_with_bvn" type="BIGINT" defaultValue="5000000"/>
+            <column name="daily_withdrawal_limit_without_bvn" type="BIGINT" defaultValue="1000000000"/>
+            <column name="anchor_provider" type="VARCHAR(50)" defaultValue="ninepsb"/>
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
+

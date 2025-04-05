@@ -49,4 +49,5 @@
     <include file="changelog/024_customer_verification_migration.xml"/>
     <include file="changelog/025_bvn_details_migration.xml"/>
     <include file="changelog/026_discussion_migration.xml"/>
+    <include file="changelog/027_system_settings_migration.xml"/>
 </databaseChangeLog>
