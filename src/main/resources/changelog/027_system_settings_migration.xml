@@ -31,5 +31,17 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="1743857012025-1" author="owolabiezekiel" context="add account-activation-enabled column">
+        <preConditions>
+            <not>
+                <columnExists tableName="system_settings" columnName="bank_account_activation_enabled"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="system_settings">
+            <column name="bank_account_activation_enabled" type="BOOLEAN" defaultValue="false"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
 

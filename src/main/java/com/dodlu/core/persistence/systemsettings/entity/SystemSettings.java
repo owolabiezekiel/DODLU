@@ -46,6 +46,9 @@ public class SystemSettings extends LongBaseEntity {
   @Column(nullable = false)
   private String anchorProvider;
 
+  @Column(nullable = false)
+  private Boolean bankAccountActivationEnabled;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -69,6 +72,7 @@ public class SystemSettings extends LongBaseEntity {
         .withdrawalFeeChargeAmount(withdrawalFeeChargeAmount)
         .dailyWithdrawalLimitWithBvn(dailyWithdrawalLimitWithBvn)
         .dailyWithdrawalLimitWithoutBvn(dailyWithdrawalLimitWithoutBvn)
+        .bankAccountActivationEnabled(bankAccountActivationEnabled)
         .anchorProvider(anchorProvider)
         .build();
   }

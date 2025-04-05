@@ -1,0 +1,91 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="tobiowolabi" context="create-bank-account-details-table" id="1743859569783-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="bank_account_details"/>
+            </not>
+        </preConditions>
+        <createTable tableName="bank_account_details">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true" primaryKeyName="pk_bankaccountdetails"/>
+            </column>
+
+            <column name="owner_id" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="owner_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="${boolean}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_account_id" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_id" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="sub_account_id" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="sub_account_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="virtual_nuban_id" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="pin" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="virtual_bank_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="virtual_bank_nip_code" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="virtual_bank_account_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="virtual_bank_account_number" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="currency" type="VARCHAR(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blocked" defaultValue="false" type="${boolean}">
+                <constraints nullable="false"/>
+            </column>
+
+
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="bank_account_details" indexName="bank_account_owner_id_idx">
+            <column name="owner_id"/>
+        </createIndex>
+        <createIndex tableName="bank_account_details" indexName="bank_account_owner_type_idx">
+            <column name="owner_type"/>
+        </createIndex>
+        <createIndex tableName="bank_account_details" indexName="bank_account_owner_details_idx">
+            <column name="owner_id"/>
+            <column name="owner_type"/>
+        </createIndex>
+    </changeSet>
+
+
+</databaseChangeLog>
+

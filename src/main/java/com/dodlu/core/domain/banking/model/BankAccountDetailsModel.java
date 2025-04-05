@@ -1,7 +1,12 @@
 package com.dodlu.core.domain.banking.model;
 
+import com.dodlu.core.domain.banking.enums.BankUserType;
+import lombok.Builder;
+
+@Builder
 public record BankAccountDetailsModel(
-    String username,
+    String ownerId,
+    BankUserType ownerType,
     boolean isActive,
     String virtualBankName,
     String virtualBankAccountName,

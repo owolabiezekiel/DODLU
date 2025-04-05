@@ -1,15 +1,25 @@
 package com.dodlu.core.domain.banking.service;
 
+import com.dodlu.core.app.exceptions.BadRequestException;
 import com.dodlu.core.app.model.request.banking.ActivateBankAccountRequest;
 import com.dodlu.core.domain.banking.model.BankAccountDetailsModel;
+import com.dodlu.core.persistence.systemsettings.repository.SystemSettingsRepository;
 import com.dodlu.core.persistence.user.entity.User;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+@Service
+@Slf4j
+@RequiredArgsConstructor
 public class BankingServiceImpl implements BankingService {
+  private final SystemSettingsRepository systemSettingsRepository;
+
   @Override
   public BankAccountDetailsModel activateBankAccount(
       User user, ActivateBankAccountRequest request) {
-    //    checkActivationStatus();
-    //    ensureNoWalletExistsForUser(user.getUsername());
+    checkActivationStatus();
+    //ensureNoWalletExistsForUser(user.getUsername());
     //
     //    HttpHeaders headers = setupRequestHeaders();
     //
@@ -39,5 +49,13 @@ public class BankingServiceImpl implements BankingService {
     //
     //    return walletDetails.toModel();
     return null;
+  }
+
+  private void checkActivationStatus() {
+    var systemSettings = systemSettingsRepository.findFirstByOrderByIdDesc();
+    if (systemSettings.isEmpty() || !systemSettings.get().getBankAccountActivationEnabled()) {
+      throw new BadRequestException(
+          "Bank account activation is not enabled on at the moment. Please try again later");
+    }
   }
 }

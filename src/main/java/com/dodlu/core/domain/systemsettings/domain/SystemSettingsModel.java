@@ -11,4 +11,5 @@ public record SystemSettingsModel(
     long withdrawalFeeChargeAmount,
     long dailyWithdrawalLimitWithBvn,
     long dailyWithdrawalLimitWithoutBvn,
+    boolean bankAccountActivationEnabled,
     String anchorProvider) {}
