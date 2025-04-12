@@ -12,6 +12,7 @@ import static com.dodlu.core.domain.user.model.EntityStatus.ACTIVE;
 import static com.dodlu.core.domain.user.model.UserType.*;
 import static com.dodlu.core.domain.utils.CoordinatorProfileUtils.getCoordinatorByUsername;
 import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByEmail;
+import static com.dodlu.core.domain.utils.CustomerProfileUtils.getCustomerByPhoneNumber;
 import static com.dodlu.core.domain.utils.DepartmentUtils.getDepartmentById;
 import static com.dodlu.core.domain.utils.EmployerProfileUtils.getEmployerByUsername;
 import static com.dodlu.core.domain.utils.RoleUtils.getRoleByName;
@@ -389,6 +390,12 @@ public class DefaultUserService {
           studentDocuments.setTranscriptUrl(newTranscriptUrl);
           return studentDocumentRepository.save(studentDocuments).toModel();
         });
+  }
+
+  @Transactional
+  public CustomerProfileModel getCustomerProfile(String phoneNumber) {
+    return getCustomerByPhoneNumber(customerProfileRepository, exceptionService, phoneNumber)
+        .toModel();
   }
 
   @Transactional

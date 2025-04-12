@@ -185,3 +185,7 @@ Content-Type: application/json
   "country": "Nigeria",
   "phoneNumber": "08106723916"
 }
+
+### Get Customer Profile
+GET {{host}}/user/customer-profile/+2348106723916
+Authorization: {{customer_token}}

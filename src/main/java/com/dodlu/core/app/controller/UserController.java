@@ -108,6 +108,17 @@ public class UserController {
     return new ResponseModel<>(userProfile);
   }
 
+  @GetMapping(value = "/customer-profile/{phoneNumber}")
+  @Operation(description = "Get customer profile")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "Success", response = CustomerProfileModel.class)
+  })
+  @PreAuthorize("isAuthenticated()")
+  public ResponseModel<CustomerProfileModel> getCustomerProfile(@PathVariable String phoneNumber) {
+    CustomerProfileModel userProfile = userService.getCustomerProfile(phoneNumber);
+    return new ResponseModel<>(userProfile);
+  }
+
   @PutMapping(value = "/profile_update/student")
   @Operation(description = "Student update user profile")
   @ApiResponses({
