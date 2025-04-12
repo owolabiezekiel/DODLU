@@ -54,9 +54,6 @@ management:
         enabled: true
 
   metrics:
-    export:
-      prometheus:
-        enabled: true
     enable:
       all: true
     distribution:
@@ -136,6 +133,24 @@ dodlu:
   secrets:
     jwt-secret: ${JWT_SECRET:somesecret}
     jwt-expiration: ${JWT_EXPIRATION:86400000}
+  anchor:
+    api-key: ${ANCHOR_KEY:add.test.key.as.an.environment.variable.in.ide} 167543352218123
+    fbo-parent-account-id: ${ANCHOR_PARENT_ACCOUNT_ID:167543352218123-anc_acc}
+    revenue-account-id: ${ANCHOR_REVENUE_ACCOUNT_ID:167543352205022-anc_acc}
+    settlement-account-id: ${ANCHOR_SETTLEMENT_ACCOUNT_ID:167543352154520-anc_acc}
+    master-account-id: ${ANCHOR_MASTER_ACCOUNT_ID:167543352175921-anc_acc}
+    urls:
+      base-url: ${ANCHOR_BASE_URL:https://api.sandbox.getanchor.co/api/v1}
+      customer-url: ${ANCHOR_CREATE_CUSTOMER_URL:https://api.sandbox.getanchor.co/api/v1/customers}
+      account-url: ${ANCHOR_ACCOUNT_URL:https://api.sandbox.getanchor.co/api/v1/accounts}
+      sub-account-url: ${ANCHOR_CREATE_SUB_ACCOUNT_URL:https://api.sandbox.getanchor.co/api/v1/sub-accounts}
+      virtual-nuban-url: ${ANCHOR_VIRTUAL_NUBAN_URL:https://api.sandbox.getanchor.co/api/v1/virtual-nubans}
+      book-transfer-url: ${ANCHOR_BOOK_TRANSFER_URL:https://api.sandbox.getanchor.co/api/v1/transfers}
+      bank-verification-url: ${ANCHOR_BANK_VERIFICATION_URL:https://api.sandbox.getanchor.co/api/v1/payments/verify-account}
+      fee-url: ${ANCHOR_FEE_URL:https://api.sandbox.getanchor.co/api/v1/fee}
+      bvn-validation-url: ${ANCHOR_BVN_VALIDATION_URL:https://api.getanchor.co/api/v1/identity-validation/bvn/}
+      bills-url: ${ANCHOR_BILL_URL:https://api.sandbox.getanchor.co/api/v1/bills}
+      biller-url: ${ANCHOR_BILLER_URL:https://api.sandbox.getanchor.co/api/v1/bills/billers}
 
 sms:
   provider:

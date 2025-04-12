@@ -248,8 +248,8 @@ public class RestControllerAdvice<T> {
   }
 
   @ExceptionHandler(UnAuthorizedException.class)
-  public void handleUnAuthorizedException(
-      ResourceNotFoundException ex, HttpServletResponse response) throws IOException {
+  public void handleUnAuthorizedException(UnAuthorizedException ex, HttpServletResponse response)
+      throws IOException {
     ResponseModel<?> responseModel =
         new ResponseModel<>(
             null,

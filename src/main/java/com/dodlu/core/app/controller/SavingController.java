@@ -2,10 +2,7 @@ package com.dodlu.core.app.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.dodlu.core.app.model.request.savings.CreateGroupSavingRequest;
-import com.dodlu.core.app.model.request.savings.GroupLoanRequest;
-import com.dodlu.core.app.model.request.savings.GroupTransactionRequest;
-import com.dodlu.core.app.model.request.savings.InviteToGroupRequest;
+import com.dodlu.core.app.model.request.savings.*;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.savings.model.GroupSavingLoanModel;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
@@ -73,12 +70,21 @@ public class SavingController {
     return new ResponseModel<>(null);
   }
 
-  @PostMapping("/group/invite")
+  //  @PostMapping("/group/invite")
+  //  @Operation(description = "Invite a user to group saving")
+  //  @ApiResponses({@ApiResponse(code = 200, message = "Success")})
+  //  public ResponseModel<Void> inviteUserToGroupSaving(
+  //      @AuthenticationPrincipal User user, @Valid @RequestBody InviteToGroupRequest request) {
+  //    groupSavingsService.inviteUserToGroup(user, request.getGroupId(), request.getInviteeId());
+  //    return new ResponseModel<>(null);
+  //  }
+
+  @PostMapping(value = "/group/send-invite", consumes = APPLICATION_JSON_VALUE)
   @Operation(description = "Invite a user to group saving")
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
-  public ResponseModel<Void> inviteUserToGroupSaving(
-      @AuthenticationPrincipal User user, @Valid @RequestBody InviteToGroupRequest request) {
-    groupSavingsService.inviteUserToGroup(user, request.getGroupId(), request.getInviteeId());
+  public ResponseModel<Void> userGroupInvite(
+      @AuthenticationPrincipal User user, @Valid @RequestBody GroupInviteRequest request) {
+    groupSavingsService.sendGroupInvite(user, request);
     return new ResponseModel<>(null);
   }
 

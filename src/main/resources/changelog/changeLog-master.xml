@@ -51,4 +51,5 @@
     <include file="changelog/026_discussion_migration.xml"/>
     <include file="changelog/027_system_settings_migration.xml"/>
     <include file="changelog/028_bank_account_details_migration.xml"/>
+    <include file="changelog/029_group_invite_code_migration.xml"/>
 </databaseChangeLog>

@@ -7,4 +7,6 @@ public class Constants {
       "Dear %s, the code to verify your phone number is %s. Please note that this code expires in 30 minutes";
   public static final String PASSWORD_RESET_STRING =
       "Dear %s, the code to reset your password is %s. Please note that this code expires in 30 minutes";
+  public static final String GROUP_INVITE_STRING =
+      "Invite to join group %s. Please use the code %s on the app to accept";
 }

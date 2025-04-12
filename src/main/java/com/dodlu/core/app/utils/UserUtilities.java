@@ -9,7 +9,7 @@ public class UserUtilities {
   private static final Long MIN_NUMBER = 10L;
   private static final Long MAX_NUMBER = 1000L;
   private static final String CHARACTERS =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      "0abcde1fghij2klmno3pqrst4uvwxy5zABCD6EFGHI7JKLMN8OPQRS9TUVWXYZ0123456789";
   private static final int DEFAULT_PASSWORD_LENGTH = 30;
 
   @SneakyThrows
@@ -24,6 +24,10 @@ public class UserUtilities {
 
   public static String generateRandomPassword() {
     return generateRandomString(DEFAULT_PASSWORD_LENGTH);
+  }
+
+  public static String generateRandomCode(int length) {
+    return generateRandomString(length);
   }
 
   private static String generateRandomString(int length) {

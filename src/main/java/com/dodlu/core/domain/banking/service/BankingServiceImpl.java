@@ -1,12 +1,17 @@
 package com.dodlu.core.domain.banking.service;
 
+import com.dodlu.core.app.configuration.AnchorConfiguration;
 import com.dodlu.core.app.exceptions.BadRequestException;
 import com.dodlu.core.app.model.request.banking.ActivateBankAccountRequest;
 import com.dodlu.core.domain.banking.model.BankAccountDetailsModel;
+import com.dodlu.core.domain.user.service.concretes.CustomerProfileService;
+import com.dodlu.core.persistence.banking.repository.BankAccountDetailsRepository;
 import com.dodlu.core.persistence.systemsettings.repository.SystemSettingsRepository;
 import com.dodlu.core.persistence.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,14 +19,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BankingServiceImpl implements BankingService {
   private final SystemSettingsRepository systemSettingsRepository;
+  private final BankAccountDetailsRepository bankAccountDetailsRepository;
+  private final CustomerProfileService customerProfileService;
+  private final AnchorConfiguration anchorConfiguration;
 
   @Override
-  public BankAccountDetailsModel activateBankAccount(
+  public BankAccountDetailsModel activateBankAccountForCustomer(
       User user, ActivateBankAccountRequest request) {
     checkActivationStatus();
-    // ensureNoWalletExistsForUser(user.getUsername());
-    //
-    //    HttpHeaders headers = setupRequestHeaders();
+
+    var customer = customerProfileService.getCustomerByUsername(user.getUsername());
+    ensureNoAccountExistsForUser(customer.getId());
+
+    HttpHeaders headers = setupRequestHeaders();
     //
     //    IndividualCustomerResponse individualCustomerResponse =
     //        createIndividualCustomer(headers, user, activateWalletRequest);
@@ -57,5 +67,19 @@ public class BankingServiceImpl implements BankingService {
       throw new BadRequestException(
           "Bank account activation is not enabled on at the moment. Please try again later");
     }
+  }
+
+  private void ensureNoAccountExistsForUser(String entityId) {
+    if (bankAccountDetailsRepository.existsByOwnerId(entityId)) {
+      log.info("Bank account already exists for customer {}. Exiting...", entityId);
+      throw new BadRequestException("Wallet already exists for customer.");
+    }
+  }
+
+  private HttpHeaders setupRequestHeaders() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("x-anchor-key", anchorConfiguration.getApiKey());
+    return headers;
   }
 }

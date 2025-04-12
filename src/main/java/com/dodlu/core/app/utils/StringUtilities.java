@@ -4,6 +4,7 @@ import java.time.Period;
 import java.util.*;
 import java.util.stream.Stream;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
 
 @UtilityClass
 public class StringUtilities {
@@ -58,5 +59,17 @@ public class StringUtilities {
 
   public static boolean stringsMatch(String s1, String s2) {
     return s1.equalsIgnoreCase(s2);
+  }
+
+  public static String shortenString(String input, int length) {
+    if (StringUtils.isNotBlank(input)) {
+      if (input.length() <= length) {
+        return input;
+      } else {
+        return input.substring(0, length - 3) + "...";
+      }
+    } else {
+      return "";
+    }
   }
 }

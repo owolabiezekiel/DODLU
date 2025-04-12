@@ -5,5 +5,6 @@ import com.dodlu.core.domain.banking.model.BankAccountDetailsModel;
 import com.dodlu.core.persistence.user.entity.User;
 
 public interface BankingService {
-  BankAccountDetailsModel activateBankAccount(User user, ActivateBankAccountRequest request);
+  BankAccountDetailsModel activateBankAccountForCustomer(
+      User user, ActivateBankAccountRequest request);
 }
