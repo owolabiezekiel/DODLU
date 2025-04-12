@@ -44,4 +44,11 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="1744452807306-1" author="owolabiezekiel">
+        <createIndex tableName="group_invite_code" indexName="customer_invite_details_idx">
+            <column name="customer_id"/>
+            <column name="code"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>

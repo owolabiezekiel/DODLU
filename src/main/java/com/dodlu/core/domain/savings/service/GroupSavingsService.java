@@ -46,7 +46,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -68,7 +67,6 @@ public class GroupSavingsService {
   private final TransactionTemplate transactionTemplate;
   private final GroupInviteCodeRepository groupInviteCodeRepository;
   private final SmsService smsService;
-  private final PasswordEncoder passwordEncoder;
 
   @Transactional
   public GroupSavingModel createGroupSaving(User user, CreateGroupSavingRequest request) {
@@ -276,7 +274,7 @@ public class GroupSavingsService {
     }
 
     inviteCode = UserUtilities.generateRandomCode(8);
-    groupInviteCode.setCode(passwordEncoder.encode(inviteCode));
+    groupInviteCode.setCode(inviteCode);
     groupInviteCode.setNextReminder(LocalDateTime.now().plusDays(1));
 
     groupInviteCodeRepository.save(groupInviteCode);
@@ -284,6 +282,30 @@ public class GroupSavingsService {
     var smsMessage =
         format(GROUP_INVITE_STRING, shortenString(groupSaving.getName(), 20), inviteCode);
     sendSMS(smsMessage, customerProfile.getPhoneNumber());
+  }
+
+  @Transactional
+  public GroupSavingModel joinGroupByInviteCode(User user, String inviteCode) {
+    CustomerProfile customerProfile =
+        customerProfileRepository
+            .findByUsernameOrEmailOrIdOrPhone(user.getUsername())
+            .orElseThrow(() -> new ResourceNotFoundException("Customer profile not found"));
+
+    GroupInviteCode groupInviteCode =
+        groupInviteCodeRepository
+            .findFirstByCustomerIdAndCode(customerProfile.getId(), inviteCode)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Invalid or expired group invite code"));
+
+    GroupSaving group =
+        groupSavingRepository
+            .findById(groupInviteCode.getGroupId())
+            .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+
+    group.getMembers().add(customerProfile);
+    group = groupSavingRepository.save(group);
+    groupInviteCodeRepository.delete(groupInviteCode);
+    return group.toModel();
   }
 
   @Transactional

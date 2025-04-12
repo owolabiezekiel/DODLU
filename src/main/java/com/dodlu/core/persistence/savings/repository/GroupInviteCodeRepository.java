@@ -10,4 +10,6 @@ public interface GroupInviteCodeRepository extends JpaRepository<GroupInviteCode
   boolean existsByGroupIdAndCustomerId(String groupId, String customerId);
 
   Optional<GroupInviteCode> findFirstByGroupIdAndCustomerId(String groupId, String customerId);
+
+  Optional<GroupInviteCode> findFirstByCustomerIdAndCode(String customerId, String code);
 }
