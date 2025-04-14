@@ -88,7 +88,7 @@ public class SavingController {
     return new ResponseModel<>(null);
   }
 
-  @PostMapping(value = "/group/join-with-code/{inviteCode}", consumes = APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/group/join-with-code/{inviteCode}")
   @Operation(description = "Join group with code")
   @ApiResponses({@ApiResponse(code = 200, message = "Success")})
   public ResponseModel<GroupSavingModel> joinGroupWithCode(
