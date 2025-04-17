@@ -140,4 +140,10 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="1744915678941-1" author="owolabiezekiel" context="create index on group id column in group saving users">
+        <createIndex tableName="group_saving_users" indexName="group_saving_user_group_id_idx">
+            <column name="group_saving_id"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>
