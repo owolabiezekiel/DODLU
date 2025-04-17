@@ -120,7 +120,6 @@ public class GroupSavingsService {
 
   @Transactional
   public GroupSavingModel getGroupSaving(User user, String id) {
-
     GroupSaving groupSaving =
         groupSavingRepository
             .findById(id)

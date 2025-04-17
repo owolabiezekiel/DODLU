@@ -33,7 +33,7 @@ Authorization: {{customer_token}}
 ### Get user's group savings
 GET{{host}}/savings/group?size=20&page=0
 Content-Type: application/json
-Authorization: {{customer_token}}
+Authorization: {{token}}
 
 ### Create Group Savings Transaction
 POST {{host}}/savings/group/record-transaction/4e07052f-4bd0-4f2d-ac80-53d776c9e49b
@@ -54,11 +54,11 @@ Authorization: {{customer_token}}
 ### Invite user to group saving (Updated)
 POST {{host}}/savings/group/send-invite
 Content-Type: application/json
-Authorization: {{customer_token}}
+Authorization: {{token}}
 
 {
-  "customerId": "ac3b5f5c-fa4c-416e-bb4e-36c0585a313e",
-  "groupId": "4e07052f-4bd0-4f2d-ac80-53d776c9e49b"
+  "customerId": "32328829-8abe-4fce-bcd7-bc39186d8c71",
+  "groupId": "85d8e840-bf92-4f85-981a-213c125b663b"
 }
 
 ### User request loan

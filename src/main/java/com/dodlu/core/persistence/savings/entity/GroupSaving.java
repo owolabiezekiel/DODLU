@@ -5,11 +5,13 @@ import static com.dodlu.core.app.utils.StringUtilities.emptyIfNull;
 import com.dodlu.core.domain.savings.enums.Currency;
 import com.dodlu.core.domain.savings.enums.SavingFrequency;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
+import com.dodlu.core.domain.user.model.CustomerProfileModel;
 import com.dodlu.core.persistence.base.BaseEntity;
 import com.dodlu.core.persistence.transaction.entity.GroupBalance;
 import com.dodlu.core.persistence.user.entity.CustomerProfile;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -119,10 +121,22 @@ public class GroupSaving extends BaseEntity {
         .savingFrequency(savingFrequency.name())
         .currency(currency.name())
         .admin(admin.toModel())
-        .members(
-            emptyIfNull(members).stream().map(CustomerProfile::toModel).collect(Collectors.toSet()))
+        .memberCount(this.members.size())
+        .members(extractTop5Members(members))
         .balance(balance == null ? null : balance.toModel())
         .settings(setting == null ? null : setting.toModel())
         .build();
+  }
+
+  private Set<CustomerProfileModel> extractTop5Members(Set<CustomerProfile> data) {
+    LinkedHashSet<CustomerProfile> members = new LinkedHashSet<>();
+    members.add(admin);
+
+    emptyIfNull(data).stream()
+        .filter(m -> !admin.getId().equals(m.getId()))
+        .limit(4)
+        .forEach(members::add);
+
+    return members.stream().map(CustomerProfile::toModel).collect(Collectors.toSet());
   }
 }

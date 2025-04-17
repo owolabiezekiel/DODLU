@@ -4,11 +4,14 @@ import static com.dodlu.core.persistence.savings.entity.querydsl.QGroupSavingUse
 import static com.dodlu.core.persistence.user.entity.querydsl.QCustomerProfile.customerProfile;
 
 import com.dodlu.core.persistence.savings.entity.GroupSavingUser;
+import com.dodlu.core.persistence.user.entity.CustomerProfile;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface GroupSavingUsersRepository
@@ -31,4 +34,9 @@ public interface GroupSavingUsersRepository
 
     return findAll(predicate, pageable);
   }
+
+  @Query("SELECT g.member from GroupSavingUser g WHERE g.group.id = :groupId")
+  List<CustomerProfile> findTop5ByGroupId(String groupId);
+
+  boolean existsByGroupIdAndMemberId(String groupId, String memberId);
 }

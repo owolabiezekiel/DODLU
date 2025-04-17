@@ -23,4 +23,5 @@ public record GroupSavingModel(
     String currency,
     GroupBalanceModel balance,
     GroupSettingModel settings,
+    int memberCount,
     Set<CustomerProfileModel> members) {}
