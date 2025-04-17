@@ -30,6 +30,11 @@ GET{{host}}/savings/group/4e07052f-4bd0-4f2d-ac80-53d776c9e49b
 Content-Type: application/json
 Authorization: {{customer_token}}
 
+### Get a group saving member list
+GET{{host}}/savings/group/4e07052f-4bd0-4f2d-ac80-53d776c9e49b/members?size=20
+Content-Type: application/json
+Authorization: {{customer_token}}
+
 ### Get user's group savings
 GET{{host}}/savings/group?size=20&page=0
 Content-Type: application/json

@@ -23,6 +23,7 @@ import com.dodlu.core.domain.savings.model.GroupSavingLoanModel;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.domain.transaction.enums.EntityType;
 import com.dodlu.core.domain.transaction.enums.TransactionType;
+import com.dodlu.core.domain.user.model.CustomerProfileModel;
 import com.dodlu.core.persistence.savings.entity.*;
 import com.dodlu.core.persistence.savings.repository.*;
 import com.dodlu.core.persistence.transaction.entity.GroupBalance;
@@ -135,6 +136,12 @@ public class GroupSavingsService {
     } else {
       return null;
     }
+  }
+
+  @Transactional
+  public Page<CustomerProfileModel> getGroupMembers(String groupId, Pageable pageable) {
+    var members = groupSavingUsersRepository.findAllByGroupId(groupId, pageable);
+    return members.map(CustomerProfile::toModel);
   }
 
   @Transactional

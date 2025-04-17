@@ -7,6 +7,7 @@ import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.savings.model.GroupSavingLoanModel;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
 import com.dodlu.core.domain.savings.service.GroupSavingsService;
+import com.dodlu.core.domain.user.model.CustomerProfileModel;
 import com.dodlu.core.persistence.user.entity.User;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -42,6 +43,21 @@ public class SavingController {
       @AuthenticationPrincipal User user, @PathVariable("savingsId") String savingsId) {
     GroupSavingModel groupSaving = groupSavingsService.getGroupSaving(user, savingsId);
     return new ResponseModel<>(groupSaving);
+  }
+
+  @GetMapping("/group/{groupId}/members")
+  @Operation(description = "Get a group savings members")
+  @ApiResponses({
+    @ApiResponse(
+        code = 200,
+        message = "Success",
+        response = CustomerProfileModel.class,
+        responseContainer = "Page")
+  })
+  public ResponseModel<Page<CustomerProfileModel>> getGroupSavingMembers(
+      @PathVariable("groupId") String groupId, @PageableDefault Pageable pageable) {
+    var result = groupSavingsService.getGroupMembers(groupId, pageable);
+    return new ResponseModel<>(result);
   }
 
   @GetMapping("/group")
