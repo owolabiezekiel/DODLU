@@ -17,8 +17,10 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.AuditorAware;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,6 +30,9 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @AllArgsConstructor
+@EnableAsync
+@EnableAspectJAutoProxy(exposeProxy = true)
+@EnableJpaAuditing(auditorAwareRef = "databaseAuditor")
 public class AppConfiguration {
   private final UserRepository userRepository;
 
@@ -56,11 +61,6 @@ public class AppConfiguration {
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
       throws Exception {
     return config.getAuthenticationManager();
-  }
-
-  @Bean
-  public AuditorAware<String> auditorAware() {
-    return new AuditorAwareImpl();
   }
 
   @Bean
