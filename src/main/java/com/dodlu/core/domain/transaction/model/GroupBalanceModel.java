@@ -4,4 +4,10 @@ import java.math.BigDecimal;
 import lombok.Builder;
 
 @Builder
-public record GroupBalanceModel(BigDecimal availableBalance) {}
+public record GroupBalanceModel(
+    BigDecimal availableBalance,
+    BigDecimal totalCreditAmount,
+    BigDecimal totalDebitAmount,
+    Long totalDebitTransactionCount,
+    Long totalCreditTransactionCount,
+    Long totalTransactionCount) {}

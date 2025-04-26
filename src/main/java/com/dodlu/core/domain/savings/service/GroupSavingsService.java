@@ -419,6 +419,8 @@ public class GroupSavingsService {
 
     BigDecimal newGroupBalance = groupBalance.getAvailableBalance().subtract(loan.getAmount());
     groupBalance.setAvailableBalance(newGroupBalance);
+    groupBalance.setTotalDebitAmount(groupBalance.getTotalDebitAmount().add(loan.getAmount()));
+    groupBalance.setTotalDebitTransactionCount(groupBalance.getTotalDebitTransactionCount() + 1);
 
     loan.setLoanStatus(LoanStatus.APPROVED);
     loan.setApprovalDate(LocalDateTime.now());
@@ -476,6 +478,10 @@ public class GroupSavingsService {
     return GroupBalance.builder()
         .groupSavings(groupSaving)
         .availableBalance(BigDecimal.ZERO)
+        .totalCreditAmount(BigDecimal.ZERO)
+        .totalDebitAmount(BigDecimal.ZERO)
+        .totalCreditTransactionCount(0L)
+        .totalDebitTransactionCount(0L)
         .build();
   }
 
@@ -528,6 +534,8 @@ public class GroupSavingsService {
 
     GroupBalance balance = groupSaving.getBalance();
     balance.setAvailableBalance(balance.getAvailableBalance().subtract(transaction.getAmount()));
+    balance.setTotalDebitAmount(balance.getTotalDebitAmount().add(request.getAmount()));
+    balance.setTotalDebitTransactionCount(balance.getTotalDebitTransactionCount() + 1);
     groupBalanceRepository.save(balance);
 
     transactionTemplate.executeWithoutResult(
@@ -558,6 +566,8 @@ public class GroupSavingsService {
 
     GroupBalance balance = groupSaving.getBalance();
     balance.setAvailableBalance(balance.getAvailableBalance().add(transaction.getAmount()));
+    balance.setTotalCreditAmount(balance.getTotalCreditAmount().add(request.getAmount()));
+    balance.setTotalCreditTransactionCount(balance.getTotalDebitTransactionCount() + 1);
     groupBalanceRepository.save(balance);
 
     transactionTemplate.executeWithoutResult(
@@ -579,6 +589,8 @@ public class GroupSavingsService {
 
     loan.setAmountRepaid(loan.getAmountRepaid().add(request.getAmount()));
     balance.setAvailableBalance(balance.getAvailableBalance().add(request.getAmount()));
+    balance.setTotalCreditAmount(balance.getTotalCreditAmount().add(request.getAmount()));
+    balance.setTotalCreditTransactionCount(balance.getTotalDebitTransactionCount() + 1);
 
     Transaction transaction =
         Transaction.builder()

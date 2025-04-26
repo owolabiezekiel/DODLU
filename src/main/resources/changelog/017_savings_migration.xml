@@ -146,4 +146,11 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="1745660155566-1" author="owolabiezekiel" context="create composite index on group id and customer id columns in group saving users">
+        <createIndex tableName="group_saving_users" indexName="gs_user_group_id_member_id_idx">
+            <column name="group_saving_id"/>
+            <column name="member_profile_id"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>

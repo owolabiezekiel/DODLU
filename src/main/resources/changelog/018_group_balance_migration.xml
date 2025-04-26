@@ -47,4 +47,13 @@
                                  onDelete="RESTRICT"
                                  onUpdate="RESTRICT"/>
     </changeSet>
+
+    <changeSet id="1745661109720-1" author="owolabiezekiel" context="add more fields to balance table">
+        <addColumn tableName="group_balance">
+            <column name="total_credit_amount" type="DECIMAL" defaultValue="0"/>
+            <column name="total_debit_amount" type="DECIMAL" defaultValue="0"/>
+            <column name="total_credit_transaction_count" type="BIGINT" defaultValue="0"/>
+            <column name="total_debit_transaction_count" type="BIGINT" defaultValue="0"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

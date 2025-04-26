@@ -24,6 +24,18 @@ public class GroupBalance extends BaseEntity {
   @Column(nullable = false)
   private BigDecimal availableBalance;
 
+  @Column(nullable = false)
+  private BigDecimal totalCreditAmount;
+
+  @Column(nullable = false)
+  private BigDecimal totalDebitAmount;
+
+  @Column(nullable = false)
+  private Long totalDebitTransactionCount;
+
+  @Column(nullable = false)
+  private Long totalCreditTransactionCount;
+
   @OneToOne(optional = false)
   @JoinColumn(name = "group_savings_id", nullable = false, unique = true)
   @ToString.Exclude
@@ -44,6 +56,13 @@ public class GroupBalance extends BaseEntity {
   }
 
   public GroupBalanceModel toModel() {
-    return GroupBalanceModel.builder().availableBalance(this.availableBalance).build();
+    return GroupBalanceModel.builder()
+        .availableBalance(this.availableBalance)
+        .totalCreditAmount(this.totalCreditAmount)
+        .totalDebitAmount(this.totalDebitAmount)
+        .totalCreditTransactionCount(this.totalCreditTransactionCount)
+        .totalDebitTransactionCount(this.totalDebitTransactionCount)
+        .totalTransactionCount(this.totalCreditTransactionCount + this.totalDebitTransactionCount)
+        .build();
   }
 }

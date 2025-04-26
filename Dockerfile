@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 COPY target/backend-core-service-1.0.jar backend-core-service-1.0.jar
