@@ -21,6 +21,7 @@ import com.dodlu.core.domain.savings.enums.LoanStatus;
 import com.dodlu.core.domain.savings.enums.RepaymentStatus;
 import com.dodlu.core.domain.savings.model.GroupSavingLoanModel;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
+import com.dodlu.core.domain.savings.model.LoanMetricModel;
 import com.dodlu.core.domain.transaction.enums.EntityType;
 import com.dodlu.core.domain.transaction.enums.TransactionType;
 import com.dodlu.core.domain.user.model.CustomerProfileModel;
@@ -474,6 +475,44 @@ public class GroupSavingsService {
     }
   }
 
+  @Transactional
+  public LoanMetricModel getLoanMetrics(User user, String groupId) {
+    CustomerProfile customerProfile =
+        getCustomerByPhoneNumber(
+            customerProfileRepository, exceptionService, user.getPhoneNumber());
+
+    if (!groupSavingUsersRepository.existsByGroupIdAndMemberId(groupId, customerProfile.getId())) {
+      throw new BadRequestException("Group does not exist or user not part of group");
+    }
+
+    var activeLoanCount =
+        groupLoanRepository.countByLendingGroup_IdAndLoanStatus(groupId, LoanStatus.APPROVED);
+    var pendingLoanCount =
+        groupLoanRepository.countByLendingGroup_IdAndLoanStatus(groupId, LoanStatus.PENDING);
+
+    var calcMetric = activeLoanCount >= 0;
+
+    return LoanMetricModel.builder()
+        .loanDisbursedCount(activeLoanCount)
+        .pendingLoanCount(pendingLoanCount)
+        .inProgressLoanCount(
+            calcMetric
+                ? groupLoanRepository.countByLendingGroup_IdAndRepaymentStatus(
+                    groupId, RepaymentStatus.IN_PROGRESS)
+                : 0)
+        .completedLoanCount(
+            calcMetric
+                ? groupLoanRepository.countByLendingGroup_IdAndRepaymentStatus(
+                    groupId, RepaymentStatus.COMPLETED)
+                : 0)
+        .totalLoanDisbursedAmount(
+            calcMetric
+                ? groupLoanRepository.sumApprovedLoanAmountByGroupIdAndStatus(
+                    groupId, LoanStatus.APPROVED)
+                : BigDecimal.ZERO)
+        .build();
+  }
+
   private GroupBalance generateEmptyGroupBalance(GroupSaving groupSaving) {
     return GroupBalance.builder()
         .groupSavings(groupSaving)
@@ -493,12 +532,6 @@ public class GroupSavingsService {
 
   private BigDecimal calculatePercent(BigDecimal value, Float percent) {
     return value.multiply(BigDecimal.valueOf(percent)).divide(BigDecimal.valueOf(100.0));
-  }
-
-  private CustomerProfile getCustomer(String email, String username) {
-    return !isNullOrBlank(email)
-        ? getCustomerByEmail(customerProfileRepository, exceptionService, email)
-        : getCustomerByUsername(customerProfileRepository, exceptionService, username);
   }
 
   private GroupSaving getGroupSaving(String groupId) {

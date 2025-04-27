@@ -6,6 +6,7 @@ import com.dodlu.core.app.model.request.savings.*;
 import com.dodlu.core.app.model.response.ResponseModel;
 import com.dodlu.core.domain.savings.model.GroupSavingLoanModel;
 import com.dodlu.core.domain.savings.model.GroupSavingModel;
+import com.dodlu.core.domain.savings.model.LoanMetricModel;
 import com.dodlu.core.domain.savings.service.GroupSavingsService;
 import com.dodlu.core.domain.user.model.CustomerProfileModel;
 import com.dodlu.core.persistence.user.entity.User;
@@ -145,6 +146,15 @@ public class SavingController {
       @PageableDefault Pageable pageable) {
     var loans = groupSavingsService.getGroupLoans(user, groupSavingId, pageable);
     return new ResponseModel<>(loans);
+  }
+
+  @GetMapping("/group/{groupSavingId}/loan-metrics")
+  @Operation(description = "Get Loan metrics for a group")
+  @ApiResponses({@ApiResponse(code = 200, message = "Success", response = LoanMetricModel.class)})
+  public ResponseModel<LoanMetricModel> getLoanMetricForGroup(
+      @AuthenticationPrincipal User user, @PathVariable("groupSavingId") String groupSavingId) {
+    var metrics = groupSavingsService.getLoanMetrics(user, groupSavingId);
+    return new ResponseModel<>(metrics);
   }
 
   @GetMapping("/group/loans/{groupLoanId}")

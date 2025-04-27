@@ -1,12 +1,3 @@
-#### Customer login
-#POST {{host}}/auth/login
-#Content-Type: application/json
-#
-#{
-#  "username": "owo.obaseki@gmail.com",
-#  "password": "password"
-#}
-
 ### Create Group Savings
 POST {{host}}/savings/group
 Content-Type: application/json
@@ -26,7 +17,12 @@ Authorization: {{customer_token}}
 }
 
 ### Get group saving by Id
-GET{{host}}/savings/group/4e07052f-4bd0-4f2d-ac80-53d776c9e49b
+GET{{host}}/savings/group/1a915c0e-9afe-4400-9e68-49c3915e8904
+Content-Type: application/json
+Authorization: {{customer_token}}
+
+### Get group saving metrics by Id
+GET{{host}}/savings/group/1a915c0e-9afe-4400-9e68-49c3915e8904/loan-metrics
 Content-Type: application/json
 Authorization: {{customer_token}}
 
