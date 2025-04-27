@@ -485,32 +485,34 @@ public class GroupSavingsService {
       throw new BadRequestException("Group does not exist or user not part of group");
     }
 
-    var activeLoanCount =
-        groupLoanRepository.countByLendingGroup_IdAndLoanStatus(groupId, LoanStatus.APPROVED);
-    var pendingLoanCount =
-        groupLoanRepository.countByLendingGroup_IdAndLoanStatus(groupId, LoanStatus.PENDING);
+    //    var activeLoanCount =
+    //        groupLoanRepository.countByLendingGroup_IdAndLoanStatus(groupId, LoanStatus.APPROVED);
+    //    var pendingLoanCount =
+    //        groupLoanRepository.countByLendingGroup_IdAndLoanStatus(groupId, LoanStatus.PENDING);
+    //
+    //    var calcMetric = activeLoanCount >= 0;
+    //
+    //    return LoanMetricModel.builder()
+    //        .loanDisbursedCount(activeLoanCount)
+    //        .pendingLoanCount(pendingLoanCount)
+    //        .inProgressLoanCount(
+    //            calcMetric
+    //                ? groupLoanRepository.countByLendingGroup_IdAndRepaymentStatus(
+    //                    groupId, RepaymentStatus.IN_PROGRESS)
+    //                : 0)
+    //        .completedLoanCount(
+    //            calcMetric
+    //                ? groupLoanRepository.countByLendingGroup_IdAndRepaymentStatus(
+    //                    groupId, RepaymentStatus.COMPLETED)
+    //                : 0)
+    //        .totalLoanDisbursedAmount(
+    //            calcMetric
+    //                ? groupLoanRepository.sumApprovedLoanAmountByGroupIdAndStatus(
+    //                    groupId, LoanStatus.APPROVED)
+    //                : BigDecimal.ZERO)
+    //        .build();
 
-    var calcMetric = activeLoanCount >= 0;
-
-    return LoanMetricModel.builder()
-        .loanDisbursedCount(activeLoanCount)
-        .pendingLoanCount(pendingLoanCount)
-        .inProgressLoanCount(
-            calcMetric
-                ? groupLoanRepository.countByLendingGroup_IdAndRepaymentStatus(
-                    groupId, RepaymentStatus.IN_PROGRESS)
-                : 0)
-        .completedLoanCount(
-            calcMetric
-                ? groupLoanRepository.countByLendingGroup_IdAndRepaymentStatus(
-                    groupId, RepaymentStatus.COMPLETED)
-                : 0)
-        .totalLoanDisbursedAmount(
-            calcMetric
-                ? groupLoanRepository.sumApprovedLoanAmountByGroupIdAndStatus(
-                    groupId, LoanStatus.APPROVED)
-                : BigDecimal.ZERO)
-        .build();
+    return groupLoanRepository.getLoanMetricsForGroup(groupId);
   }
 
   private GroupBalance generateEmptyGroupBalance(GroupSaving groupSaving) {
