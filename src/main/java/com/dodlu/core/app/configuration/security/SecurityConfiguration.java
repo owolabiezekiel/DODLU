@@ -77,6 +77,7 @@ public class SecurityConfiguration {
               auth.requestMatchers("/actuator/**").permitAll();
               auth.requestMatchers("/actuator/**").permitAll();
               auth.requestMatchers(HttpMethod.POST, "/v1/webhook/twilio/**").permitAll();
+              auth.requestMatchers("/v1/webhook/whatsapp/**").permitAll();
 
               auth.requestMatchers(
                       "/swagger**",
