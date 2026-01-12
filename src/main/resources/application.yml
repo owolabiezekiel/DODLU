@@ -170,3 +170,10 @@ verification:
       nin-url: ${YOU_VERIFY_NIN_URL:${YOU_VERIFY_BASE_URL:https://api.sandbox.youverify.co}/v2/api/identity/ng/nin}
     prembly:
       api-key: sample-api-key
+
+
+whatsapp:
+  business-account-id: ${WHATSAPP_BUSINESS_ACCOUNT_ID:test-id}
+  phone-number-id: ${WHATSAPP_PHONE_NUMBER_ID:test-id}
+  access-token: ${WHATSAPP_ACCESS_TOKEN:test-token}
+  verify-token: ${WHATSAPP_WEBHOOK_VERIFY_TOKEN:test}
